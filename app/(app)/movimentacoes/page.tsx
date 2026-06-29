@@ -22,29 +22,19 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
         description="Controle total sobre o seu fluxo de caixa com filtros avançados"
       />
 
-<div className="space-y-6">
-
-    {/* Primeira linha */}
-    <div className="grid gap-6 lg:grid-cols-2">
-
-        {/* Formulário */}
-        <Card>...</Card>
-
-        {/* Filtros */}
-        <Card>...</Card>
-
-    </div>
-
-    {/* Segunda linha */}
-    <Card>
-        ...
-        Histórico de Lançamentos
-        ...
-    </Card>
-
-</div>
+      <div className="grid gap-6 lg:grid-cols-[420px_1fr]">
+        {/* Sidebar: Formulário e Filtros */}
+        <aside className="space-y-6">
+          {/* Nova Movimentação Card */}
+          <Card className="border-indigo-500/30 bg-gradient-to-br from-indigo-600/10 to-indigo-600/5 relative overflow-hidden">
+            <div className="absolute -right-12 -top-12 w-32 h-32 bg-indigo-600/10 rounded-full blur-3xl" />
             
-<form action={saveMovimentacao} className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-2 mb-6 text-indigo-400 font-bold uppercase text-xs tracking-widest relative z-10">
+              <Plus className="h-4 w-4" />
+              <span>Lançamento Rápido</span>
+            </div>
+            
+            <form action={saveMovimentacao} className="space-y-4 relative z-10">
               <FormGroup label="Tipo">
                 <Select name="tipo" required className="h-11">
                   <option value="despesa">Despesa</option>
