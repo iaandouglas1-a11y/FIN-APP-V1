@@ -1,7 +1,7 @@
 import { getCategorias } from "@/lib/queries";
-import { Card, Button, Input, Badge, PageHeader, FormGroup, EmptyState } from "@/components/ui";
+import { Card, Button, Input, Select, Badge, PageHeader, FormGroup, EmptyState } from "@/components/ui";
 import { saveCategoria, deleteCategoria } from "@/app/(app)/actions";
-import { Tags, Plus, Trash2, FolderOpen, AlertCircle } from "lucide-react";
+import { Tags, Plus, Trash2, FolderOpen, AlertCircle, TrendingUp, TrendingDown } from "lucide-react";
 
 export default async function CategoriasPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
@@ -45,6 +45,14 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
                   required 
                   className="h-11"
                 />
+              </FormGroup>
+
+              <FormGroup label="Tipo">
+                <Select name="tipo" required className="h-11">
+                  <option value="">Selecione o tipo...</option>
+                  <option value="despesa">Despesa</option>
+                  <option value="receita">Receita</option>
+                </Select>
               </FormGroup>
               
               <Button type="submit" className="w-full h-11 text-base font-semibold">
@@ -93,13 +101,26 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
                     className="px-6 py-4 flex items-center justify-between hover:bg-slate-800/20 transition-all duration-200 group"
                   >
                     <div className="flex items-center gap-4 flex-1">
-                      <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-indigo-600/20 to-indigo-600/10 flex items-center justify-center text-indigo-400 group-hover:from-indigo-600/30 group-hover:to-indigo-600/20 transition-all duration-200">
-                        <span className="text-sm font-bold">{index + 1}</span>
+                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                        cat.tipo === "receita"
+                          ? "bg-emerald-500/15 text-emerald-400 group-hover:bg-emerald-500/25"
+                          : "bg-rose-500/15 text-rose-400 group-hover:bg-rose-500/25"
+                      }`}>
+                        {cat.tipo === "receita"
+                          ? <TrendingUp className="h-5 w-5" />
+                          : <TrendingDown className="h-5 w-5" />
+                        }
                       </div>
-                      <span className="text-slate-200 font-semibold text-base">{cat.nome}</span>
+                      <div>
+                        <span className="text-slate-200 font-semibold text-base">{cat.nome}</span>
+                        <p className="text-xs text-slate-500 mt-0.5 capitalize">{cat.tipo}</p>
+                      </div>
                     </div>
                     
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
+                      <Badge variant={cat.tipo === "receita" ? "success" : "error"} className="text-[10px]">
+                        {cat.tipo}
+                      </Badge>
                       <form action={deleteCategoria}>
                         <input type="hidden" name="id" value={cat.id} />
                         <button 
