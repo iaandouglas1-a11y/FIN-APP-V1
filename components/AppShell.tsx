@@ -51,9 +51,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             !isSidebarOpen && "md:w-0 md:opacity-0"
           )}>
             <span className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-indigo-300 bg-clip-text text-transparent">
-              FINV4
+              Gerenciador Pessoal
             </span>
-            <p className="text-[10px] text-slate-500 font-medium">Controle Financeiro</p>
+            <p className="text-[10px] text-slate-500 font-medium">Controle Financeiro e Diversos</p>
           </div>
         </div>
       </div>
