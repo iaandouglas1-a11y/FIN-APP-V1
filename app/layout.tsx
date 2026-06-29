@@ -3,7 +3,7 @@ import { ToastProvider } from "@/components/ToastProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FINV4 - Controle Financeiro",
+  title: "Controle Pessoal",
   description: "Seu controle financeiro pessoal",
 };
 
