@@ -47,6 +47,7 @@ export interface ListaItem {
   id: string;
   lista_id: string;
   nome: string;
+  descricao: string | null;
   valor: number | null;
   concluido: boolean;
   created_at: string;
