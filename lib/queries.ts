@@ -39,28 +39,34 @@ export async function getMovimentacoes(filters?: { inicio?: string; fim?: string
   return (data || []) as any[]; 
 }
 
-export async function getDashboardData() { 
+export async function getDashboardData(filters?: { inicio?: string; fim?: string }) { 
   noStore(); 
   const s = await createServerSupabaseClient(); 
   const b = monthBounds(); 
+  const start = filters?.inicio || b.start;
+  const end = filters?.fim || b.end;
   const [allMovs, monthMovs] = await Promise.all([
     s.from("movimentacoes").select("*"), 
-    s.from("movimentacoes").select("*, categorias(nome)").gte("data", b.start).lte("data", b.end)
+    s.from("movimentacoes").select("*, categorias(nome)").gte("data", start).lte("data", end)
   ]); 
   if (allMovs.error) throw allMovs.error; 
   if (monthMovs.error) throw monthMovs.error; 
   return { 
     allMovs: (allMovs.data || []) as Movimentacao[], 
-    monthMovs: (monthMovs.data || []) as any[] 
+    monthMovs: (monthMovs.data || []) as any[],
+    filtro: { start, end }
   }; 
 }
 
-export async function getCartoesEFaturas() { 
+export async function getCartoesEFaturas(filters?: { inicio?: string; fim?: string }) { 
   noStore(); 
   const s = await createServerSupabaseClient(); 
+  let faturasQuery = s.from("faturas").select("*").order("data_vencimento", { ascending: false });
+  if (filters?.inicio) faturasQuery = faturasQuery.gte("data_vencimento", filters.inicio);
+  if (filters?.fim) faturasQuery = faturasQuery.lte("data_vencimento", filters.fim);
   const [cartoes, faturas, movs] = await Promise.all([
     s.from("cartoes").select("*, contas(nome)").order("nome"), 
-    s.from("faturas").select("*").order("data_vencimento", { ascending: false }), 
+    faturasQuery, 
     s.from("movimentacoes").select("*, categorias(nome)").order("data", { ascending: false })
   ]); 
   if (cartoes.error) throw cartoes.error; 
@@ -84,4 +90,39 @@ export function monthlyDre(movs: Movimentacao[]) {
     map.set(mes, row); 
   } 
   return [...map.values()].sort((a, b) => a.mes.localeCompare(b.mes)); 
+}
+
+// ── Listas ────────────────────────────────────────────────
+import type { Lista, ListaItem } from "@/types/database";
+
+export async function getListas(status?: "ativa" | "arquivada") {
+  noStore();
+  const s = await createServerSupabaseClient();
+  let q = s.from("listas").select("*").order("created_at", { ascending: false });
+  if (status) q = q.eq("status", status);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data || []) as Lista[];
+}
+
+export async function getListaComItens(listaId: string) {
+  noStore();
+  const s = await createServerSupabaseClient();
+  const [lista, itens] = await Promise.all([
+    s.from("listas").select("*").eq("id", listaId).single(),
+    s.from("lista_itens").select("*").eq("lista_id", listaId).order("created_at", { ascending: true }),
+  ]);
+  if (lista.error) throw lista.error;
+  if (itens.error) throw itens.error;
+  return { lista: lista.data as Lista, itens: (itens.data || []) as ListaItem[] };
+}
+
+export async function getListasComItens(status?: "ativa" | "arquivada") {
+  noStore();
+  const s = await createServerSupabaseClient();
+  let q = s.from("listas").select("*, lista_itens(*)").order("created_at", { ascending: false });
+  if (status) q = q.eq("status", status);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data || []) as (Lista & { lista_itens: ListaItem[] })[];
 }

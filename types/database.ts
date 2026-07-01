@@ -33,3 +33,21 @@ export type Categoria = Database["public"]["Tables"]["categorias"]["Row"];
 export type Cartao = Database["public"]["Tables"]["cartoes"]["Row"];
 export type Fatura = Database["public"]["Tables"]["faturas"]["Row"];
 export type Movimentacao = Database["public"]["Tables"]["movimentacoes"]["Row"];
+
+// ── Listas ────────────────────────────────────────────────
+export interface Lista {
+  id: string;
+  nome: string;
+  descricao: string | null;
+  status: "ativa" | "arquivada";
+  created_at: string;
+}
+
+export interface ListaItem {
+  id: string;
+  lista_id: string;
+  nome: string;
+  valor: number | null;
+  concluido: boolean;
+  created_at: string;
+}

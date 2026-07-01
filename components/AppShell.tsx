@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { 
   WalletCards, Menu, X, LayoutDashboard, ArrowUpRight, 
-  CreditCard, Receipt, Wallet, Tags, LogOut, ChevronRight, Settings
+  CreditCard, Receipt, Wallet, Tags, LogOut, ChevronRight, Settings, ListChecks
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -28,6 +28,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         { href: "/contas", label: "Bancos e Contas", icon: Wallet },
         { href: "/cartoes", label: "Meus Cartões", icon: CreditCard },
         { href: "/faturas", label: "Faturas", icon: Receipt },
+        { href: "/listas", label: "Listas", icon: ListChecks },
       ]
     },
     { 
@@ -51,9 +52,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             !isSidebarOpen && "md:w-0 md:opacity-0"
           )}>
             <span className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-indigo-300 bg-clip-text text-transparent">
-              Gerenciador Pessoal
+              FINV4
             </span>
-            <p className="text-[10px] text-slate-500 font-medium">Controle Financeiro e Diversos</p>
+            <p className="text-[10px] text-slate-500 font-medium">Controle Financeiro</p>
           </div>
         </div>
       </div>
