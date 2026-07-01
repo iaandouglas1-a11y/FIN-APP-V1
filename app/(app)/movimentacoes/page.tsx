@@ -83,7 +83,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
 
             {/* Linha 2: Data (largura total) */}
             <FormGroup label="Data">
-              <Input name="data" type="date" required className="h-11 w-full" />
+              <Input name="data" type="date" required className="h-11 w-full block" />
             </FormGroup>
 
             {/* Linha 3: Categoria | Conta */}
@@ -156,10 +156,10 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
           <form className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <FormGroup label="De">
-                <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-11 text-xs" />
+                <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-11 w-full block text-xs" />
               </FormGroup>
               <FormGroup label="Até">
-                <Input type="date" name="fim" defaultValue={sp.fim} className="h-11 text-xs" />
+                <Input type="date" name="fim" defaultValue={sp.fim} className="h-11 w-full block text-xs" />
               </FormGroup>
             </div>
 
