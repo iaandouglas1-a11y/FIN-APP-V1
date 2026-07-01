@@ -87,7 +87,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2 block">Até</label>
             <Input type="date" name="fim" defaultValue={sp.fim ?? filtro.end} className="h-10 text-sm w-full block" />
           </div>
-          <Button type="submit" variant="secondary" className="h-10 px-5 text-sm mb-[1px]">
+          <Button type="submit" variant="secondary" className="h-10 px-5 text-sm mb-[1px] inline-flex items-center justify-center">
             <Filter className="h-4 w-4 mr-2" />
             Filtrar
           </Button>
