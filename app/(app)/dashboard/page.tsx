@@ -79,12 +79,14 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
         {/* Período customizável */}
         <form className="flex flex-wrap items-end gap-3">
-          <FormGroup label="De" className="flex-1 min-w-[140px]">
-            <Input type="date" name="inicio" defaultValue={sp.inicio ?? filtro.start} className="h-10 text-sm" />
-          </FormGroup>
-          <FormGroup label="Até" className="flex-1 min-w-[140px]">
-            <Input type="date" name="fim" defaultValue={sp.fim ?? filtro.end} className="h-10 text-sm" />
-          </FormGroup>
+          <div className="flex-1 min-w-[140px]">
+            <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2 block">De</label>
+            <Input type="date" name="inicio" defaultValue={sp.inicio ?? filtro.start} className="h-10 text-sm w-full block" />
+          </div>
+          <div className="flex-1 min-w-[140px]">
+            <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2 block">Até</label>
+            <Input type="date" name="fim" defaultValue={sp.fim ?? filtro.end} className="h-10 text-sm w-full block" />
+          </div>
           <Button type="submit" variant="secondary" className="h-10 px-5 text-sm mb-[1px]">
             <Filter className="h-4 w-4 mr-2" />
             Filtrar
