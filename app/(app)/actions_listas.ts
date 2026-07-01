@@ -14,6 +14,7 @@ const listaSchema = z.object({
 const itemSchema = z.object({
   lista_id: z.string().uuid("Lista inválida"),
   nome: z.string().min(1, "Informe o nome do item"),
+  descricao: z.string().optional().or(z.literal("")),
   valor: z.coerce.number().nonnegative("Valor inválido").optional().or(z.literal("")),
 });
 
@@ -100,11 +101,12 @@ export async function saveItem(formData: FormData) {
   const payload = {
     lista_id: parsed.data.lista_id,
     nome: parsed.data.nome,
+    descricao: parsed.data.descricao || null,
     valor: parsed.data.valor || null,
   };
 
   const result = id
-    ? await (s.from("lista_itens") as any).update({ nome: payload.nome, valor: payload.valor }).eq("id", id)
+    ? await (s.from("lista_itens") as any).update({ nome: payload.nome, descricao: payload.descricao, valor: payload.valor }).eq("id", id)
     : await (s.from("lista_itens") as any).insert(payload);
 
   if (result.error) throw new Error(result.error.message);
