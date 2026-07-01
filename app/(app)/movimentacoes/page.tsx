@@ -50,8 +50,9 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
             <span>Lançamento Rápido</span>
           </div>
 
-          <form action={saveMovimentacao} className="relative z-10">
-            <div className="grid grid-cols-2 gap-3 mb-3">
+          <form action={saveMovimentacao} className="relative z-10 space-y-3">
+            {/* Linha 1: Tipo | Status | Valor */}
+            <div className="grid grid-cols-3 gap-3">
               <FormGroup label="Tipo">
                 <Select name="tipo" required className="h-11">
                   <option value="despesa">Despesa</option>
@@ -64,12 +65,9 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                   <option value="previsto">Previsto</option>
                 </Select>
               </FormGroup>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 mb-3">
               <FormGroup label="Valor">
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">R$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">R$</span>
                   <Input
                     name="valor"
                     type="number"
@@ -77,25 +75,25 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                     min="0.01"
                     placeholder="0,00"
                     required
-                    className="pl-10 h-11 text-base font-bold"
+                    className="pl-9 h-11 font-bold"
                   />
                 </div>
               </FormGroup>
-              <FormGroup label="Data">
-                <Input name="data" type="date" required className="h-11" />
-              </FormGroup>
             </div>
 
-            <div className="mb-3">
+            {/* Linha 2: Data (largura total) */}
+            <FormGroup label="Data">
+              <Input name="data" type="date" required className="h-11 w-full" />
+            </FormGroup>
+
+            {/* Linha 3: Categoria | Conta */}
+            <div className="grid grid-cols-2 gap-3">
               <FormGroup label="Categoria">
                 <Select name="categoria_id" required className="h-11">
                   <option value="">Selecione...</option>
                   {categorias.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
                 </Select>
               </FormGroup>
-            </div>
-
-            <div className="mb-3">
               <FormGroup label="Conta / Origem">
                 <Select name="conta_id" className="h-11">
                   <option value="">Nenhuma</option>
@@ -104,7 +102,8 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
               </FormGroup>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 mb-5">
+            {/* Linha 4: Cartão | Fatura */}
+            <div className="grid grid-cols-2 gap-3">
               <FormGroup label="Cartão">
                 <Select name="cartao_id" className="h-11">
                   <option value="">Nenhum</option>
@@ -181,7 +180,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
             </div>
 
             <div className="flex gap-2 pt-1">
-              <Button type="submit" variant="secondary" className="flex-1 h-11 text-sm">
+              <Button type="submit" variant="secondary" className="flex-1 h-11 text-sm inline-flex items-center justify-center">
                 <Filter className="h-4 w-4 mr-2" />
                 Aplicar Filtros
               </Button>
