@@ -26,7 +26,7 @@ export function ListaAccordion({ lista }: { lista: ListaComItens }) {
 
   return (
     <div className="glass-card border-slate-800/60 relative overflow-hidden group">
-      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-indigo-600/10 blur-3xl group-hover:bg-indigo-600/15 transition-all duration-300" />
+      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#5DA832]/10 blur-3xl group-hover:bg-[#5DA832]/15 transition-all duration-300" />
 
       {/* Header — clicável para expandir */}
       <button
@@ -36,7 +36,7 @@ export function ListaAccordion({ lista }: { lista: ListaComItens }) {
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 mb-1">
-            <ListChecks className="h-5 w-5 text-indigo-400 shrink-0" />
+            <ListChecks className="h-5 w-5 text-[#5DA832] shrink-0" />
             <h2 className="text-lg font-bold text-white truncate">{lista.nome}</h2>
             {lista.status === "arquivada" && (
               <Badge variant="warning" className="text-[10px]">Arquivada</Badge>
@@ -56,7 +56,7 @@ export function ListaAccordion({ lista }: { lista: ListaComItens }) {
                   </div>
                   <div className="h-1.5 w-full bg-slate-800/60 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-indigo-600 to-indigo-400 rounded-full transition-all duration-500"
+                      className="h-full bg-gradient-to-r from-[#5DA832] to-[#6fc23b] rounded-full transition-all duration-500"
                       style={{ width: `${progresso}%` }}
                     />
                   </div>
@@ -77,7 +77,7 @@ export function ListaAccordion({ lista }: { lista: ListaComItens }) {
           {/* Ações — stopPropagation para não abrir/fechar o accordion */}
           <form action={duplicarLista} onClick={(e) => e.stopPropagation()}>
             <input type="hidden" name="id" value={lista.id} />
-            <button type="submit" title="Duplicar" className="p-2 text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-all duration-200">
+            <button type="submit" title="Duplicar" className="p-2 text-slate-500 hover:text-[#5DA832] hover:bg-[#5DA832]/10 rounded-lg transition-all duration-200">
               <Copy className="h-4 w-4" />
             </button>
           </form>
