@@ -35,10 +35,10 @@ export default async function ContasPage() {
       />
 
       {/* Nova Conta Card */}
-      <Card className="border-indigo-500/30 bg-gradient-to-br from-indigo-600/10 to-indigo-600/5 relative overflow-hidden">
-        <div className="absolute -right-12 -top-12 w-32 h-32 bg-indigo-600/10 rounded-full blur-3xl" />
+      <Card className="border-[#5DA832]/30 bg-gradient-to-br from-[#5DA832]/10 to-[#5DA832]/5 relative overflow-hidden">
+        <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#5DA832]/10 rounded-full blur-3xl" />
         
-        <div className="flex items-center gap-2 mb-6 text-indigo-400 font-bold uppercase text-xs tracking-widest relative z-10">
+        <div className="flex items-center gap-2 mb-6 text-[#5DA832] font-bold uppercase text-xs tracking-widest relative z-10">
           <Plus className="h-4 w-4" />
           <span>Adicionar Nova Conta</span>
         </div>
@@ -49,12 +49,12 @@ export default async function ContasPage() {
               name="nome" 
               placeholder="Nome da conta (Ex: Nubank, Bradesco...)" 
               required 
-              className="h-11"
+              className="h-9"
             />
           </FormGroup>
           
           <FormGroup>
-            <Select name="tipo" defaultValue="corrente" className="h-11">
+            <Select name="tipo" defaultValue="corrente" className="h-9">
               <option value="corrente">Conta Corrente</option>
               <option value="poupanca">Poupança</option>
               <option value="investimento">Investimento</option>
@@ -63,7 +63,7 @@ export default async function ContasPage() {
           </FormGroup>
           
           <div className="flex items-end">
-            <Button type="submit" className="h-11 px-6">
+            <Button type="submit" className="h-9 px-5">
               <Plus className="h-4 w-4 mr-2" />
               Adicionar
             </Button>
@@ -78,15 +78,15 @@ export default async function ContasPage() {
           return (
             <Card 
               key={conta.id} 
-              className="group relative overflow-hidden border-slate-800/60 hover:border-indigo-500/40 transition-all duration-300 flex flex-col"
+              className="group relative overflow-hidden border-slate-800/60 hover:border-[#5DA832]/40 transition-all duration-300 flex flex-col"
             >
               {/* Decorative Background */}
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-indigo-600/10 blur-3xl group-hover:bg-indigo-600/15 transition-all duration-300" />
+              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#5DA832]/10 blur-3xl group-hover:bg-[#5DA832]/15 transition-all duration-300" />
               <div className="absolute -left-8 -bottom-8 h-24 w-24 rounded-full bg-slate-600/5 blur-3xl" />
 
               {/* Header */}
               <div className="flex items-start justify-between mb-6 relative z-10">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-600/20 to-indigo-600/10 text-indigo-400 group-hover:from-indigo-600/30 group-hover:to-indigo-600/20 transition-all duration-300">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-[#5DA832]/15 to-[#5DA832]/5 text-[#5DA832] group-hover:from-indigo-600/30 group-hover:to-indigo-600/20 transition-all duration-300">
                   {getIcon(conta.tipo)}
                 </div>
                 <div className="text-right">
@@ -116,12 +116,12 @@ export default async function ContasPage() {
                     <Input 
                       name="nome" 
                       defaultValue={conta.nome} 
-                      className="h-10 text-sm flex-1"
+                      className="h-9 text-sm flex-1"
                     />
                     <Button 
                       type="submit" 
                       variant="secondary"
-                      className="h-10 px-3"
+                      className="h-9 px-3"
                     >
                       <Check className="h-4 w-4" />
                     </Button>
