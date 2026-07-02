@@ -39,9 +39,9 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
       />
 
       {/* Formulário de inserção */}
-      <Card className="border-indigo-500/30 bg-gradient-to-br from-indigo-600/10 to-indigo-600/5 relative overflow-hidden">
-        <div className="absolute -right-12 -top-12 w-32 h-32 bg-indigo-600/10 rounded-full blur-3xl" />
-        <div className="flex items-center gap-2 mb-4 text-indigo-400 font-bold uppercase text-xs tracking-widest relative z-10">
+      <Card className="border-[#5DA832]/30 bg-gradient-to-br from-[#5DA832]/10 to-[#5DA832]/5 relative overflow-hidden">
+        <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#5DA832]/10 rounded-full blur-3xl" />
+        <div className="flex items-center gap-2 mb-4 text-[#5DA832] font-bold uppercase text-xs tracking-widest relative z-10">
           <Plus className="h-4 w-4" />
           <span>Lançamento Rápido</span>
         </div>
@@ -116,7 +116,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                 className={clsx(
                   "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 border whitespace-nowrap shrink-0",
                   isActive
-                    ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-300"
+                    ? "bg-[#5DA832]/20 border-[#5DA832]/40 text-[#6fc23b]"
                     : "bg-slate-800/40 border-slate-700/40 text-slate-400 hover:text-slate-200 hover:bg-slate-700/40"
                 )}
               >
