@@ -1,9 +1,10 @@
 import { CategoryPie, DreChart, EvolutionChart } from "@/components/Charts";
-import { Card, MetricCard, PageHeader, Button, Input, FormGroup } from "@/components/ui";
+import { Card, MetricCard, PageHeader, Button, Input } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { totalBalance } from "@/lib/finance";
 import { getDashboardData, monthlyDre } from "@/lib/queries";
-import { TrendingUp, TrendingDown, Wallet, Filter, CalendarRange } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, Filter } from "lucide-react";
+import { clsx } from "clsx";
 
 const MESES_RAPIDOS = [
   { label: "Este mês", offset: 0 },
@@ -49,54 +50,47 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         description="Visão geral do seu controle financeiro pessoal"
       />
 
-      {/* Filtro de Data */}
-      <Card className="border-slate-800/60">
-        <div className="flex items-center gap-2 mb-4 text-slate-300 font-bold uppercase text-xs tracking-widest">
-          <CalendarRange className="h-4 w-4" />
-          <span>Período</span>
-        </div>
-
-        {/* Atalhos rápidos */}
-        <div className="flex flex-wrap gap-2 mb-4">
+      {/* Filtros — linha única */}
+      <Card className="border-slate-800/60 py-3 px-4">
+        <div className="flex items-center gap-2 flex-wrap md:flex-nowrap overflow-x-auto">
+          {/* Chips mês rápido */}
           {MESES_RAPIDOS.map(({ label, offset }) => {
             const r = monthRange(offset);
             const isActive = sp.inicio === r.inicio && sp.fim === r.fim;
             return (
-              <a
-                key={offset}
-                href={`/dashboard?inicio=${r.inicio}&fim=${r.fim}`}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 border ${
+              <a key={offset} href={`/dashboard?inicio=${r.inicio}&fim=${r.fim}`}
+                className={clsx(
+                  "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 border whitespace-nowrap shrink-0",
                   isActive
                     ? "bg-[#5DA832]/20 border-[#5DA832]/40 text-[#6fc23b]"
                     : "bg-slate-800/40 border-slate-700/40 text-slate-400 hover:text-slate-200 hover:bg-slate-700/40"
-                }`}
+                )}
               >
                 {label}
               </a>
             );
           })}
-        </div>
 
-        {/* Período customizável */}
-        <form className="flex flex-wrap items-end gap-3">
-          <div className="flex-1 min-w-[140px]">
-            <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2 block">De</label>
-            <Input type="date" name="inicio" defaultValue={sp.inicio ?? filtro.start} className="h-9 w-full block text-sm" />
-          </div>
-          <div className="flex-1 min-w-[140px]">
-            <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2 block">Até</label>
-            <Input type="date" name="fim" defaultValue={sp.fim ?? filtro.end} className="h-9 w-full block text-sm" />
-          </div>
-          <Button type="submit" variant="secondary" className="h-9 px-4 text-sm inline-flex items-center justify-center">
-            <Filter className="h-4 w-4 mr-2" />
-            Filtrar
-          </Button>
-          {(sp.inicio || sp.fim) && (
-            <a href="/dashboard" className="h-10 px-4 flex items-center text-xs text-slate-500 hover:text-slate-300 transition-colors mb-[1px]">
-              Limpar
-            </a>
-          )}
-        </form>
+          {/* Separador */}
+          <div className="h-5 w-px bg-slate-700/60 shrink-0 hidden md:block" />
+
+          {/* Form de período */}
+          <form className="flex items-center gap-2 flex-1 flex-wrap md:flex-nowrap">
+            <Input type="date" name="inicio" defaultValue={sp.inicio ?? filtro.start} className="h-9 text-xs w-full md:w-32 block" />
+            <span className="text-slate-600 text-xs shrink-0">até</span>
+            <Input type="date" name="fim" defaultValue={sp.fim ?? filtro.end} className="h-9 text-xs w-full md:w-32 block" />
+
+            <Button type="submit" variant="secondary" className="h-9 px-4 text-xs shrink-0 inline-flex items-center justify-center">
+              <Filter className="h-3.5 w-3.5 mr-1.5" />
+              Filtrar
+            </Button>
+            {(sp.inicio || sp.fim) && (
+              <a href="/dashboard" className="text-xs text-slate-500 hover:text-slate-300 transition-colors whitespace-nowrap shrink-0">
+                Limpar
+              </a>
+            )}
+          </form>
+        </div>
       </Card>
 
       {/* Metrics Grid */}
