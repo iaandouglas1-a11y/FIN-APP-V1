@@ -1,10 +1,9 @@
 import { CategoryPie, DreChart, EvolutionChart } from "@/components/Charts";
-import { Card, MetricCard, PageHeader, Button, Input } from "@/components/ui";
+import { Card, MetricCard, PageHeader, Button, Input, FormGroup } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { totalBalance } from "@/lib/finance";
 import { getDashboardData, monthlyDre } from "@/lib/queries";
-import { TrendingUp, TrendingDown, Wallet, Filter } from "lucide-react";
-import { clsx } from "clsx";
+import { TrendingUp, TrendingDown, Wallet, Filter, CalendarRange } from "lucide-react";
 
 const MESES_RAPIDOS = [
   { label: "Este mês", offset: 0 },
@@ -50,47 +49,44 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         description="Visão geral do seu controle financeiro pessoal"
       />
 
-      {/* Filtros — linha única */}
-      <Card className="border-slate-800/60 !py-1 !px-4 min-h-0">
-        <div className="flex items-center gap-2 flex-wrap md:flex-nowrap overflow-x-auto">
-          {/* Chips mês rápido */}
+      {/* Filtro de Data */}
+      <Card className="border-slate-800/60 p-4">
+        {/* Chips — linha 1 */}
+        <div className="flex gap-2 mb-3">
           {MESES_RAPIDOS.map(({ label, offset }) => {
             const r = monthRange(offset);
             const isActive = sp.inicio === r.inicio && sp.fim === r.fim;
             return (
-              <a key={offset} href={`/dashboard?inicio=${r.inicio}&fim=${r.fim}`}
-                className={clsx(
-                  "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 border whitespace-nowrap shrink-0",
+              <a
+                key={offset}
+                href={`/dashboard?inicio=${r.inicio}&fim=${r.fim}`}
+                className={`flex-1 text-center px-2 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 border ${
                   isActive
                     ? "bg-[#5DA832]/20 border-[#5DA832]/40 text-[#6fc23b]"
-                    : "bg-slate-800/40 border-slate-700/40 text-slate-400 hover:text-slate-200 hover:bg-slate-700/40"
-                )}
+                    : "bg-[#142d52]/40 border-[#1e3a66]/40 text-slate-400 hover:text-slate-200 hover:bg-[#142d52]/60"
+                }`}
               >
                 {label}
               </a>
             );
           })}
-
-          {/* Separador */}
-          <div className="h-5 w-px bg-slate-700/60 shrink-0 hidden md:block" />
-
-          {/* Form de período */}
-          <form className="flex items-center gap-2 flex-1 flex-wrap md:flex-nowrap">
-            <Input type="date" name="inicio" defaultValue={sp.inicio ?? filtro.start} className="h-9 text-xs w-full md:w-32 block" />
-            <span className="text-slate-600 text-xs shrink-0">até</span>
-            <Input type="date" name="fim" defaultValue={sp.fim ?? filtro.end} className="h-9 text-xs w-full md:w-32 block" />
-
-            <Button type="submit" variant="secondary" className="h-9 px-4 text-xs shrink-0 inline-flex items-center justify-center">
-              <Filter className="h-3.5 w-3.5 mr-1.5" />
-              Filtrar
-            </Button>
-            {(sp.inicio || sp.fim) && (
-              <a href="/dashboard" className="text-xs text-slate-500 hover:text-slate-300 transition-colors whitespace-nowrap shrink-0">
-                Limpar
-              </a>
-            )}
-          </form>
         </div>
+
+        {/* Inputs + botão — linha 2 */}
+        <form className="flex items-center gap-2">
+          <Input type="date" name="inicio" defaultValue={sp.inicio ?? filtro.start} className="h-9 flex-1 min-w-0 block text-xs" />
+          <span className="text-slate-600 text-xs shrink-0">até</span>
+          <Input type="date" name="fim" defaultValue={sp.fim ?? filtro.end} className="h-9 flex-1 min-w-0 block text-xs" />
+          <Button type="submit" variant="secondary" className="h-9 px-3 text-xs shrink-0 inline-flex items-center justify-center gap-1.5">
+            <Filter className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Filtrar</span>
+          </Button>
+          {(sp.inicio || sp.fim) && (
+            <a href="/dashboard" className="h-9 px-2 flex items-center text-xs text-slate-500 hover:text-slate-300 transition-colors shrink-0">
+              ✕
+            </a>
+          )}
+        </form>
       </Card>
 
       {/* Metrics Grid */}
