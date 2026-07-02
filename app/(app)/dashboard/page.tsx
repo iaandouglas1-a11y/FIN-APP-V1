@@ -51,7 +51,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       />
 
       {/* Filtros — linha única */}
-      <Card className="border-slate-800/60 py-3 px-4">
+      <Card className="border-slate-800/60 py-3 px-4 w-fit">
         <div className="flex items-center gap-2 flex-wrap md:flex-nowrap overflow-x-auto">
           {/* Chips mês rápido */}
           {MESES_RAPIDOS.map(({ label, offset }) => {
