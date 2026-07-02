@@ -125,7 +125,8 @@ export function ListaAccordion({ lista }: { lista: ListaComItens }) {
                       {item.nome}
                     </span>
                     {(item as any).descricao && (
-                      <p className={`text-xs mt-0.5 ${item.concluido ? "text-slate-700" : "text-slate-500"}`}>
+                      <p className={`text-xs mt-0.5 truncate max-w-xs ${item.concluido ? "text-slate-700" : "text-slate-500"}`}
+                         title={(item as any).descricao}>
                         {(item as any).descricao}
                       </p>
                     )}
