@@ -161,7 +161,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
 
       {/* Listagem */}
       <Card className="p-0 overflow-hidden border-slate-800/60">
-        <div className="px-5 py-4 border-b border-slate-800/40 flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-slate-800/40 flex items-center justify-between">
           <h3 className="font-semibold text-white text-sm">Histórico de Lançamentos</h3>
           <Badge variant="info" className="text-xs font-semibold">{movs.length} registros</Badge>
         </div>
@@ -172,75 +172,83 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
             title="Nenhuma movimentação encontrada"
             description="Adicione uma transação ou ajuste os filtros"
           />
-        ) : (
-          <div className="divide-y divide-slate-800/40">
-            {(movs as any[]).map((m) => (
-              <div key={m.id} className="px-5 py-3 hover:bg-slate-800/20 transition-all duration-200 group">
-                {/* Linha principal */}
-                <div className="flex items-center gap-3">
-                  {/* Ícone */}
-                  <div className={clsx(
-                    "h-8 w-8 rounded-lg flex items-center justify-center shrink-0",
-                    m.tipo === "receita"
-                      ? "bg-emerald-500/15 text-emerald-400"
-                      : "bg-rose-500/15 text-rose-400"
-                  )}>
-                    {m.tipo === "receita"
-                      ? <ArrowDownLeft className="h-4 w-4" />
-                      : <ArrowUpRight className="h-4 w-4" />
-                    }
+        ) : (() => {
+          // Agrupar por data
+          const grupos = (movs as any[]).reduce((acc, m) => {
+            const d = m.data;
+            if (!acc[d]) acc[d] = [];
+            acc[d].push(m);
+            return acc;
+          }, {} as Record<string, any[]>);
+          const datas = Object.keys(grupos).sort((a, b) => b.localeCompare(a));
+
+          return (
+            <div>
+              {datas.map((data) => (
+                <div key={data}>
+                  {/* Separador de data */}
+                  <div className="px-4 py-1 bg-[#0D2340]/60 border-y border-slate-800/40 flex items-center justify-between">
+                    <span className="text-[11px] font-semibold text-slate-500">{dateBR(data)}</span>
+                    <span className="text-[11px] text-slate-600">
+                      {grupos[data].length} {grupos[data].length === 1 ? "lançamento" : "lançamentos"}
+                    </span>
                   </div>
 
-                  {/* Data */}
-                  <div className="w-20 shrink-0">
-                    <p className="text-[10px] text-slate-500 mb-0.5">Data</p>
-                    <p className="text-xs text-slate-300 font-medium">{dateBR(m.data)}</p>
-                  </div>
+                  {/* Linhas do dia */}
+                  {grupos[data].map((m: any) => (
+                    <div
+                      key={m.id}
+                      className="grid grid-cols-[24px_1fr_1fr_auto_auto] sm:grid-cols-[24px_1fr_1fr_80px_88px_auto] items-center gap-2 px-4 py-1.5 border-b border-slate-800/30 last:border-0 hover:bg-slate-800/20 transition-colors duration-150 group"
+                    >
+                      {/* Ícone */}
+                      <div className={clsx(
+                        "h-6 w-6 rounded-md flex items-center justify-center shrink-0",
+                        m.tipo === "receita" ? "bg-emerald-500/15 text-emerald-400" : "bg-rose-500/15 text-rose-400"
+                      )}>
+                        {m.tipo === "receita"
+                          ? <ArrowDownLeft className="h-3.5 w-3.5" />
+                          : <ArrowUpRight className="h-3.5 w-3.5" />
+                        }
+                      </div>
 
-                  {/* Categoria */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] text-slate-500 mb-0.5">Categoria</p>
-                    <p className="text-xs text-slate-200 font-semibold truncate">{m.categorias?.nome || "Sem categoria"}</p>
-                  </div>
+                      {/* Categoria */}
+                      <span className="text-xs font-medium text-slate-200 truncate">
+                        {m.categorias?.nome || "Sem categoria"}
+                      </span>
 
-                  {/* Banco */}
-                  <div className="w-24 shrink-0 hidden sm:block">
-                    <p className="text-[10px] text-slate-500 mb-0.5">Banco</p>
-                    <p className="text-xs text-slate-400 truncate">{m.contas?.nome ?? m.cartoes?.nome ?? "—"}</p>
-                  </div>
+                      {/* Descrição */}
+                      <span className="text-xs text-slate-500 truncate hidden sm:block">
+                        {m.descricao || "—"}
+                      </span>
 
-                  {/* Valor */}
-                  <div className="text-right shrink-0 w-28">
-                    <p className="text-[10px] text-slate-500 mb-0.5">Valor</p>
-                    <p className={clsx(
-                      "text-sm font-bold",
-                      m.tipo === "receita" ? "text-emerald-400" : "text-rose-400"
-                    )}>
-                      {m.tipo === "receita" ? "+" : "-"}{currency(Number(m.valor))}
-                    </p>
-                  </div>
+                      {/* Mobile: descrição abaixo da categoria — via subgrid trick: ocupa col 2 na linha 2 */}
+                      {/* Banco — oculto no mobile */}
+                      <span className="text-xs text-slate-500 text-right truncate hidden sm:block">
+                        {m.contas?.nome ?? m.cartoes?.nome ?? "—"}
+                      </span>
 
-                  {/* Deletar */}
-                  <form action={deleteMovimentacao} className="shrink-0">
-                    <input type="hidden" name="id" value={m.id} />
-                    <button className="p-1.5 text-slate-700 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100">
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </form>
+                      {/* Valor */}
+                      <span className={clsx(
+                        "text-xs font-semibold text-right tabular-nums",
+                        m.tipo === "receita" ? "text-emerald-400" : "text-rose-400"
+                      )}>
+                        {m.tipo === "receita" ? "+" : "-"}{currency(Number(m.valor))}
+                      </span>
+
+                      {/* Deletar */}
+                      <form action={deleteMovimentacao} className="shrink-0">
+                        <input type="hidden" name="id" value={m.id} />
+                        <button className="p-1 text-slate-700 hover:text-rose-400 rounded transition-colors opacity-0 group-hover:opacity-100">
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </form>
+                    </div>
+                  ))}
                 </div>
-
-                {/* Linha de descrição */}
-                <div className="mt-2 ml-11">
-                  {m.descricao ? (
-                    <p className="text-xs text-slate-500 italic">{m.descricao}</p>
-                  ) : (
-                    <p className="text-xs text-slate-700 italic">Sem descrição</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          );
+        })()}
       </Card>
     </div>
   );
