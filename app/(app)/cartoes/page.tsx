@@ -20,10 +20,10 @@ export default async function CartoesPage() {
       />
 
       {/* Novo Cartão Card */}
-      <Card className="border-indigo-500/30 bg-gradient-to-br from-indigo-600/10 to-indigo-600/5 relative overflow-hidden">
-        <div className="absolute -right-12 -top-12 w-32 h-32 bg-indigo-600/10 rounded-full blur-3xl" />
+      <Card className="border-[#5DA832]/30 bg-gradient-to-br from-[#5DA832]/10 to-[#5DA832]/5 relative overflow-hidden">
+        <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#5DA832]/10 rounded-full blur-3xl" />
         
-        <div className="flex items-center gap-2 mb-6 text-indigo-400 font-bold uppercase text-xs tracking-widest relative z-10">
+        <div className="flex items-center gap-2 mb-6 text-[#5DA832] font-bold uppercase text-xs tracking-widest relative z-10">
           <Plus className="h-4 w-4" />
           <span>Adicionar Novo Cartão</span>
         </div>
@@ -34,7 +34,7 @@ export default async function CartoesPage() {
               name="nome" 
               placeholder="Nome do cartão (Ex: Nubank Black)" 
               required 
-              className="h-11"
+              className="h-9"
             />
           </FormGroup>
           
@@ -46,19 +46,19 @@ export default async function CartoesPage() {
               min="0" 
               placeholder="Limite" 
               required 
-              className="h-11"
+              className="h-9"
             />
           </FormGroup>
           
           <FormGroup>
-            <Select name="conta_id" required className="h-11">
+            <Select name="conta_id" required className="h-9">
               <option value="">Conta de pagamento</option>
               {contas.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </Select>
           </FormGroup>
           
           <div className="flex items-end">
-            <Button type="submit" className="h-11 px-6">
+            <Button type="submit" className="h-9 px-5">
               <Plus className="h-4 w-4 mr-2" />
               Adicionar
             </Button>
@@ -79,18 +79,18 @@ export default async function CartoesPage() {
               className="group overflow-hidden border-slate-800/60 bg-gradient-to-br from-slate-900/50 to-slate-950/50 flex flex-col relative"
             >
               {/* Decorative Background */}
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-indigo-600/10 blur-3xl group-hover:bg-indigo-600/15 transition-all duration-300" />
+              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#5DA832]/10 blur-3xl group-hover:bg-[#5DA832]/15 transition-all duration-300" />
 
               {/* Header */}
               <div className="flex items-center justify-between mb-8 relative z-10">
                 <div className="flex items-center gap-4">
                   <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-600/30 to-indigo-600/10 group-hover:from-indigo-600/40 group-hover:to-indigo-600/20 transition-all duration-300">
-                    <CreditCard className="h-6 w-6 text-indigo-400" />
+                    <CreditCard className="h-6 w-6 text-[#5DA832]" />
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-white">{card.nome}</h2>
                     <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold">
-                      Limite: <span className="text-indigo-400">{currency(Number(card.limite))}</span>
+                      Limite: <span className="text-[#5DA832]">{currency(Number(card.limite))}</span>
                     </p>
                   </div>
                 </div>
@@ -155,7 +155,7 @@ export default async function CartoesPage() {
                   <Input 
                     name="nome" 
                     defaultValue={card.nome} 
-                    className="h-10 text-sm"
+                    className="h-9 text-sm"
                   />
                 </FormGroup>
                 
@@ -166,12 +166,12 @@ export default async function CartoesPage() {
                       type="number" 
                       step="0.01" 
                       defaultValue={card.limite} 
-                      className="h-10 text-sm flex-1"
+                      className="h-9 text-sm flex-1"
                     />
                     <Button 
                       type="submit" 
                       variant="secondary"
-                      className="h-10 px-3"
+                      className="h-9 px-3"
                     >
                       <Check className="h-4 w-4" />
                     </Button>
