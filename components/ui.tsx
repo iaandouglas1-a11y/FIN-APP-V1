@@ -27,7 +27,7 @@ export function MetricCard({
   const tones = {
     good: "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/20 hover:border-emerald-500/40",
     bad: "from-rose-500/20 to-rose-500/5 text-rose-400 border-rose-500/20 hover:border-rose-500/40",
-    default: "from-indigo-500/20 to-indigo-500/5 text-indigo-400 border-indigo-500/20 hover:border-indigo-500/40",
+    default: "from-indigo-500/20 to-indigo-500/5 text-[#5DA832] border-indigo-500/20 hover:border-[#5DA832]/40",
   };
 
   return (
@@ -119,7 +119,7 @@ export function NavLink({ href, children, isActive = false }: { href: string; ch
       className={clsx(
         "rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200",
         isActive
-          ? "bg-indigo-600/20 text-indigo-400 border border-indigo-500/30"
+          ? "bg-[#5DA832]/20 text-[#5DA832] border border-[#5DA832]/30"
           : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 border border-transparent"
       )}
     >
