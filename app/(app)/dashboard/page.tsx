@@ -67,7 +67,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                 href={`/dashboard?inicio=${r.inicio}&fim=${r.fim}`}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 border ${
                   isActive
-                    ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-300"
+                    ? "bg-[#5DA832]/20 border-[#5DA832]/40 text-[#6fc23b]"
                     : "bg-slate-800/40 border-slate-700/40 text-slate-400 hover:text-slate-200 hover:bg-slate-700/40"
                 }`}
               >
@@ -81,13 +81,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <form className="flex flex-wrap items-end gap-3">
           <div className="flex-1 min-w-[140px]">
             <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2 block">De</label>
-            <Input type="date" name="inicio" defaultValue={sp.inicio ?? filtro.start} className="h-10 text-sm w-full block" />
+            <Input type="date" name="inicio" defaultValue={sp.inicio ?? filtro.start} className="h-9 w-full block text-sm" />
           </div>
           <div className="flex-1 min-w-[140px]">
             <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2 block">Até</label>
-            <Input type="date" name="fim" defaultValue={sp.fim ?? filtro.end} className="h-10 text-sm w-full block" />
+            <Input type="date" name="fim" defaultValue={sp.fim ?? filtro.end} className="h-9 w-full block text-sm" />
           </div>
-          <Button type="submit" variant="secondary" className="h-10 px-5 text-sm mb-[1px] inline-flex items-center justify-center">
+          <Button type="submit" variant="secondary" className="h-9 px-4 text-sm inline-flex items-center justify-center">
             <Filter className="h-4 w-4 mr-2" />
             Filtrar
           </Button>
