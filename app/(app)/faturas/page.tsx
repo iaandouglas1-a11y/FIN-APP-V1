@@ -17,32 +17,32 @@ export default async function FaturasPage() {
       />
 
       {/* Nova Fatura Card */}
-      <Card className="border-indigo-500/30 bg-gradient-to-br from-indigo-600/10 to-indigo-600/5 relative overflow-hidden">
-        <div className="absolute -right-12 -top-12 w-32 h-32 bg-indigo-600/10 rounded-full blur-3xl" />
+      <Card className="border-[#5DA832]/30 bg-gradient-to-br from-[#5DA832]/10 to-[#5DA832]/5 relative overflow-hidden">
+        <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#5DA832]/10 rounded-full blur-3xl" />
         
-        <div className="flex items-center gap-2 mb-6 text-indigo-400 font-bold uppercase text-xs tracking-widest relative z-10">
+        <div className="flex items-center gap-2 mb-6 text-[#5DA832] font-bold uppercase text-xs tracking-widest relative z-10">
           <Plus className="h-4 w-4" />
           <span>Criar Nova Fatura</span>
         </div>
         
         <form action={saveFatura} className="grid gap-4 md:grid-cols-[1fr_180px_180px_auto] relative z-10">
           <FormGroup>
-            <Select name="cartao_id" required className="h-11">
+            <Select name="cartao_id" required className="h-9">
               <option value="">Selecione o Cartão</option>
               {cartoes.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </Select>
           </FormGroup>
           
           <FormGroup label="Fechamento">
-            <Input name="data_fechamento" type="date" required className="h-11" />
+            <Input name="data_fechamento" type="date" required className="h-9" />
           </FormGroup>
           
           <FormGroup label="Vencimento">
-            <Input name="data_vencimento" type="date" required className="h-11" />
+            <Input name="data_vencimento" type="date" required className="h-9" />
           </FormGroup>
           
           <div className="flex items-end">
-            <Button type="submit" className="h-11 px-6">
+            <Button type="submit" className="h-9 px-5">
               <Plus className="h-4 w-4 mr-2" />
               Criar
             </Button>
@@ -70,12 +70,12 @@ export default async function FaturasPage() {
               className="border-slate-800/60 bg-slate-900/30 relative overflow-hidden group"
             >
               {/* Decorative Background */}
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-indigo-600/10 blur-3xl group-hover:bg-indigo-600/15 transition-all duration-300" />
+              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#5DA832]/10 blur-3xl group-hover:bg-[#5DA832]/15 transition-all duration-300" />
 
               {/* Header Section */}
               <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between mb-8 relative z-10">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600/30 to-indigo-600/10 text-indigo-400 group-hover:from-indigo-600/40 group-hover:to-indigo-600/20 transition-all duration-300">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600/30 to-indigo-600/10 text-[#5DA832] group-hover:from-indigo-600/40 group-hover:to-indigo-600/20 transition-all duration-300">
                     <Receipt className="h-6 w-6" />
                   </div>
                   <div>
