@@ -18,14 +18,14 @@ import {
 } from "recharts";
 
 // ======================
-// CONFIGURAÇÕES VISUAIS
+// CONFIG VISUAL
 // ======================
 const colors = ["#5DA832", "#10b981", "#f43f5e", "#f59e0b", "#8b5cf6", "#06b6d4"];
 const chartGridColor = "#1e293b";
 const chartTextColor = "#94a3b8";
 
 // ======================
-// FORMATADOR MONETÁRIO
+// FORMATADOR BRL
 // ======================
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", {
@@ -34,34 +34,34 @@ const formatCurrency = (value: number) =>
   }).format(value);
 
 // ======================
-// HOOK RESPONSIVO
+// HOOK MOBILE
 // ======================
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
   return isMobile;
 }
 
 // ======================
-// TOOLTIP CUSTOMIZADO
+// TOOLTIP PADRÃO
 // ======================
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-slate-800/95 border border-slate-700/60 rounded-lg p-3 shadow-xl backdrop-blur-sm">
+      <div className="bg-slate-800/95 border border-slate-700/60 rounded-lg p-3 shadow-xl">
         {label && (
-          <p className="text-xs font-semibold text-slate-300 mb-1">{label}</p>
+          <p className="text-xs text-slate-400 mb-1">{label}</p>
         )}
 
-        {payload.map((entry: any, index: number) => (
-          <p key={index} style={{ color: entry.color }} className="text-sm font-medium">
+        {payload.map((entry: any, i: number) => (
+          <p key={i} style={{ color: entry.color }} className="text-sm font-medium">
             {entry.name}: {formatCurrency(entry.value)}
           </p>
         ))}
@@ -72,7 +72,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 // ======================
-// GRÁFICO DE PIZZA (CATEGORIAS)
+// PIE (REFATORADO)
 // ======================
 export function CategoryPie({
   data,
@@ -80,43 +80,70 @@ export function CategoryPie({
   data: { name: string; value: number }[];
 }) {
   const isMobile = useIsMobile();
-  const height = isMobile ? 280 : 320;
-  const radius = isMobile ? 70 : 90;
+
+  const sorted = [...data].sort((a, b) => b.value - a.value);
+  const total = sorted.reduce((acc, item) => acc + item.value, 0);
 
   return (
-    <ResponsiveContainer width="100%" height={height}>
-      <PieChart margin={{ right: isMobile ? 0 : 140 }}>
-        <Pie
-          data={data}
-          dataKey="value"
-          nameKey="name"
-          outerRadius={radius}
-          label={!isMobile}
-          labelLine={false}
-        >
-          {data.map((_, i) => (
-            <Cell key={i} fill={colors[i % colors.length]} />
-          ))}
-        </Pie>
+    <div className={`w-full ${isMobile ? "flex flex-col" : "flex flex-row"} items-center gap-6`}>
 
-        <Tooltip content={<CustomTooltip />} />
+      {/* CHART */}
+      <div className="w-full md:w-1/2 h-[280px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={sorted}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={90}
+              innerRadius={55}
+              stroke="none"
+            >
+              {sorted.map((_, i) => (
+                <Cell key={i} fill={colors[i % colors.length]} />
+              ))}
+            </Pie>
 
-        <Legend
-          layout={isMobile ? "horizontal" : "vertical"}
-          verticalAlign={isMobile ? "bottom" : "middle"}
-          align={isMobile ? "center" : "right"}
-          wrapperStyle={{
-            fontSize: isMobile ? 12 : 14,
-            color: chartTextColor,
-          }}
-        />
-      </PieChart>
-    </ResponsiveContainer>
+            <Tooltip content={<CustomTooltip />} />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* LEGENDA CUSTOM */}
+      <div className="w-full md:w-1/2 flex flex-col gap-3">
+        {sorted.map((item, index) => {
+          const percent = total ? (item.value / total) * 100 : 0;
+
+          return (
+            <div key={index} className="flex items-center justify-between text-sm">
+
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: colors[index % colors.length] }}
+                />
+                <span className="text-slate-300">{item.name}</span>
+              </div>
+
+              <div className="text-right">
+                <div className="text-white font-medium">
+                  {formatCurrency(item.value)}
+                </div>
+                <div className="text-xs text-slate-400">
+                  {percent.toFixed(1)}%
+                </div>
+              </div>
+
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
 // ======================
-// GRÁFICO DE EVOLUÇÃO (LINHA)
+// LINE CHART
 // ======================
 export function EvolutionChart({
   data,
@@ -129,67 +156,37 @@ export function EvolutionChart({
   }[];
 }) {
   const isMobile = useIsMobile();
-  const height = isMobile ? 280 : 320;
 
   return (
-    <ResponsiveContainer width="100%" height={height}>
-      <LineChart
-        data={data}
-        margin={{
-          top: 5,
-          right: isMobile ? 10 : 30,
-          left: 0,
-          bottom: 5,
-        }}
-      >
+    <ResponsiveContainer width="100%" height={isMobile ? 280 : 320}>
+      <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" stroke={chartGridColor} opacity={0.5} />
 
         <XAxis
           dataKey="mes"
-          tick={{ fontSize: isMobile ? 12 : 14, fill: chartTextColor }}
+          tick={{ fill: chartTextColor, fontSize: isMobile ? 12 : 14 }}
           stroke={chartGridColor}
         />
 
         <YAxis
-          tickFormatter={(value) => formatCurrency(value)}
-          tick={{ fontSize: isMobile ? 12 : 14, fill: chartTextColor }}
+          tickFormatter={formatCurrency}
+          tick={{ fill: chartTextColor, fontSize: isMobile ? 12 : 14 }}
           stroke={chartGridColor}
         />
 
         <Tooltip content={<CustomTooltip />} />
 
-        <Legend
-          wrapperStyle={{
-            fontSize: isMobile ? 12 : 14,
-            color: chartTextColor,
-          }}
-          iconType="line"
-        />
+        <Legend wrapperStyle={{ color: chartTextColor }} />
 
-        <Line
-          type="monotone"
-          dataKey="receitas"
-          stroke="#10b981"
-          strokeWidth={2.5}
-          dot={!isMobile ? { fill: "#10b981", r: 4 } : false}
-          activeDot={{ r: 6 }}
-        />
-
-        <Line
-          type="monotone"
-          dataKey="despesas"
-          stroke="#f43f5e"
-          strokeWidth={2.5}
-          dot={!isMobile ? { fill: "#f43f5e", r: 4 } : false}
-          activeDot={{ r: 6 }}
-        />
+        <Line type="monotone" dataKey="receitas" stroke="#10b981" strokeWidth={2} />
+        <Line type="monotone" dataKey="despesas" stroke="#f43f5e" strokeWidth={2} />
       </LineChart>
     </ResponsiveContainer>
   );
 }
 
 // ======================
-// GRÁFICO DRE (BARRAS)
+// BAR CHART (DRE)
 // ======================
 export function DreChart({
   data,
@@ -202,53 +199,30 @@ export function DreChart({
   }[];
 }) {
   const isMobile = useIsMobile();
-  const height = isMobile ? 280 : 320;
 
   return (
-    <ResponsiveContainer width="100%" height={height}>
-      <BarChart
-        data={data}
-        margin={{
-          top: 5,
-          right: isMobile ? 10 : 30,
-          left: 0,
-          bottom: 5,
-        }}
-      >
+    <ResponsiveContainer width="100%" height={isMobile ? 280 : 320}>
+      <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" stroke={chartGridColor} opacity={0.5} />
 
         <XAxis
           dataKey="mes"
-          tick={{ fontSize: isMobile ? 12 : 14, fill: chartTextColor }}
+          tick={{ fill: chartTextColor, fontSize: isMobile ? 12 : 14 }}
           stroke={chartGridColor}
         />
 
         <YAxis
-          tickFormatter={(value) => formatCurrency(value)}
-          tick={{ fontSize: isMobile ? 12 : 14, fill: chartTextColor }}
+          tickFormatter={formatCurrency}
+          tick={{ fill: chartTextColor, fontSize: isMobile ? 12 : 14 }}
           stroke={chartGridColor}
         />
 
         <Tooltip content={<CustomTooltip />} />
 
-        <Legend
-          wrapperStyle={{
-            fontSize: isMobile ? 12 : 14,
-            color: chartTextColor,
-          }}
-        />
+        <Legend wrapperStyle={{ color: chartTextColor }} />
 
-        <Bar
-          dataKey="receitas"
-          fill="#10b981"
-          radius={[6, 6, 0, 0]}
-        />
-
-        <Bar
-          dataKey="despesas"
-          fill="#f43f5e"
-          radius={[6, 6, 0, 0]}
-        />
+        <Bar dataKey="receitas" fill="#10b981" radius={[6, 6, 0, 0]} />
+        <Bar dataKey="despesas" fill="#f43f5e" radius={[6, 6, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
