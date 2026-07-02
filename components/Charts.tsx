@@ -18,14 +18,14 @@ import {
 } from "recharts";
 
 // ======================
-// CONFIG VISUAL
+// CONFIG
 // ======================
 const colors = ["#5DA832", "#10b981", "#f43f5e", "#f59e0b", "#8b5cf6", "#06b6d4"];
 const chartGridColor = "#1e293b";
 const chartTextColor = "#94a3b8";
 
 // ======================
-// FORMATADOR BRL
+// FORMATADOR
 // ======================
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", {
@@ -50,15 +50,13 @@ function useIsMobile() {
 }
 
 // ======================
-// TOOLTIP PADRÃO
+// TOOLTIP
 // ======================
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-slate-800/95 border border-slate-700/60 rounded-lg p-3 shadow-xl">
-        {label && (
-          <p className="text-xs text-slate-400 mb-1">{label}</p>
-        )}
+        {label && <p className="text-xs text-slate-400 mb-1">{label}</p>}
 
         {payload.map((entry: any, i: number) => (
           <p key={i} style={{ color: entry.color }} className="text-sm font-medium">
@@ -72,7 +70,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 // ======================
-// PIE (REFATORADO)
+// CATEGORY PIE (CORRIGIDO)
 // ======================
 export function CategoryPie({
   data,
@@ -84,18 +82,74 @@ export function CategoryPie({
   const sorted = [...data].sort((a, b) => b.value - a.value);
   const total = sorted.reduce((acc, item) => acc + item.value, 0);
 
-  return (
-    <div className={`w-full ${isMobile ? "flex flex-col" : "flex flex-row"} items-center gap-6`}>
+  // MOBILE
+  if (isMobile) {
+    return (
+      <div className="w-full flex flex-col gap-6">
+        {/* CHART */}
+        <div className="w-full h-[260px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={sorted}
+                dataKey="value"
+                nameKey="name"
+                outerRadius={85}
+                innerRadius={50}
+                stroke="none"
+              >
+                {sorted.map((_, i) => (
+                  <Cell key={i} fill={colors[i % colors.length]} />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
 
+        {/* LEGENDA */}
+        <div className="w-full flex flex-col gap-3">
+          {sorted.map((item, index) => {
+            const percent = total ? (item.value / total) * 100 : 0;
+
+            return (
+              <div key={index} className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: colors[index % colors.length] }}
+                  />
+                  <span className="text-slate-300">{item.name}</span>
+                </div>
+
+                <div className="text-right">
+                  <div className="text-white font-medium">
+                    {formatCurrency(item.value)}
+                  </div>
+                  <div className="text-xs text-slate-400">
+                    {percent.toFixed(1)}%
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // DESKTOP
+  return (
+    <div className="w-full flex flex-row items-center gap-6">
       {/* CHART */}
-      <div className="w-full md:w-1/2 h-[280px]">
+      <div className="w-1/2 h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={sorted}
               dataKey="value"
               nameKey="name"
-              outerRadius={90}
+              outerRadius={95}
               innerRadius={55}
               stroke="none"
             >
@@ -103,20 +157,18 @@ export function CategoryPie({
                 <Cell key={i} fill={colors[i % colors.length]} />
               ))}
             </Pie>
-
             <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
       </div>
 
-      {/* LEGENDA CUSTOM */}
-      <div className="w-full md:w-1/2 flex flex-col gap-3">
+      {/* LEGENDA */}
+      <div className="w-1/2 flex flex-col gap-3">
         {sorted.map((item, index) => {
           const percent = total ? (item.value / total) * 100 : 0;
 
           return (
             <div key={index} className="flex items-center justify-between text-sm">
-
               <div className="flex items-center gap-2">
                 <div
                   className="w-3 h-3 rounded-full"
@@ -133,7 +185,6 @@ export function CategoryPie({
                   {percent.toFixed(1)}%
                 </div>
               </div>
-
             </div>
           );
         })}
@@ -145,16 +196,7 @@ export function CategoryPie({
 // ======================
 // LINE CHART
 // ======================
-export function EvolutionChart({
-  data,
-}: {
-  data: {
-    mes: string;
-    receitas: number;
-    despesas: number;
-    resultado: number;
-  }[];
-}) {
+export function EvolutionChart({ data }: any) {
   const isMobile = useIsMobile();
 
   return (
@@ -178,26 +220,17 @@ export function EvolutionChart({
 
         <Legend wrapperStyle={{ color: chartTextColor }} />
 
-        <Line type="monotone" dataKey="receitas" stroke="#10b981" strokeWidth={2} />
-        <Line type="monotone" dataKey="despesas" stroke="#f43f5e" strokeWidth={2} />
+        <Line type="monotone" dataKey="receitas" stroke="#10b981" />
+        <Line type="monotone" dataKey="despesas" stroke="#f43f5e" />
       </LineChart>
     </ResponsiveContainer>
   );
 }
 
 // ======================
-// BAR CHART (DRE)
+// BAR CHART
 // ======================
-export function DreChart({
-  data,
-}: {
-  data: {
-    mes: string;
-    receitas: number;
-    despesas: number;
-    resultado: number;
-  }[];
-}) {
+export function DreChart({ data }: any) {
   const isMobile = useIsMobile();
 
   return (
