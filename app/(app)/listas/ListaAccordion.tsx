@@ -124,12 +124,22 @@ export function ListaAccordion({ lista }: { lista: ListaComItens }) {
                     <span className={`text-sm transition-all duration-200 ${item.concluido ? "line-through text-slate-600" : "text-slate-300"}`}>
                       {item.nome}
                     </span>
-                    {(item as any).descricao && (
-                      <p className={`text-xs mt-0.5 truncate max-w-xs ${item.concluido ? "text-slate-700" : "text-slate-500"}`}
-                         title={(item as any).descricao}>
-                        {(item as any).descricao}
-                      </p>
-                    )}
+                    {(item as any).descricao && (() => {
+                      const desc = (item as any).descricao as string;
+                      const isUrl = desc.startsWith("http://") || desc.startsWith("https://");
+                      return isUrl ? (
+                        <a href={desc} target="_blank" rel="noopener noreferrer"
+                           title={desc}
+                           className={`text-xs mt-0.5 truncate max-w-xs block underline underline-offset-2 transition-colors ${item.concluido ? "text-slate-700" : "text-[#5DA832] hover:text-[#6fc23b]"}`}>
+                          {desc}
+                        </a>
+                      ) : (
+                        <p title={desc}
+                           className={`text-xs mt-0.5 truncate max-w-xs ${item.concluido ? "text-slate-700" : "text-slate-500"}`}>
+                          {desc}
+                        </p>
+                      );
+                    })()}
                   </div>
 
                   {/* Valor */}
