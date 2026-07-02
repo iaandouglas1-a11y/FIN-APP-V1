@@ -29,10 +29,10 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
       <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
         {/* Sidebar: Formulário */}
         <aside>
-          <Card className="border-indigo-500/30 bg-gradient-to-br from-indigo-600/10 to-indigo-600/5 relative overflow-hidden sticky top-8">
-            <div className="absolute -right-12 -top-12 w-32 h-32 bg-indigo-600/10 rounded-full blur-3xl" />
+          <Card className="border-[#5DA832]/30 bg-gradient-to-br from-[#5DA832]/10 to-[#5DA832]/5 relative overflow-hidden sticky top-8">
+            <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#5DA832]/10 rounded-full blur-3xl" />
             
-            <div className="flex items-center gap-2 mb-6 text-indigo-400 font-bold uppercase text-xs tracking-widest relative z-10">
+            <div className="flex items-center gap-2 mb-6 text-[#5DA832] font-bold uppercase text-xs tracking-widest relative z-10">
               <Plus className="h-4 w-4" />
               <span>Nova Categoria</span>
             </div>
@@ -43,19 +43,19 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
                   name="nome" 
                   placeholder="Ex: Alimentação, Lazer, Saúde..." 
                   required 
-                  className="h-11"
+                  className="h-9"
                 />
               </FormGroup>
 
               <FormGroup label="Tipo">
-                <Select name="tipo" required className="h-11">
+                <Select name="tipo" required className="h-9">
                   <option value="">Selecione o tipo...</option>
                   <option value="despesa">Despesa</option>
                   <option value="receita">Receita</option>
                 </Select>
               </FormGroup>
               
-              <Button type="submit" className="w-full h-11 text-base font-semibold">
+              <Button type="submit" className="w-full h-9 text-sm font-semibold">
                 <Plus className="h-4 w-4 mr-2" />
                 Criar Categoria
               </Button>
@@ -142,7 +142,7 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
           {categorias.length > 0 && (
             <div className="mt-6 p-4 rounded-xl bg-slate-800/20 border border-slate-800/40">
               <p className="text-sm text-slate-400">
-                <span className="font-semibold text-slate-300">💡 Dica:</span> Você tem <span className="font-bold text-indigo-400">{categorias.length}</span> categorias cadastradas. Use-as para filtrar e analisar suas movimentações.
+                <span className="font-semibold text-slate-300">💡 Dica:</span> Você tem <span className="font-bold text-[#5DA832]">{categorias.length}</span> categorias cadastradas. Use-as para filtrar e analisar suas movimentações.
               </p>
             </div>
           )}
