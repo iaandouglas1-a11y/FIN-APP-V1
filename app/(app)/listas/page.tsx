@@ -23,20 +23,20 @@ export default async function ListasPage({
       <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
         {/* Sidebar: Nova Lista + Filtro */}
         <aside className="space-y-6">
-          <Card className="border-indigo-500/30 bg-gradient-to-br from-indigo-600/10 to-indigo-600/5 relative overflow-hidden">
-            <div className="absolute -right-12 -top-12 w-32 h-32 bg-indigo-600/10 rounded-full blur-3xl" />
-            <div className="flex items-center gap-2 mb-6 text-indigo-400 font-bold uppercase text-xs tracking-widest relative z-10">
+          <Card className="border-[#5DA832]/30 bg-gradient-to-br from-[#5DA832]/10 to-[#5DA832]/5 relative overflow-hidden">
+            <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#5DA832]/10 rounded-full blur-3xl" />
+            <div className="flex items-center gap-2 mb-6 text-[#5DA832] font-bold uppercase text-xs tracking-widest relative z-10">
               <Plus className="h-4 w-4" />
               <span>Nova Lista</span>
             </div>
             <form action={saveLista} className="space-y-4 relative z-10">
               <FormGroup label="Nome da Lista">
-                <Input name="nome" placeholder="Ex: Compras Semana, Tarefas Casa..." required className="h-11" />
+                <Input name="nome" placeholder="Ex: Compras Semana, Tarefas Casa..." required className="h-9" />
               </FormGroup>
               <FormGroup label="Descrição (opcional)">
-                <Input name="descricao" placeholder="Ex: Mercado sábado de manhã" className="h-11" />
+                <Input name="descricao" placeholder="Ex: Mercado sábado de manhã" className="h-9" />
               </FormGroup>
-              <Button type="submit" className="w-full h-11 text-base font-semibold">
+              <Button type="submit" className="w-full h-9 text-sm font-semibold">
                 <Plus className="h-4 w-4 mr-2" />
                 Criar Lista
               </Button>
@@ -46,10 +46,10 @@ export default async function ListasPage({
           <Card className="border-slate-800/60 p-4">
             <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">Exibir</p>
             <div className="flex gap-2">
-              <a href="/listas?status=ativa" className={`flex-1 text-center px-3 py-2 rounded-lg text-xs font-semibold border transition-all duration-200 ${filtroStatus === "ativa" ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-300" : "bg-slate-800/40 border-slate-700/40 text-slate-400 hover:text-slate-200"}`}>
+              <a href="/listas?status=ativa" className={`flex-1 text-center px-3 py-2 rounded-lg text-xs font-semibold border transition-all duration-200 ${filtroStatus === "ativa" ? "bg-[#5DA832]/20 border-[#5DA832]/40 text-[#6fc23b]" : "bg-slate-800/40 border-slate-700/40 text-slate-400 hover:text-slate-200"}`}>
                 Ativas
               </a>
-              <a href="/listas?status=arquivada" className={`flex-1 text-center px-3 py-2 rounded-lg text-xs font-semibold border transition-all duration-200 ${filtroStatus === "arquivada" ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-300" : "bg-slate-800/40 border-slate-700/40 text-slate-400 hover:text-slate-200"}`}>
+              <a href="/listas?status=arquivada" className={`flex-1 text-center px-3 py-2 rounded-lg text-xs font-semibold border transition-all duration-200 ${filtroStatus === "arquivada" ? "bg-[#5DA832]/20 border-[#5DA832]/40 text-[#6fc23b]" : "bg-slate-800/40 border-slate-700/40 text-slate-400 hover:text-slate-200"}`}>
                 Arquivadas
               </a>
             </div>
