@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { 
   WalletCards, Menu, X, LayoutDashboard, ArrowUpRight, 
-  CreditCard, Receipt, Wallet, Tags, LogOut, ChevronRight, Settings, ListChecks
+  CreditCard, Receipt, Wallet, Tags, LogOut, ChevronRight, ListChecks
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -52,9 +52,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             !isSidebarOpen && "md:w-0 md:opacity-0"
           )}>
             <span className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-indigo-300 bg-clip-text text-transparent">
-              FINV4
+              On Finanças
             </span>
-            <p className="text-[10px] text-slate-500 font-medium">Controle Financeiro</p>
+            <p className="text-[10px] text-slate-500 font-medium">Gestão Financeira</p>
           </div>
         </div>
       </div>
@@ -106,32 +106,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         ))}
       </nav>
 
-      {/* Footer / User Profile */}
-      <div className="p-4 border-t border-slate-800/40 space-y-3">
-        <button className={clsx(
-          "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent hover:border-slate-700/30",
-          !isSidebarOpen && "md:justify-center md:px-2"
-        )}>
-          <Settings className="h-5 w-5 shrink-0" />
-          <span className={clsx(
-            "text-sm font-medium transition-all duration-300",
-            !isSidebarOpen && "md:opacity-0 md:w-0"
-          )}>
-            Configurações
-          </span>
-        </button>
-        
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/30 border border-slate-800/40">
-          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex-shrink-0" />
-          <div className={clsx(
-            "flex flex-col transition-all duration-300 min-w-0",
-            !isSidebarOpen && "md:opacity-0 md:w-0"
-          )}>
-            <span className="text-xs font-bold text-white truncate">Usuário</span>
-            <span className="text-[10px] text-slate-500 truncate">Controle Pessoal</span>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 
@@ -144,8 +119,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <WalletCards className="h-5 w-5 text-white" />
           </div>
           <div>
-            <span className="font-bold text-white text-sm">FINV4</span>
-            <p className="text-[10px] text-[#5DA832]/70">Finanças</p>
+            <span className="font-bold text-white text-sm">On Finanças</span>
+            <p className="text-[10px] text-[#5DA832]/70">Gestão Financeira</p>
           </div>
         </div>
         <button 
