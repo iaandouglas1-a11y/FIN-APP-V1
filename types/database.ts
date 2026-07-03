@@ -52,3 +52,13 @@ export interface ListaItem {
   concluido: boolean;
   created_at: string;
 }
+
+// ── Clientes ──────────────────────────────────────────────
+export interface Cliente {
+  id: string;
+  nome: string;
+  cpf: string | null;
+  cnpj: string | null;
+  senha_gov: string | null;
+  created_at: string;
+}
