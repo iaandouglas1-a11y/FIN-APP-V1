@@ -75,7 +75,7 @@ export default async function FaturasPage() {
               {/* Header Section */}
               <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between mb-8 relative z-10">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600/30 to-indigo-600/10 text-[#5DA832] group-hover:from-indigo-600/40 group-hover:to-indigo-600/20 transition-all duration-300">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#5DA832]/30 to-[#5DA832]/10 text-[#5DA832] group-hover:from-[#5DA832]/40 group-hover:to-[#5DA832]/20 transition-all duration-300">
                     <Receipt className="h-6 w-6" />
                   </div>
                   <div>
