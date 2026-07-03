@@ -86,7 +86,7 @@ export default async function ContasPage() {
 
               {/* Header */}
               <div className="flex items-start justify-between mb-6 relative z-10">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-[#5DA832]/15 to-[#5DA832]/5 text-[#5DA832] group-hover:from-indigo-600/30 group-hover:to-indigo-600/20 transition-all duration-300">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-[#5DA832]/15 to-[#5DA832]/5 text-[#5DA832] group-hover:from-[#5DA832]/30 group-hover:to-[#5DA832]/20 transition-all duration-300">
                   {getIcon(conta.tipo)}
                 </div>
                 <div className="text-right">
