@@ -84,7 +84,7 @@ export default async function CartoesPage() {
               {/* Header */}
               <div className="flex items-center justify-between mb-8 relative z-10">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-600/30 to-indigo-600/10 group-hover:from-indigo-600/40 group-hover:to-indigo-600/20 transition-all duration-300">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-[#5DA832]/30 to-[#5DA832]/10 group-hover:from-[#5DA832]/40 group-hover:to-[#5DA832]/20 transition-all duration-300">
                     <CreditCard className="h-6 w-6 text-[#5DA832]" />
                   </div>
                   <div>
