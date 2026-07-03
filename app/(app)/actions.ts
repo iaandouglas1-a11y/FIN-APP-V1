@@ -200,16 +200,17 @@ export async function pagarFatura(formData: FormData) {
   }
 
   // 2. Criar movimentação de pagamento da fatura
+  // Não vincula fatura_id nem cartao_id para não dobrar o total/limite
   const { error: movError } = await (s.from("movimentacoes") as any).insert({
     tipo:         "despesa",
     valor:        total,
     data:         new Date().toISOString().slice(0, 10),
     categoria_id: catId,
     conta_id:     conta_id,
-    cartao_id:    cartao_id,
-    fatura_id:    fatura_id,
+    cartao_id:    null,
+    fatura_id:    null,
     status:       "realizado",
-    descricao:    "Pagamento de fatura",
+    descricao:    `Pagamento de fatura - ${cartao_id}`,
   });
   if (movError) throw new Error(movError.message);
 
@@ -237,15 +238,21 @@ export async function cancelarPagamentoFatura(formData: FormData) {
 
   const s = await createServerSupabaseClient();
 
-  // 1. Deletar a movimentação de pagamento se existir
+  // 1. Deletar a movimentação de pagamento
+  // Busca pela descricao que inclui o cartao_id (sem fatura_id pois não vinculamos)
+  const { data: faturaData } = await (s.from("faturas") as any)
+    .select("cartao_id, conta_pagamento_id")
+    .eq("id", fatura_id)
+    .single();
+
   if (movimentacao_id) {
     await (s.from("movimentacoes") as any).delete().eq("id", movimentacao_id);
-  } else {
-    // Buscar pela fatura_id + descricao
+  } else if (faturaData) {
     await (s.from("movimentacoes") as any)
       .delete()
-      .eq("fatura_id", fatura_id)
-      .eq("descricao", "Pagamento de fatura");
+      .eq("conta_id", faturaData.conta_pagamento_id)
+      .eq("descricao", `Pagamento de fatura - ${faturaData.cartao_id}`)
+      .eq("status", "realizado");
   }
 
   // 2. Reverter fatura para não paga
