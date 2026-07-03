@@ -185,12 +185,18 @@ export async function pagarFatura(formData: FormData) {
 
   const s = await createServerSupabaseClient();
 
-  // 1. Buscar uma categoria do tipo "despesa" para o lançamento
+  // 1. Buscar ou criar categoria "Fatura"
   let catId = categoria_id;
   if (!catId) {
-    const { data: cats } = await (s.from("categorias") as any)
-      .select("id").eq("tipo", "despesa").limit(1).single();
-    catId = cats?.id || null;
+    const { data: existing } = await (s.from("categorias") as any)
+      .select("id").eq("nome", "Fatura").limit(1).single();
+    if (existing) {
+      catId = existing.id;
+    } else {
+      const { data: nova } = await (s.from("categorias") as any)
+        .insert({ nome: "Fatura", tipo: "despesa" }).select("id").single();
+      catId = nova?.id || null;
+    }
   }
 
   // 2. Criar movimentação de pagamento da fatura
@@ -216,6 +222,37 @@ export async function pagarFatura(formData: FormData) {
     })
     .eq("id", fatura_id);
   if (fatError) throw new Error(fatError.message);
+
+  revalidatePath("/faturas");
+  revalidatePath("/cartoes");
+  revalidatePath("/movimentacoes");
+  revalidatePath("/dashboard");
+  redirect("/faturas");
+}
+
+// --- Cancelar Pagamento de Fatura ---
+export async function cancelarPagamentoFatura(formData: FormData) {
+  const fatura_id  = String(formData.get("fatura_id"));
+  const movimentacao_id = String(formData.get("movimentacao_id") || "");
+
+  const s = await createServerSupabaseClient();
+
+  // 1. Deletar a movimentação de pagamento se existir
+  if (movimentacao_id) {
+    await (s.from("movimentacoes") as any).delete().eq("id", movimentacao_id);
+  } else {
+    // Buscar pela fatura_id + descricao
+    await (s.from("movimentacoes") as any)
+      .delete()
+      .eq("fatura_id", fatura_id)
+      .eq("descricao", "Pagamento de fatura");
+  }
+
+  // 2. Reverter fatura para não paga
+  const { error } = await (s.from("faturas") as any)
+    .update({ pago: false, pago_em: null, conta_pagamento_id: null })
+    .eq("id", fatura_id);
+  if (error) throw new Error(error.message);
 
   revalidatePath("/faturas");
   revalidatePath("/cartoes");
