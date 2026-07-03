@@ -62,3 +62,14 @@ export interface Cliente {
   senha_gov: string | null;
   created_at: string;
 }
+
+// ── Fatura estendida (com campos de pagamento) ────────────
+export interface FaturaExtendida {
+  id: string;
+  cartao_id: string;
+  data_fechamento: string;
+  data_vencimento: string;
+  pago: boolean;
+  pago_em: string | null;
+  conta_pagamento_id: string | null;
+}
