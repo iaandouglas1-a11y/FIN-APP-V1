@@ -170,3 +170,56 @@ export async function deleteCategoria(formData: FormData) {
 
   revalidatePath("/categorias");
 }
+
+// --- Pagar Fatura ---
+export async function pagarFatura(formData: FormData) {
+  const fatura_id  = String(formData.get("fatura_id"));
+  const conta_id   = String(formData.get("conta_id"));
+  const cartao_id  = String(formData.get("cartao_id"));
+  const total      = Number(formData.get("total"));
+  const categoria_id = String(formData.get("categoria_id") || "");
+
+  if (!fatura_id || !conta_id || !cartao_id || !total) {
+    throw new Error("Dados insuficientes para pagar a fatura.");
+  }
+
+  const s = await createServerSupabaseClient();
+
+  // 1. Buscar uma categoria do tipo "despesa" para o lançamento
+  let catId = categoria_id;
+  if (!catId) {
+    const { data: cats } = await (s.from("categorias") as any)
+      .select("id").eq("tipo", "despesa").limit(1).single();
+    catId = cats?.id || null;
+  }
+
+  // 2. Criar movimentação de pagamento da fatura
+  const { error: movError } = await (s.from("movimentacoes") as any).insert({
+    tipo:         "despesa",
+    valor:        total,
+    data:         new Date().toISOString().slice(0, 10),
+    categoria_id: catId,
+    conta_id:     conta_id,
+    cartao_id:    cartao_id,
+    fatura_id:    fatura_id,
+    status:       "realizado",
+    descricao:    "Pagamento de fatura",
+  });
+  if (movError) throw new Error(movError.message);
+
+  // 3. Marcar fatura como paga
+  const { error: fatError } = await (s.from("faturas") as any)
+    .update({
+      pago: true,
+      pago_em: new Date().toISOString(),
+      conta_pagamento_id: conta_id,
+    })
+    .eq("id", fatura_id);
+  if (fatError) throw new Error(fatError.message);
+
+  revalidatePath("/faturas");
+  revalidatePath("/cartoes");
+  revalidatePath("/movimentacoes");
+  revalidatePath("/dashboard");
+  redirect("/faturas");
+}
