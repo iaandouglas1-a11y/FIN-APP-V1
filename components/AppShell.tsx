@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { 
-  WalletCards, Menu, X, LayoutDashboard, ArrowUpRight, 
-  CreditCard, Receipt, Wallet, Tags, LogOut, ChevronRight, ListChecks
+  Menu, X, LayoutDashboard, ArrowUpRight, 
+  CreditCard, Receipt, Wallet, Tags, LogOut, ChevronRight, Settings, ListChecks, Users
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 import Link from "next/link";
+import Image from "next/image";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -29,6 +30,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         { href: "/cartoes", label: "Meus Cartões", icon: CreditCard },
         { href: "/faturas", label: "Faturas", icon: Receipt },
         { href: "/listas", label: "Listas", icon: ListChecks },
+        { href: "/clientes", label: "Acessos Clientes", icon: Users },
       ]
     },
     { 
@@ -40,21 +42,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   ];
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-gradient-to-b from-slate-950 to-[#0a0a0a] border-r border-slate-800/40">
+    <div className="flex flex-col h-full bg-[#0D2340] border-r border-[#142d52]/80">
       {/* Logo Section */}
-      <div className="p-6 border-b border-slate-800/40">
+      <div className="p-4 border-b border-[#142d52]/80">
         <div className="flex items-center gap-3 group cursor-pointer">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 shadow-lg shadow-indigo-900/40 group-hover:shadow-indigo-900/60 transition-all duration-300">
-            <WalletCards className="h-6 w-6 text-white" />
+          <div className="h-10 w-10 rounded-xl overflow-hidden shrink-0">
+            <Image src="/icon-512.png" alt="On Finanças" width={40} height={40} className="rounded-xl" />
           </div>
           <div className={clsx(
             "transition-all duration-300 overflow-hidden",
             !isSidebarOpen && "md:w-0 md:opacity-0"
           )}>
-            <span className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-indigo-300 bg-clip-text text-transparent">
-              On Finanças
-            </span>
-            <p className="text-[10px] text-slate-500 font-medium">Gestão Financeira</p>
+            <span className="text-base font-bold text-white tracking-tight">On Finanças</span>
+            <p className="text-[10px] text-[#5DA832]/80 font-medium">Gestão Financeira</p>
           </div>
         </div>
       </div>
@@ -64,7 +64,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {navItems.map((group) => (
           <div key={group.group}>
             <p className={clsx(
-              "text-[10px] font-black uppercase tracking-[0.15em] text-slate-600 mb-3 px-3 transition-all duration-300",
+              "text-[10px] font-black uppercase tracking-[0.15em] text-[#5DA832]/50 mb-3 px-3 transition-all duration-300",
               !isSidebarOpen && "md:opacity-0 md:w-0"
             )}>
               {group.group}
@@ -81,13 +81,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     className={clsx(
                       "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group/nav relative overflow-hidden",
                       isActive 
-                        ? "bg-gradient-to-r from-indigo-600/20 to-indigo-600/10 text-indigo-300 border border-indigo-500/30 shadow-lg shadow-indigo-900/10" 
-                        : "text-slate-400 hover:bg-slate-800/40 hover:text-slate-200 border border-transparent hover:border-slate-700/30"
+                        ? "bg-[#5DA832]/15 text-[#6fc23b] border border-[#5DA832]/30" 
+                        : "text-slate-400 hover:bg-[#142d52]/60 hover:text-slate-200 border border-transparent hover:border-[#1e3a66]/40"
                     )}
                   >
                     <Icon className={clsx(
                       "h-5 w-5 shrink-0 transition-all duration-200",
-                      isActive ? "text-[#5DA832]" : "text-slate-500 group-hover/nav:text-slate-300"
+                      isActive ? "text-[#5DA832]" : "text-slate-500 group-hover/nav:text-[#5DA832]/80"
                     )} />
                     <span className={clsx(
                       "text-sm font-medium transition-all duration-300",
@@ -106,17 +106,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         ))}
       </nav>
 
-
+      {/* Footer */}
+      <div className="p-4 border-t border-[#142d52]/80">
+        <div className={clsx(
+          "flex items-center gap-2 p-2 rounded-xl",
+          !isSidebarOpen && "md:justify-center"
+        )}>
+          <div className="h-7 w-7 rounded-lg overflow-hidden shrink-0">
+            <Image src="/icon-512.png" alt="On Finanças" width={28} height={28} className="rounded-lg" />
+          </div>
+          <span className={clsx(
+            "text-xs text-[#5DA832]/70 font-medium transition-all duration-300",
+            !isSidebarOpen && "md:opacity-0 md:w-0"
+          )}>
+            On Finanças
+          </span>
+        </div>
+      </div>
     </div>
   );
 
   return (
     <div className="min-h-screen bg-[#091829] flex">
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-slate-950/90 backdrop-blur-xl border-b border-slate-800/40 p-4 flex items-center justify-between">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-[#0D2340]/95 backdrop-blur-xl border-b border-[#142d52]/80 p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-600 to-indigo-700">
-            <WalletCards className="h-5 w-5 text-white" />
+          <div className="h-9 w-9 rounded-lg overflow-hidden shrink-0">
+            <Image src="/icon-512.png" alt="On Finanças" width={36} height={36} className="rounded-lg" />
           </div>
           <div>
             <span className="font-bold text-white text-sm">On Finanças</span>
@@ -139,7 +155,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <SidebarContent />
         <button 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="absolute -right-3 top-24 bg-slate-800/80 border border-slate-700/60 text-slate-400 hover:text-slate-200 hover:bg-slate-700/80 rounded-full p-1.5 transition-all duration-200 hover:shadow-lg hover:shadow-indigo-900/20"
+          className="absolute -right-3 top-24 bg-[#0D2340] border border-[#142d52]/80 text-slate-400 hover:text-[#5DA832] rounded-full p-1.5 transition-all duration-200"
         >
           <ChevronRight className={clsx("h-4 w-4 transition-transform duration-300", isSidebarOpen && "rotate-180")} />
         </button>
@@ -161,7 +177,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 bg-gradient-to-b from-[#0a0a0a] to-slate-950/50">
+      <main className="flex-1 flex flex-col min-w-0 bg-[#091829]">
         <div className="flex-1 p-4 md:p-8 pt-20 md:pt-8 overflow-y-auto">
           <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}
