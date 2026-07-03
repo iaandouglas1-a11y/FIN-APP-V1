@@ -104,59 +104,61 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
         </form>
       </Card>
 
-      {/* Filtros — linha única */}
-      <Card className="border-slate-800/60 py-3 px-4">
-        <div className="flex items-center gap-2 flex-wrap md:flex-nowrap overflow-x-auto">
-          {/* Chips mês rápido */}
+      {/* Filtros */}
+      <Card className="border-slate-800/60 p-3">
+        {/* Linha 1: chips de mês rápido */}
+        <div className="flex gap-2 mb-3">
           {MESES_RAPIDOS.map(({ label, offset }) => {
             const r = monthRange(offset);
             const isActive = sp.inicio === r.inicio && sp.fim === r.fim;
             return (
               <a key={offset} href={`/movimentacoes?inicio=${r.inicio}&fim=${r.fim}`}
                 className={clsx(
-                  "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 border whitespace-nowrap shrink-0",
+                  "flex-1 text-center px-2 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 border whitespace-nowrap",
                   isActive
                     ? "bg-[#5DA832]/20 border-[#5DA832]/40 text-[#6fc23b]"
-                    : "bg-slate-800/40 border-slate-700/40 text-slate-400 hover:text-slate-200 hover:bg-slate-700/40"
+                    : "bg-[#142d52]/40 border-[#1e3a66]/40 text-slate-400 hover:text-slate-200 hover:bg-[#142d52]/60"
                 )}
               >
                 {label}
               </a>
             );
           })}
+        </div>
 
-          {/* Separador */}
-          <div className="h-5 w-px bg-slate-700/60 shrink-0 hidden md:block" />
-
-          {/* Form de período + filtros */}
-          <form className="flex items-center gap-2 flex-1 flex-wrap md:flex-nowrap">
-            <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-9 text-xs w-full md:w-32 block" />
+        {/* Linha 2: form de período + tipo + categoria + botão */}
+        <form className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          {/* Datas */}
+          <div className="flex items-center gap-2 flex-1">
+            <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-9 flex-1 min-w-0 block text-xs" />
             <span className="text-slate-600 text-xs shrink-0">até</span>
-            <Input type="date" name="fim" defaultValue={sp.fim} className="h-9 text-xs w-full md:w-32 block" />
-
-            <div className="h-5 w-px bg-slate-700/60 shrink-0 hidden md:block" />
-
-            <Select name="tipo" defaultValue={sp.tipo ?? ""} className="h-9 text-xs w-full md:w-28">
+            <Input type="date" name="fim" defaultValue={sp.fim} className="h-9 flex-1 min-w-0 block text-xs" />
+          </div>
+          {/* Tipo + Categoria */}
+          <div className="flex gap-2">
+            <Select name="tipo" defaultValue={sp.tipo ?? ""} className="h-9 text-xs flex-1 sm:w-28 sm:flex-none">
               <option value="">Todos</option>
               <option value="receita">Receitas</option>
               <option value="despesa">Despesas</option>
             </Select>
-            <Select name="categoria" defaultValue={sp.categoria ?? ""} className="h-9 text-xs w-full md:w-36">
+            <Select name="categoria" defaultValue={sp.categoria ?? ""} className="h-9 text-xs flex-1 sm:w-36 sm:flex-none">
               <option value="">Todas categ.</option>
               {categorias.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </Select>
-
-            <Button type="submit" variant="secondary" className="h-9 px-4 text-xs shrink-0 inline-flex items-center justify-center">
+          </div>
+          {/* Botão */}
+          <div className="flex gap-2">
+            <Button type="submit" variant="secondary" className="h-9 px-4 text-xs flex-1 sm:flex-none inline-flex items-center justify-center">
               <Filter className="h-3.5 w-3.5 mr-1.5" />
               Filtrar
             </Button>
             {(sp.inicio || sp.fim || sp.tipo || sp.categoria) && (
-              <a href="/movimentacoes" className="text-xs text-slate-500 hover:text-slate-300 transition-colors whitespace-nowrap shrink-0">
+              <a href="/movimentacoes" className="h-9 px-3 flex items-center justify-center text-xs text-slate-500 hover:text-slate-300 border border-slate-700/40 rounded-lg transition-colors">
                 Limpar
               </a>
             )}
-          </form>
-        </div>
+          </div>
+        </form>
       </Card>
 
       {/* Listagem */}
@@ -188,8 +190,8 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                 <div key={data}>
                   {/* Separador de data */}
                   <div className="px-4 py-1 bg-[#0D2340]/60 border-y border-slate-800/40 flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-slate-500">{dateBR(data)}</span>
-                    <span className="text-[11px] text-slate-600">
+                    <span className="text-xs font-semibold text-slate-500">{dateBR(data)}</span>
+                    <span className="text-xs text-slate-600">
                       {grupos[data].length} {grupos[data].length === 1 ? "lançamento" : "lançamentos"}
                     </span>
                   </div>
@@ -198,38 +200,38 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                   {grupos[data].map((m: any) => (
                     <div
                       key={m.id}
-                      className="grid grid-cols-[24px_1fr_1fr_auto_auto] sm:grid-cols-[24px_1fr_1fr_80px_88px_auto] items-center gap-2 px-4 py-1.5 border-b border-slate-800/30 last:border-0 hover:bg-slate-800/20 transition-colors duration-150 group"
+                      className="grid grid-cols-[28px_1fr_1fr_auto_auto] sm:grid-cols-[28px_1fr_1fr_88px_96px_auto] items-center gap-3 px-4 py-2.5 border-b border-slate-800/30 last:border-0 hover:bg-slate-800/20 transition-colors duration-150 group"
                     >
                       {/* Ícone */}
                       <div className={clsx(
-                        "h-6 w-6 rounded-md flex items-center justify-center shrink-0",
+                        "h-7 w-7 rounded-md flex items-center justify-center shrink-0",
                         m.tipo === "receita" ? "bg-emerald-500/15 text-emerald-400" : "bg-rose-500/15 text-rose-400"
                       )}>
                         {m.tipo === "receita"
-                          ? <ArrowDownLeft className="h-3.5 w-3.5" />
-                          : <ArrowUpRight className="h-3.5 w-3.5" />
+                          ? <ArrowDownLeft className="h-4 w-4" />
+                          : <ArrowUpRight className="h-4 w-4" />
                         }
                       </div>
 
                       {/* Categoria */}
-                      <span className="text-xs font-medium text-slate-200 truncate">
+                      <span className="text-sm font-medium text-slate-200 truncate">
                         {m.categorias?.nome || "Sem categoria"}
                       </span>
 
                       {/* Descrição */}
-                      <span className="text-xs text-slate-500 truncate hidden sm:block">
+                      <span className="text-sm text-slate-500 truncate hidden sm:block">
                         {m.descricao || "—"}
                       </span>
 
                       {/* Mobile: descrição abaixo da categoria — via subgrid trick: ocupa col 2 na linha 2 */}
                       {/* Banco — oculto no mobile */}
-                      <span className="text-xs text-slate-500 text-right truncate hidden sm:block">
+                      <span className="text-sm text-slate-500 text-right truncate hidden sm:block">
                         {m.contas?.nome ?? m.cartoes?.nome ?? "—"}
                       </span>
 
                       {/* Valor */}
                       <span className={clsx(
-                        "text-xs font-semibold text-right tabular-nums",
+                        "text-sm font-semibold text-right tabular-nums",
                         m.tipo === "receita" ? "text-emerald-400" : "text-rose-400"
                       )}>
                         {m.tipo === "receita" ? "+" : "-"}{currency(Number(m.valor))}
@@ -239,7 +241,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                       <form action={deleteMovimentacao} className="shrink-0">
                         <input type="hidden" name="id" value={m.id} />
                         <button className="p-1 text-slate-700 hover:text-rose-400 rounded transition-colors opacity-0 group-hover:opacity-100">
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </form>
                     </div>
