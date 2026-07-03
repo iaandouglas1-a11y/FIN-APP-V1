@@ -70,7 +70,9 @@ export default async function CartoesPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         {(cartoes as any[]).map((card) => {
           const cardInvoices = faturas.filter((f) => f.cartao_id === card.id);
-          const totalUsed = cardInvoices.reduce((sum, f) => sum + invoiceTotal(f.id, movimentacoes), 0);
+          // Exclui faturas pagas do cálculo de utilização do limite
+          const faturasEmAberto = cardInvoices.filter((f) => !(f as any).pago);
+          const totalUsed = faturasEmAberto.reduce((sum, f) => sum + invoiceTotal(f.id, movimentacoes), 0);
           const utilization = (totalUsed / Number(card.limite)) * 100;
           
           return (
