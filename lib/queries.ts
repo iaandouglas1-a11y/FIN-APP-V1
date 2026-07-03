@@ -1,7 +1,7 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 import { monthBounds } from "@/lib/finance";
-import type { Movimentacao, Conta, Categoria, Cartao, Fatura } from "@/types/database";
+import type { Movimentacao, Conta, Categoria, Cartao, Fatura, FaturaExtendida } from "@/types/database";
 
 export async function getCategorias() { 
   noStore(); 
@@ -74,7 +74,7 @@ export async function getCartoesEFaturas(filters?: { inicio?: string; fim?: stri
   if (movs.error) throw movs.error; 
   return { 
     cartoes: (cartoes.data || []) as any[], 
-    faturas: (faturas.data || []) as Fatura[], 
+    faturas: (faturas.data || []) as FaturaExtendida[], 
     movimentacoes: (movs.data || []) as any[] 
   }; 
 }
