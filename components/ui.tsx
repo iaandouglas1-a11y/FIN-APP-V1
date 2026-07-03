@@ -27,7 +27,7 @@ export function MetricCard({
   const tones = {
     good: "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/20 hover:border-emerald-500/40",
     bad: "from-rose-500/20 to-rose-500/5 text-rose-400 border-rose-500/20 hover:border-rose-500/40",
-    default: "from-indigo-500/20 to-indigo-500/5 text-white border-indigo-500/20 hover:border-[#5DA832]/40",
+    default: "from-[#5DA832]/20 to-[#5DA832]/5 text-[#5DA832] border-[#5DA832]/20 hover:border-[#5DA832]/40",
   };
 
   return (
