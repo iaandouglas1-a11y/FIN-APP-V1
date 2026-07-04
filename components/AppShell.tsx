@@ -106,27 +106,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         ))}
       </nav>
-
-      {/* Footer */}
-      <div className="p-4 border-t border-[#142d52]/80">
-        <div className={clsx(
-          "flex items-center gap-2 p-2 rounded-xl",
-          !isSidebarOpen && "md:justify-center"
-        )}>
-          <div className="h-7 w-7 rounded-lg overflow-hidden shrink-0">
-            <Image src="/icon-512.png" alt="On Finanças" width={28} height={28} className="rounded-lg" />
-          </div>
-          <span className={clsx(
-            "text-xs text-[#5DA832]/70 font-medium transition-all duration-300",
-            !isSidebarOpen && "md:opacity-0 md:w-0"
-          )}>
-            On Finanças
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-[#091829] flex">
       {/* Mobile Header */}
