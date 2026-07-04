@@ -14,7 +14,7 @@ export default async function DividasPage() {
   ]);
 
   const contasList = contas.map((c) => ({ id: c.id, nome: c.nome }));
-  const categoriasDespesa = categorias.filter((cat) => (cat as any).tipo === "despesa");
+  const categoriasDespesa = categorias; // todas as categorias disponíveis
 
   // Resumo
   const totalDevido  = dividas.filter(d => d.situacao === "pendente").reduce((s, d) => s + Number(d.valor), 0);
@@ -128,6 +128,7 @@ export default async function DividasPage() {
                   <td className="px-4 py-2.5 text-slate-400 text-xs whitespace-nowrap">{dateBR(d.data)}</td>
                   <td className="px-4 py-2.5 text-slate-200 font-medium">{d.descricao}</td>
                   <td className="px-4 py-2.5 text-right font-semibold text-rose-400 whitespace-nowrap">{currency(Number(d.valor))}</td>
+                  <td className="px-4 py-2.5 text-slate-400 text-xs hidden md:table-cell">{d.categoria_id ? categorias.find(cat => cat.id === d.categoria_id)?.nome || "—" : "—"}</td>
                   <td className="px-4 py-2.5 text-slate-500 text-xs hidden md:table-cell">{d.observacao || "—"}</td>
                   <td className="px-4 py-2.5 text-center">
                     <form action={alterarSituacaoDivida}>
