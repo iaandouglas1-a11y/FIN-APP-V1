@@ -1,25 +1,29 @@
-import type { Metadata } from "next";
-import { ToastProvider } from "@/components/ToastProvider";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Controle Pessoal",
-  description: "Seu controle financeiro pessoal",
+  title: "On Finanças",
+  description: "Gestão Financeira",
+
+  manifest: "/manifest.json",
+
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "On Finanças",
+  },
+
   icons: {
     icon: [
-      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icon-192.png" },
     ],
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="pt-BR">
-      <body>
-        <ToastProvider />
-        {children}
-      </body>
-    </html>
-  );
-}
+export const viewport: Viewport = {
+  themeColor: "#0D2340",
+};
