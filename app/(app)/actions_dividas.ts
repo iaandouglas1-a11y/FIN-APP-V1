@@ -64,7 +64,7 @@ export async function alterarSituacaoDivida(formData: FormData) {
   const { error } = await (s.from("dividas") as any).update({ situacao: novaSituacao }).eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/dividas");
-  return { success: true };
+  // Removido o retorno para evitar erro de tipagem no formulário (action espera void)
 }
 
 // ── Pagamentos ────────────────────────────────────────────
@@ -179,11 +179,6 @@ export async function desfazerPagamento(formData: FormData) {
     await (s.from("movimentacoes") as any).delete().eq("id", pag.movimentacao_id);
   }
 
-  // Se era realizado, volta para orçado. Se era orçado, deleta? 
-  // O usuário pediu "desfazer um orçado e realizado". 
-  // Para realizado, voltamos para orçado. Para orçado, vamos apenas remover o registro ou resetar?
-  // Geralmente "desfazer orçado" em fluxos financeiros significa remover a previsão.
-  
   if (pag.tipo === "realizado") {
     const { error } = await (s.from("divida_pagamentos") as any)
       .update({ tipo: "orcado", movimentacao_id: null })
@@ -198,5 +193,5 @@ export async function desfazerPagamento(formData: FormData) {
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
-  return { success: true };
+  // Removido o retorno para evitar erro de tipagem no formulário (action espera void)
 }
