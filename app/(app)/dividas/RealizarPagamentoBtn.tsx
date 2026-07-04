@@ -33,48 +33,99 @@ export default function RealizarPagamentoBtn({ pagamentoId, descricao, valor, da
   }
 
   return (
-    <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-[#0D2340] border border-[#5DA832]/40 flex-wrap">
-      <select
-        value={contaSelecionada}
-        onChange={(e) => setContaSelecionada(e.target.value)}
-        className="select-modern h-7 text-xs w-28 min-w-0"
-      >
-        {contas.map((c) => (
-          <option key={c.id} value={c.id}>{c.nome}</option>
-        ))}
-      </select>
-      <select
-        value={catSelecionada}
-        onChange={(e) => setCatSelecionada(e.target.value)}
-        className="select-modern h-7 text-xs w-28 min-w-0"
-      >
-        <option value="">Sem categoria</option>
-        {categorias.map((cat) => (
-          <option key={cat.id} value={cat.id}>{cat.nome}</option>
-        ))}
-      </select>
-      <form action={realizarPagamento}>
-        <input type="hidden" name="id"           value={pagamentoId} />
-        <input type="hidden" name="conta_id"     value={contaSelecionada} />
-        <input type="hidden" name="categoria_id" value={catSelecionada} />
-        <input type="hidden" name="descricao"    value={descricao} />
-        <input type="hidden" name="valor"        value={valor} />
-        <input type="hidden" name="data"         value={data} />
-        <button
-          type="submit"
-          className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all duration-200 whitespace-nowrap"
-        >
-          <CheckCircle className="h-3 w-3" />
-          Confirmar
-        </button>
-      </form>
-      <button
-        type="button"
-        onClick={() => setAberto(false)}
-        className="p-1 text-slate-500 hover:text-slate-300 rounded transition-colors"
-      >
-        <X className="h-3.5 w-3.5" />
-      </button>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-[#0D2340] border border-[#5DA832]/40 w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-[#5DA832]/10">
+          <h3 className="font-bold text-white flex items-center gap-2 text-sm">
+            <CheckCircle className="h-4 w-4 text-[#5DA832]" />
+            Confirmar Pagamento
+          </h3>
+          <button onClick={() => setAberto(false)} className="text-slate-400 hover:text-white transition-colors">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <form action={realizarPagamento} className="p-6 space-y-4">
+          <input type="hidden" name="id" value={pagamentoId} />
+          
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Descrição</label>
+            <input 
+              name="descricao" 
+              defaultValue={descricao} 
+              className="w-full h-9 bg-slate-900/50 border border-slate-800 rounded-lg px-3 text-sm text-white focus:outline-none focus:border-[#5DA832]/50" 
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Data</label>
+              <input 
+                name="data" 
+                type="date" 
+                defaultValue={data} 
+                className="w-full h-9 bg-slate-900/50 border border-slate-800 rounded-lg px-3 text-sm text-white focus:outline-none focus:border-[#5DA832]/50" 
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Valor</label>
+              <input 
+                name="valor" 
+                type="number" 
+                step="0.01" 
+                defaultValue={valor} 
+                className="w-full h-9 bg-slate-900/50 border border-slate-800 rounded-lg px-3 text-sm text-white focus:outline-none focus:border-[#5DA832]/50" 
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Conta</label>
+            <select
+              name="conta_id"
+              value={contaSelecionada}
+              onChange={(e) => setContaSelecionada(e.target.value)}
+              className="w-full h-9 bg-slate-900/50 border border-slate-800 rounded-lg px-3 text-sm text-white focus:outline-none focus:border-[#5DA832]/50"
+            >
+              {contas.map((c) => (
+                <option key={c.id} value={c.id}>{c.nome}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Categoria</label>
+            <select
+              name="categoria_id"
+              value={catSelecionada}
+              onChange={(e) => setCatSelecionada(e.target.value)}
+              className="w-full h-9 bg-slate-900/50 border border-slate-800 rounded-lg px-3 text-sm text-white focus:outline-none focus:border-[#5DA832]/50"
+            >
+              <option value="">Sem categoria</option>
+              {categorias.map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.nome}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="pt-2 flex gap-3">
+            <button 
+              type="button" 
+              onClick={() => setAberto(false)} 
+              className="flex-1 h-10 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-sm font-semibold"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              className="flex-1 h-10 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#5DA832]/20"
+            >
+              <CheckCircle className="h-4 w-4" />
+              Confirmar
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
