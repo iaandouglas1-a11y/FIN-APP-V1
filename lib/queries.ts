@@ -126,3 +126,21 @@ export async function getListasComItens(status?: "ativa" | "arquivada") {
   if (error) throw error;
   return (data || []) as (Lista & { lista_itens: ListaItem[] })[];
 }
+
+// ── Dívidas ───────────────────────────────────────────────
+import type { Divida, DividaPagamento } from "@/types/database";
+
+export async function getDividas() {
+  noStore();
+  const s = await createServerSupabaseClient();
+  const [dividas, pagamentos] = await Promise.all([
+    s.from("dividas").select("*").order("data", { ascending: true }),
+    s.from("divida_pagamentos").select("*").order("data", { ascending: true }),
+  ]);
+  if (dividas.error) throw dividas.error;
+  if (pagamentos.error) throw pagamentos.error;
+  return {
+    dividas:    (dividas.data    || []) as Divida[],
+    pagamentos: (pagamentos.data || []) as DividaPagamento[],
+  };
+}
