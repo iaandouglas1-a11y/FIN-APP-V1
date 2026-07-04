@@ -38,8 +38,8 @@ export default async function DividasPage() {
         description="Levantamento e fluxo de pagamentos das suas dívidas"
       />
 
-      {/* Resumo - Ajustado para ser responsivo (1 coluna no mobile, 3 no desktop) */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {/* Resumo */}
+      <div className="grid grid-cols-3 gap-4">
         <Card className="border-rose-500/20 bg-rose-500/5 p-4">
           <p className="text-[10px] font-bold uppercase tracking-widest text-rose-400/70 mb-1">Total em Aberto</p>
           <p className="text-xl font-bold text-rose-400">{currency(totalDevido)}</p>
@@ -270,16 +270,13 @@ export default async function DividasPage() {
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     <div className="flex items-center justify-center gap-1">
-                      {p.tipo === "realizado" ? (
-                        <DesfazerPagamentoBtn pagamentoId={p.id} />
-                      ) : (
-                        <form action={deletePagamento}>
-                          <input type="hidden" name="id" value={p.id} />
-                          <button type="submit" className="p-1 text-slate-600 hover:text-rose-400 rounded transition-colors">
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </form>
-                      )}
+                      <DesfazerPagamentoBtn pagamentoId={p.id} tipo={p.tipo} />
+                      <form action={deletePagamento}>
+                        <input type="hidden" name="id" value={p.id} />
+                        <button type="submit" className="p-1 text-slate-600 hover:text-rose-400 rounded transition-colors">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>
