@@ -73,3 +73,25 @@ export interface FaturaExtendida {
   pago_em: string | null;
   conta_pagamento_id: string | null;
 }
+
+// ── Dívidas ───────────────────────────────────────────────
+export interface Divida {
+  id: string;
+  descricao: string;
+  valor: number;
+  observacao: string | null;
+  situacao: "pendente" | "liquidado";
+  data: string;
+  created_at: string;
+}
+
+export interface DividaPagamento {
+  id: string;
+  divida_id: string | null;
+  descricao: string;
+  data: string;
+  valor: number;
+  tipo: "orcado" | "realizado";
+  movimentacao_id: string | null;
+  created_at: string;
+}
