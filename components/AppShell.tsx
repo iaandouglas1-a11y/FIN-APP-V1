@@ -106,6 +106,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         ))}
       </nav>
+
+
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-[#091829] flex">
       {/* Mobile Header */}
