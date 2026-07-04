@@ -11,7 +11,7 @@ const dividaSchema = z.object({
   valor:        z.coerce.number().positive("Valor deve ser maior que zero"),
   observacao:   z.string().optional().or(z.literal("")),
   data:         z.string().min(10, "Data inválida"),
-  situacao:     z.enum(["pendente", "liquidado"]).default("pendente"),
+  situacao:     z.enum(["pendente", "liquidado", "parcial"]).default("pendente"),
   categoria_id: z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
 });
 
@@ -51,10 +51,17 @@ export async function deleteDivida(formData: FormData) {
 }
 
 export async function alterarSituacaoDivida(formData: FormData) {
-  const id       = String(formData.get("id"));
-  const situacao = String(formData.get("situacao")) === "pendente" ? "liquidado" : "pendente";
-  const s        = await createServerSupabaseClient();
-  const { error } = await (s.from("dividas") as any).update({ situacao }).eq("id", id);
+  const id = String(formData.get("id"));
+  const atual = String(formData.get("situacao"));
+  
+  // Ciclo: pendente -> parcial -> liquidado -> pendente
+  let novaSituacao: "pendente" | "parcial" | "liquidado" = "pendente";
+  if (atual === "pendente") novaSituacao = "parcial";
+  else if (atual === "parcial") novaSituacao = "liquidado";
+  else novaSituacao = "pendente";
+
+  const s = await createServerSupabaseClient();
+  const { error } = await (s.from("dividas") as any).update({ situacao: novaSituacao }).eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/dividas");
 }
@@ -154,4 +161,40 @@ export async function deletePagamento(formData: FormData) {
 
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
+}
+
+export async function desfazerPagamento(formData: FormData) {
+  const id = String(formData.get("id"));
+  const s  = await createServerSupabaseClient();
+
+  // Buscar o pagamento para saber se tem movimentação
+  const { data: pag } = await (s.from("divida_pagamentos") as any)
+    .select("movimentacao_id, tipo").eq("id", id).single();
+
+  if (!pag) throw new Error("Pagamento não encontrado");
+
+  // Se era realizado e tinha movimentação, deleta a movimentação
+  if (pag.movimentacao_id) {
+    await (s.from("movimentacoes") as any).delete().eq("id", pag.movimentacao_id);
+  }
+
+  // Se era realizado, volta para orçado. Se era orçado, deleta? 
+  // O usuário pediu "desfazer um orçado e realizado". 
+  // Para realizado, voltamos para orçado. Para orçado, vamos apenas remover o registro ou resetar?
+  // Geralmente "desfazer orçado" em fluxos financeiros significa remover a previsão.
+  
+  if (pag.tipo === "realizado") {
+    const { error } = await (s.from("divida_pagamentos") as any)
+      .update({ tipo: "orcado", movimentacao_id: null })
+      .eq("id", id);
+    if (error) throw new Error(error.message);
+  } else {
+    // Se for orçado, removemos o registro de pagamento (a previsão)
+    const { error } = await (s.from("divida_pagamentos") as any).delete().eq("id", id);
+    if (error) throw new Error(error.message);
+  }
+
+  revalidatePath("/dividas");
+  revalidatePath("/movimentacoes");
+  revalidatePath("/dashboard");
 }
