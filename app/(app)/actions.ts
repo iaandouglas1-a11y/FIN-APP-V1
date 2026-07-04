@@ -27,7 +27,7 @@ const movSchema = z.object({
 
 const contaSchema = z.object({ 
   nome: z.string().min(2, "Nome muito curto"), 
-  tipo: z.enum(["corrente", "poupanca", "investimento", "dinheiro"]).optional() 
+  tipo: z.enum(["corrente", "poupanca", "investimento", "dinheiro"]) 
 });
 
 const cartaoSchema = z.object({ 
@@ -39,7 +39,8 @@ const cartaoSchema = z.object({
 const faturaSchema = z.object({ 
   cartao_id: z.string().uuid("Selecione o cartão"), 
   data_fechamento: z.string().min(10, "Data de fechamento inválida"), 
-  data_vencimento: z.string().min(10, "Data de vencimento inválida") 
+  data_vencimento: z.string().min(10, "Data de vencimento inválida"),
+  observacao: z.string().optional().or(z.literal("")).transform(v => v || null),
 });
 
 // ALTERADO: categoria agora inclui "tipo"
