@@ -64,6 +64,7 @@ export async function alterarSituacaoDivida(formData: FormData) {
   const { error } = await (s.from("dividas") as any).update({ situacao: novaSituacao }).eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/dividas");
+  return { success: true };
 }
 
 // ── Pagamentos ────────────────────────────────────────────
@@ -197,4 +198,5 @@ export async function desfazerPagamento(formData: FormData) {
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
+  return { success: true };
 }
