@@ -7,8 +7,23 @@ export const metadata: Metadata = {
   description: "Seu controle financeiro pessoal",
   icons: {
     icon: [
-      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+      { url: 
+        '/icon-192.png',
+        sizes: '192x192',
+        type: 'image/png'
+      },
+      { url: 
+        '/icon-512.png',
+        sizes: '512x512',
+        type: 'image/png'
+      },
+    ],
+    apple: [
+      { url: 
+        '/icon-512.png',
+        sizes: '512x512',
+        type: 'image/png'
+      },
     ],
   },
 };
