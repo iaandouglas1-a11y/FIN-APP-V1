@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { 
   Menu, X, LayoutDashboard, ArrowUpRight, 
-  CreditCard, Receipt, Wallet, Tags, LogOut, ChevronRight, Settings, ListChecks, Users, TrendingDown
+  CreditCard, Receipt, Wallet, Tags, ChevronRight, ListChecks, Users, TrendingDown
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -44,7 +44,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-[#0D2340] border-r border-[#142d52]/80">
-      {/* Logo Section */}
       <div className="p-4 border-b border-[#142d52]/80">
         <div className="flex items-center gap-3 group cursor-pointer">
           <div className="h-10 w-10 rounded-xl overflow-hidden shrink-0">
@@ -60,7 +59,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 px-3 py-6 space-y-8 overflow-y-auto">
         {navItems.map((group) => (
           <div key={group.group}>
@@ -111,7 +109,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-[#091829] flex">
-      {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-[#0D2340]/95 backdrop-blur-xl border-b border-[#142d52]/80 p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-lg overflow-hidden shrink-0">
@@ -130,7 +127,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </button>
       </div>
 
-      {/* Desktop Sidebar */}
       <aside className={clsx(
         "hidden md:flex flex-col sticky top-0 h-screen transition-all duration-300 ease-in-out z-40",
         isSidebarOpen ? "w-72" : "w-24"
@@ -144,7 +140,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </button>
       </aside>
 
-      {/* Mobile Sidebar Overlay */}
       {isMobileOpen && (
         <div className="md:hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="w-72 h-full animate-in slide-in-from-left duration-300">
@@ -159,7 +154,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0 bg-[#091829]">
         <div className="flex-1 p-4 md:p-8 pt-20 md:pt-8 overflow-y-auto">
           <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
