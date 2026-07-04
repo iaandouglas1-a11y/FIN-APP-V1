@@ -1,5 +1,4 @@
-import { getDividas } from "@/lib/queries";
-import { getContasWithMovs } from "@/lib/queries";
+import { getDividas, getCategorias, getContasWithMovs } from "@/lib/queries";
 import { saveDivida, deleteDivida, alterarSituacaoDivida, savePagamento, deletePagamento } from "@/app/(app)/actions_dividas";
 import { Card, Button, Input, Select, Badge, PageHeader, FormGroup } from "@/components/ui";
 import { currency, dateBR } from "@/lib/format";
@@ -8,12 +7,14 @@ import RealizarPagamentoBtn from "./RealizarPagamentoBtn";
 import { clsx } from "clsx";
 
 export default async function DividasPage() {
-  const [{ dividas, pagamentos }, { contas }] = await Promise.all([
+  const [{ dividas, pagamentos }, { contas }, categorias] = await Promise.all([
     getDividas(),
     getContasWithMovs(),
+    getCategorias(),
   ]);
 
   const contasList = contas.map((c) => ({ id: c.id, nome: c.nome }));
+  const categoriasDespesa = categorias.filter((cat) => (cat as any).tipo === "despesa");
 
   // Resumo
   const totalDevido  = dividas.filter(d => d.situacao === "pendente").reduce((s, d) => s + Number(d.valor), 0);
@@ -77,6 +78,14 @@ export default async function DividasPage() {
           <div className="flex-1 min-w-[120px]">
             <FormGroup label="Observação">
               <Input name="observacao" placeholder="Ex: 10x R$ 140,00" className="h-9 text-sm" />
+            </FormGroup>
+          </div>
+          <div className="w-36 shrink-0">
+            <FormGroup label="Categoria">
+              <Select name="categoria_id" className="h-9 text-sm">
+                <option value="">Sem categoria</option>
+                {categoriasDespesa.map((cat) => <option key={cat.id} value={cat.id}>{cat.nome}</option>)}
+              </Select>
             </FormGroup>
           </div>
           <input type="hidden" name="situacao" value="pendente" />
@@ -193,6 +202,14 @@ export default async function DividasPage() {
                 </Select>
               </FormGroup>
             </div>
+            <div className="w-36 shrink-0">
+              <FormGroup label="Categoria">
+                <Select name="categoria_id" className="h-9 text-sm">
+                  <option value="">Sem categoria</option>
+                  {categoriasDespesa.map((cat) => <option key={cat.id} value={cat.id}>{cat.nome}</option>)}
+                </Select>
+              </FormGroup>
+            </div>
             <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center shrink-0 mb-[1px]">
               <Plus className="h-4 w-4 mr-1.5" />
               Adicionar
@@ -207,6 +224,7 @@ export default async function DividasPage() {
                 <th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Data</th>
                 <th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Descrição</th>
                 <th className="px-4 py-2 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500">Valor</th>
+<th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden md:table-cell">Categoria</th>
                 <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">Tipo</th>
                 <th className="px-4 py-2 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden md:table-cell">Saldo Após</th>
                 <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500"></th>
@@ -220,6 +238,7 @@ export default async function DividasPage() {
                   <td className="px-4 py-2.5 text-slate-400 text-xs whitespace-nowrap">{dateBR(p.data)}</td>
                   <td className="px-4 py-2.5 text-slate-200 font-medium">{p.descricao}</td>
                   <td className="px-4 py-2.5 text-right font-semibold text-white whitespace-nowrap">{currency(Number(p.valor))}</td>
+                  <td className="px-4 py-2.5 text-slate-400 text-xs hidden md:table-cell">{(p as any).categoria_id ? categorias.find(cat => cat.id === (p as any).categoria_id)?.nome || "—" : "—"}</td>
                   <td className="px-4 py-2.5 text-center">
                     {p.tipo === "realizado" ? (
                       <Badge variant="success" className="text-[10px]">✓ Realizado</Badge>
@@ -232,6 +251,8 @@ export default async function DividasPage() {
                           valor={Number(p.valor)}
                           data={p.data}
                           contas={contasList}
+                          categorias={categoriasDespesa}
+                          categoriaId={(p as any).categoria_id}
                         />
                       </div>
                     )}
