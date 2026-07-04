@@ -7,20 +7,22 @@ import { createServerSupabaseClient } from "@/lib/supabaseClient";
 
 // ── Schemas ───────────────────────────────────────────────
 const dividaSchema = z.object({
-  descricao:  z.string().min(2, "Descrição muito curta"),
-  valor:      z.coerce.number().positive("Valor deve ser maior que zero"),
-  observacao: z.string().optional().or(z.literal("")),
-  data:       z.string().min(10, "Data inválida"),
-  situacao:   z.enum(["pendente", "liquidado"]).default("pendente"),
+  descricao:    z.string().min(2, "Descrição muito curta"),
+  valor:        z.coerce.number().positive("Valor deve ser maior que zero"),
+  observacao:   z.string().optional().or(z.literal("")),
+  data:         z.string().min(10, "Data inválida"),
+  situacao:     z.enum(["pendente", "liquidado"]).default("pendente"),
+  categoria_id: z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
 });
 
 const pagamentoSchema = z.object({
-  divida_id:  z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
-  descricao:  z.string().min(2, "Descrição muito curta"),
-  data:       z.string().min(10, "Data inválida"),
-  valor:      z.coerce.number().positive("Valor deve ser maior que zero"),
-  tipo:       z.enum(["orcado", "realizado"]),
-  conta_id:   z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
+  divida_id:    z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
+  descricao:    z.string().min(2, "Descrição muito curta"),
+  data:         z.string().min(10, "Data inválida"),
+  valor:        z.coerce.number().positive("Valor deve ser maior que zero"),
+  tipo:         z.enum(["orcado", "realizado"]),
+  conta_id:     z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
+  categoria_id: z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
 });
 
 function entries(f: FormData) { return Object.fromEntries(f.entries()); }
@@ -68,24 +70,12 @@ export async function savePagamento(formData: FormData) {
   // Se realizado → criar movimentação automaticamente
   let movimentacao_id: string | null = null;
   if (parsed.data.tipo === "realizado" && parsed.data.conta_id) {
-    // Busca ou cria categoria "Dívida"
-    let catId: string | null = null;
-    const { data: existing } = await (s.from("categorias") as any)
-      .select("id").eq("nome", "Dívida").limit(1).single();
-    if (existing) {
-      catId = existing.id;
-    } else {
-      const { data: nova } = await (s.from("categorias") as any)
-        .insert({ nome: "Dívida", tipo: "despesa" }).select("id").single();
-      catId = nova?.id || null;
-    }
-
     const { data: mov, error: movErr } = await (s.from("movimentacoes") as any)
       .insert({
         tipo:         "despesa",
         valor:        parsed.data.valor,
         data:         parsed.data.data,
-        categoria_id: catId,
+        categoria_id: parsed.data.categoria_id,
         conta_id:     parsed.data.conta_id,
         status:       "realizado",
         descricao:    parsed.data.descricao,
@@ -101,6 +91,7 @@ export async function savePagamento(formData: FormData) {
     data:           parsed.data.data,
     valor:          parsed.data.valor,
     tipo:           parsed.data.tipo,
+    categoria_id:   parsed.data.categoria_id,
     movimentacao_id,
   };
 
@@ -116,31 +107,20 @@ export async function savePagamento(formData: FormData) {
 }
 
 export async function realizarPagamento(formData: FormData) {
-  const id       = String(formData.get("id"));
-  const conta_id = String(formData.get("conta_id"));
-  const descricao = String(formData.get("descricao"));
-  const valor    = Number(formData.get("valor"));
-  const data     = String(formData.get("data"));
+  const id          = String(formData.get("id"));
+  const conta_id    = String(formData.get("conta_id"));
+  const descricao   = String(formData.get("descricao"));
+  const valor       = Number(formData.get("valor"));
+  const data        = String(formData.get("data"));
+  const categoria_id = formData.get("categoria_id") ? String(formData.get("categoria_id")) : null;
 
   const s = await createServerSupabaseClient();
 
-  // Busca ou cria categoria Dívida
-  let catId: string | null = null;
-  const { data: existing } = await (s.from("categorias") as any)
-    .select("id").eq("nome", "Dívida").limit(1).single();
-  if (existing) {
-    catId = existing.id;
-  } else {
-    const { data: nova } = await (s.from("categorias") as any)
-      .insert({ nome: "Dívida", tipo: "despesa" }).select("id").single();
-    catId = nova?.id || null;
-  }
-
-  // Cria movimentação
+  // Cria movimentação com a categoria escolhida
   const { data: mov, error: movErr } = await (s.from("movimentacoes") as any)
     .insert({
       tipo: "despesa", valor, data,
-      categoria_id: catId, conta_id,
+      categoria_id, conta_id,
       status: "realizado", descricao,
     })
     .select("id").single();
