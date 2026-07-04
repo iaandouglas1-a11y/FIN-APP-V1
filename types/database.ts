@@ -80,7 +80,7 @@ export interface Divida {
   descricao: string;
   valor: number;
   observacao: string | null;
-  situacao: "pendente" | "liquidado";
+  situacao: "pendente" | "liquidado" | "parcial";
   data: string;
   categoria_id: string | null;
   created_at: string;
