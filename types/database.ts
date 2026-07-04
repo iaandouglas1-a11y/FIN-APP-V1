@@ -72,6 +72,7 @@ export interface FaturaExtendida {
   pago: boolean;
   pago_em: string | null;
   conta_pagamento_id: string | null;
+  observacao: string | null;
 }
 
 // ── Dívidas ───────────────────────────────────────────────
