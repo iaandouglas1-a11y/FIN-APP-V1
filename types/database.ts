@@ -82,6 +82,7 @@ export interface Divida {
   observacao: string | null;
   situacao: "pendente" | "liquidado";
   data: string;
+  categoria_id: string | null;
   created_at: string;
 }
 
@@ -93,5 +94,6 @@ export interface DividaPagamento {
   valor: number;
   tipo: "orcado" | "realizado";
   movimentacao_id: string | null;
+  categoria_id: string | null;
   created_at: string;
 }
