@@ -5,16 +5,19 @@ import { CheckCircle, X } from "lucide-react";
 import { realizarPagamento } from "@/app/(app)/actions_dividas";
 
 interface Props {
-  pagamentoId: string;
-  descricao:   string;
-  valor:       number;
-  data:        string;
-  contas:      { id: string; nome: string }[];
+  pagamentoId:  string;
+  descricao:    string;
+  valor:        number;
+  data:         string;
+  contas:       { id: string; nome: string }[];
+  categorias:   { id: string; nome: string }[];
+  categoriaId:  string | null;
 }
 
-export default function RealizarPagamentoBtn({ pagamentoId, descricao, valor, data, contas }: Props) {
+export default function RealizarPagamentoBtn({ pagamentoId, descricao, valor, data, contas, categorias, categoriaId }: Props) {
   const [aberto, setAberto] = useState(false);
   const [contaSelecionada, setContaSelecionada] = useState(contas[0]?.id ?? "");
+  const [catSelecionada, setCatSelecionada] = useState(categoriaId ?? categorias[0]?.id ?? "");
 
   if (!aberto) {
     return (
@@ -30,22 +33,33 @@ export default function RealizarPagamentoBtn({ pagamentoId, descricao, valor, da
   }
 
   return (
-    <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-[#0D2340] border border-[#5DA832]/40">
+    <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-[#0D2340] border border-[#5DA832]/40 flex-wrap">
       <select
         value={contaSelecionada}
         onChange={(e) => setContaSelecionada(e.target.value)}
-        className="select-modern h-7 text-xs flex-1 min-w-0"
+        className="select-modern h-7 text-xs w-28 min-w-0"
       >
         {contas.map((c) => (
           <option key={c.id} value={c.id}>{c.nome}</option>
         ))}
       </select>
+      <select
+        value={catSelecionada}
+        onChange={(e) => setCatSelecionada(e.target.value)}
+        className="select-modern h-7 text-xs w-28 min-w-0"
+      >
+        <option value="">Sem categoria</option>
+        {categorias.map((cat) => (
+          <option key={cat.id} value={cat.id}>{cat.nome}</option>
+        ))}
+      </select>
       <form action={realizarPagamento}>
-        <input type="hidden" name="id"        value={pagamentoId} />
-        <input type="hidden" name="conta_id"  value={contaSelecionada} />
-        <input type="hidden" name="descricao" value={descricao} />
-        <input type="hidden" name="valor"     value={valor} />
-        <input type="hidden" name="data"      value={data} />
+        <input type="hidden" name="id"           value={pagamentoId} />
+        <input type="hidden" name="conta_id"     value={contaSelecionada} />
+        <input type="hidden" name="categoria_id" value={catSelecionada} />
+        <input type="hidden" name="descricao"    value={descricao} />
+        <input type="hidden" name="valor"        value={valor} />
+        <input type="hidden" name="data"         value={data} />
         <button
           type="submit"
           className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all duration-200 whitespace-nowrap"
