@@ -111,6 +111,7 @@ export default async function ContasPage() {
               {/* Edit Form */}
               <form action={saveConta} className="space-y-3 relative z-10">
                 <input type="hidden" name="id" value={conta.id} />
+                <input type="hidden" name="tipo" value={conta.tipo} />
                 <FormGroup label="Editar Nome">
                   <div className="flex gap-2">
                     <Input 
