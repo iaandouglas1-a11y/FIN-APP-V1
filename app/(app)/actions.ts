@@ -27,7 +27,7 @@ const movSchema = z.object({
 
 const contaSchema = z.object({ 
   nome: z.string().min(2, "Nome muito curto"), 
-  tipo: z.enum(["corrente", "poupanca", "investimento", "dinheiro"]) 
+  tipo: z.enum(["corrente", "poupanca", "investimento", "dinheiro"]).optional() 
 });
 
 const cartaoSchema = z.object({ 
