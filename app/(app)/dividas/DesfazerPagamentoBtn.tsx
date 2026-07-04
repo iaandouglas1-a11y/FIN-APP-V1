@@ -11,21 +11,32 @@ interface Props {
 
 export default function DesfazerPagamentoBtn({ pagamentoId, tipo }: Props) {
   const [confirmando, setConfirmando] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   if (confirmando) {
     return (
-      <form action={desfazerPagamento} className="inline-flex items-center gap-1 animate-in fade-in duration-200">
+      <form 
+        action={async (formData) => {
+          setLoading(true);
+          await desfazerPagamento(formData);
+          setLoading(false);
+          setConfirmando(false);
+        }} 
+        className="inline-flex items-center gap-1 animate-in fade-in duration-200"
+      >
         <input type="hidden" name="id" value={pagamentoId} />
         <button
           type="submit"
-          className="text-[10px] px-2 py-0.5 bg-rose-500 text-white rounded hover:bg-rose-600 transition-colors font-bold"
+          disabled={loading}
+          className="text-[10px] px-2 py-0.5 bg-rose-500 text-white rounded hover:bg-rose-600 transition-colors font-bold disabled:opacity-50"
         >
-          Confirmar Desfazer
+          {loading ? "..." : "Confirmar"}
         </button>
         <button
           type="button"
+          disabled={loading}
           onClick={() => setConfirmando(false)}
-          className="text-[10px] px-2 py-0.5 bg-slate-700 text-slate-300 rounded hover:bg-slate-600 transition-colors"
+          className="text-[10px] px-2 py-0.5 bg-slate-700 text-slate-300 rounded hover:bg-slate-600 transition-colors disabled:opacity-50"
         >
           Não
         </button>
