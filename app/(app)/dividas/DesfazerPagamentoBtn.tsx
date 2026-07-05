@@ -6,7 +6,7 @@ import { useState } from "react";
 
 interface Props {
   pagamentoId: string;
-  tipo: "orcado" | "realizado";
+  tipo?: "orcado" | "realizado";
 }
 
 export default function DesfazerPagamentoBtn({ pagamentoId, tipo }: Props) {
@@ -15,13 +15,13 @@ export default function DesfazerPagamentoBtn({ pagamentoId, tipo }: Props) {
 
   if (confirmando) {
     return (
-      <form 
+      <form
         action={async (formData) => {
           setLoading(true);
           await desfazerPagamento(formData);
           setLoading(false);
           setConfirmando(false);
-        }} 
+        }}
         className="inline-flex items-center gap-1 animate-in fade-in duration-200"
       >
         <input type="hidden" name="id" value={pagamentoId} />
