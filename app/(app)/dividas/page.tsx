@@ -2,8 +2,9 @@ import { getDividas, getCategorias, getContasWithMovs } from "@/lib/queries";
 import { saveDivida, deleteDivida, alterarSituacaoDivida, savePagamento, deletePagamento } from "@/app/(app)/actions_dividas";
 import { Card, Button, Input, Select, Badge, PageHeader, FormGroup } from "@/components/ui";
 import { currency, dateBR } from "@/lib/format";
-import { TrendingDown, Plus, Trash2, CheckCircle, Circle, AlertCircle } from "lucide-react";
+import { TrendingDown, Plus, Trash2, CheckCircle, Circle, AlertCircle, Pencil } from "lucide-react";
 import RealizarPagamentoBtn from "./RealizarPagamentoBtn";
+import DesfazerPagamentoBtn from "./DesfazerPagamentoBtn";
 import { clsx } from "clsx";
 
 export default async function DividasPage() {
@@ -240,12 +241,21 @@ export default async function DividasPage() {
                   <td className="px-4 py-2.5 text-slate-200 font-medium">{p.descricao}</td>
                   <td className="px-4 py-2.5 text-right font-semibold text-white whitespace-nowrap">{currency(Number(p.valor))}</td>
                   <td className="px-4 py-2.5 text-slate-400 text-xs hidden md:table-cell">{(p as any).categoria_id ? categorias.find(cat => cat.id === (p as any).categoria_id)?.nome || "—" : "—"}</td>
+                  {/* Tipo — só texto */}
                   <td className="px-4 py-2.5 text-center">
                     {p.tipo === "realizado" ? (
                       <Badge variant="success" className="text-[10px]">✓ Realizado</Badge>
                     ) : (
-                      <div className="flex items-center justify-center gap-1">
-                        <Badge variant="warning" className="text-[10px]">Orçado</Badge>
+                      <Badge variant="warning" className="text-[10px]">Orçado</Badge>
+                    )}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-slate-300 font-semibold hidden md:table-cell whitespace-nowrap">
+                    {p.tipo === "realizado" ? currency(p.saldoApos) : "—"}
+                  </td>
+                  {/* Ações: Realizar | Editar | Excluir */}
+                  <td className="px-4 py-2.5">
+                    <div className="flex items-center justify-end gap-1">
+                      {p.tipo === "orcado" ? (
                         <RealizarPagamentoBtn
                           pagamentoId={p.id}
                           descricao={p.descricao}
@@ -255,19 +265,21 @@ export default async function DividasPage() {
                           categorias={categoriasDespesa}
                           categoriaId={(p as any).categoria_id}
                         />
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-4 py-2.5 text-right text-slate-300 font-semibold hidden md:table-cell whitespace-nowrap">
-                    {p.tipo === "realizado" ? currency(p.saldoApos) : "—"}
-                  </td>
-                  <td className="px-4 py-2.5 text-center">
-                    <form action={deletePagamento}>
-                      <input type="hidden" name="id" value={p.id} />
-                      <button type="submit" className="p-1 text-slate-600 hover:text-rose-400 rounded transition-colors">
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </form>
+                      ) : (
+                        <DesfazerPagamentoBtn pagamentoId={p.id} />
+                      )}
+                      <a href={`/dividas?edit_pag=${p.id}`}
+                        className="p-1.5 text-slate-600 hover:text-[#5DA832] rounded-lg transition-colors"
+                        title="Editar">
+                        <Pencil className="h-3.5 w-3.5" />
+                      </a>
+                      <form action={deletePagamento}>
+                        <input type="hidden" name="id" value={p.id} />
+                        <button type="submit" className="p-1.5 text-slate-600 hover:text-rose-400 rounded-lg transition-colors" title="Excluir">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </form>
+                    </div>
                   </td>
                 </tr>
               ))}
