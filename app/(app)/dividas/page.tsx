@@ -5,6 +5,8 @@ import { currency, dateBR } from "@/lib/format";
 import { TrendingDown, Plus, Trash2, CheckCircle, Circle, AlertCircle, Pencil } from "lucide-react";
 import RealizarPagamentoBtn from "./RealizarPagamentoBtn";
 import DesfazerPagamentoBtn from "./DesfazerPagamentoBtn";
+import EditarDividaBtn from "./EditarDividaBtn";
+import EditarPagamentoBtn from "./EditarPagamentoBtn";
 import { clsx } from "clsx";
 
 export default async function DividasPage() {
@@ -147,12 +149,15 @@ export default async function DividasPage() {
                     </form>
                   </td>
                   <td className="px-4 py-2.5 text-center">
-                    <form action={deleteDivida}>
-                      <input type="hidden" name="id" value={d.id} />
-                      <button type="submit" className="p-1 text-slate-600 hover:text-rose-400 rounded transition-colors">
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </form>
+                    <div className="flex items-center justify-center gap-1">
+                      <EditarDividaBtn divida={d} categorias={categorias} />
+                      <form action={deleteDivida}>
+                        <input type="hidden" name="id" value={d.id} />
+                        <button type="submit" className="p-1 text-slate-600 hover:text-rose-400 rounded transition-colors">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </form>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -268,11 +273,19 @@ export default async function DividasPage() {
                       ) : (
                         <DesfazerPagamentoBtn pagamentoId={p.id} tipo={p.tipo} />
                       )}
-                      <a href={`/dividas?edit_pag=${p.id}`}
-                        className="p-1.5 text-slate-600 hover:text-[#5DA832] rounded-lg transition-colors"
-                        title="Editar">
-                        <Pencil className="h-3.5 w-3.5" />
-                      </a>
+                      <EditarPagamentoBtn 
+                        pagamento={{
+                          id: p.id,
+                          data: p.data,
+                          descricao: p.descricao,
+                          valor: Number(p.valor),
+                          tipo: p.tipo,
+                          conta_id: (p as any).conta_id,
+                          categoria_id: (p as any).categoria_id
+                        }}
+                        contas={contasList}
+                        categorias={categoriasDespesa}
+                      />
                       <form action={deletePagamento}>
                         <input type="hidden" name="id" value={p.id} />
                         <button type="submit" className="p-1.5 text-slate-600 hover:text-rose-400 rounded-lg transition-colors" title="Excluir">
