@@ -235,7 +235,7 @@ export default async function DividasPage() {
             <tbody className="divide-y divide-slate-800/30">
               {fluxo.length === 0 ? (
                 <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-600 italic text-xs">Nenhum pagamento lançado.</td></tr>
-              ) : fluxo.map((p) => (
+              ) : fluxo.map((p: any) => (
                 <tr key={p.id} className={clsx("hover:bg-slate-800/20 transition-colors", p.tipo === "realizado" && "bg-[#5DA832]/5")}>
                   <td className="px-4 py-2.5 text-slate-400 text-xs whitespace-nowrap">{dateBR(p.data)}</td>
                   <td className="px-4 py-2.5 text-slate-200 font-medium">{p.descricao}</td>
