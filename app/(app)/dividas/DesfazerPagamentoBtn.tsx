@@ -6,7 +6,7 @@ import { useState } from "react";
 
 interface Props {
   pagamentoId: string;
-  tipo?: "orcado" | "realizado";
+  tipo: "orcado" | "realizado";
 }
 
 export default function DesfazerPagamentoBtn({ pagamentoId, tipo }: Props) {
