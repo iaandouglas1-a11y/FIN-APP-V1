@@ -2,10 +2,8 @@ import { getDividas, getCategorias, getContasWithMovs } from "@/lib/queries";
 import { saveDivida, deleteDivida, alterarSituacaoDivida, savePagamento, deletePagamento } from "@/app/(app)/actions_dividas";
 import { Card, Button, Input, Select, Badge, PageHeader, FormGroup } from "@/components/ui";
 import { currency, dateBR } from "@/lib/format";
-import { TrendingDown, Plus, Trash2, CheckCircle, Circle, AlertCircle, HelpCircle, RotateCcw } from "lucide-react";
+import { TrendingDown, Plus, Trash2, CheckCircle, Circle, AlertCircle } from "lucide-react";
 import RealizarPagamentoBtn from "./RealizarPagamentoBtn";
-import EditarDividaBtn from "./EditarDividaBtn";
-import DesfazerPagamentoBtn from "./DesfazerPagamentoBtn";
 import { clsx } from "clsx";
 
 export default async function DividasPage() {
@@ -16,10 +14,10 @@ export default async function DividasPage() {
   ]);
 
   const contasList = contas.map((c) => ({ id: c.id, nome: c.nome }));
-  const categoriasDespesa = categorias;
+  const categoriasDespesa = categorias; // todas as categorias disponíveis
 
   // Resumo
-  const totalDevido  = dividas.filter(d => d.situacao !== "liquidado").reduce((s, d) => s + Number(d.valor), 0);
+  const totalDevido  = dividas.filter(d => d.situacao === "pendente").reduce((s, d) => s + Number(d.valor), 0);
   const totalPago    = pagamentos.filter(p => p.tipo === "realizado").reduce((s, p) => s + Number(p.valor), 0);
   const saldoAtual   = totalDevido - totalPago;
 
@@ -39,18 +37,18 @@ export default async function DividasPage() {
       />
 
       {/* Resumo */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="border-rose-500/20 bg-rose-500/5 p-4">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-rose-400/70 mb-1">Total em Aberto</p>
-          <p className="text-xl font-bold text-rose-400">{currency(totalDevido)}</p>
+      <div className="grid grid-cols-3 gap-3">
+        <Card className="border-rose-500/20 bg-rose-500/5 p-4 flex flex-col justify-between min-h-[80px]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-rose-400/70 leading-tight">Total em Aberto</p>
+          <p className="text-base sm:text-lg font-bold text-rose-400 mt-2 tabular-nums">{currency(totalDevido)}</p>
         </Card>
-        <Card className="border-[#5DA832]/20 bg-[#5DA832]/5 p-4">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[#5DA832]/70 mb-1">Total Pago</p>
-          <p className="text-xl font-bold text-[#5DA832]">{currency(totalPago)}</p>
+        <Card className="border-[#5DA832]/20 bg-[#5DA832]/5 p-4 flex flex-col justify-between min-h-[80px]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#5DA832]/70 leading-tight">Total Pago</p>
+          <p className="text-base sm:text-lg font-bold text-[#5DA832] mt-2 tabular-nums">{currency(totalPago)}</p>
         </Card>
-        <Card className="border-slate-700/40 p-4">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">Saldo Remanescente</p>
-          <p className="text-xl font-bold text-white">{currency(saldoAtual)}</p>
+        <Card className="border-slate-700/40 p-4 flex flex-col justify-between min-h-[80px]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 leading-tight">Saldo Remanescente</p>
+          <p className="text-base sm:text-lg font-bold text-white mt-2 tabular-nums">{currency(saldoAtual)}</p>
         </Card>
       </div>
 
@@ -106,7 +104,7 @@ export default async function DividasPage() {
             <h3 className="font-semibold text-white text-sm">Levantamento de Dívidas</h3>
           </div>
           <span className="text-xs px-2.5 py-0.5 rounded-md bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold">
-            {dividas.filter(d => d.situacao !== "liquidado").length} em aberto
+            {dividas.filter(d => d.situacao === "pendente").length} pendentes
           </span>
         </div>
 
@@ -119,7 +117,7 @@ export default async function DividasPage() {
                 <th className="px-4 py-2 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500">Valor</th>
                 <th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden md:table-cell">Observação</th>
                 <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">Situação</th>
-                <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">Ações</th>
+                <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/30">
@@ -130,35 +128,30 @@ export default async function DividasPage() {
                   <td className="px-4 py-2.5 text-slate-400 text-xs whitespace-nowrap">{dateBR(d.data)}</td>
                   <td className="px-4 py-2.5 text-slate-200 font-medium">{d.descricao}</td>
                   <td className="px-4 py-2.5 text-right font-semibold text-rose-400 whitespace-nowrap">{currency(Number(d.valor))}</td>
-                  <td className="px-4 py-2.5 text-slate-400 text-xs hidden md:table-cell">{d.observacao || "—"}</td>
+                  <td className="px-4 py-2.5 text-slate-400 text-xs hidden md:table-cell">{d.categoria_id ? categorias.find(cat => cat.id === d.categoria_id)?.nome || "—" : "—"}</td>
+                  <td className="px-4 py-2.5 text-slate-500 text-xs hidden md:table-cell">{d.observacao || "—"}</td>
                   <td className="px-4 py-2.5 text-center">
                     <form action={alterarSituacaoDivida}>
                       <input type="hidden" name="id" value={d.id} />
                       <input type="hidden" name="situacao" value={d.situacao} />
                       <button type="submit" className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all duration-200 border"
-                        style={
-                          d.situacao === "liquidado"
+                        style={d.situacao === "liquidado"
                           ? { background: "rgba(93,168,50,0.1)", color: "#5DA832", borderColor: "rgba(93,168,50,0.3)" }
-                          : d.situacao === "parcial"
-                          ? { background: "rgba(245,158,11,0.1)", color: "#f59e0b", borderColor: "rgba(245,158,11,0.3)" }
                           : { background: "rgba(239,68,68,0.1)", color: "#f87171", borderColor: "rgba(239,68,68,0.2)" }
                         }
                       >
-                        {d.situacao === "liquidado" ? <CheckCircle className="h-3 w-3" /> : d.situacao === "parcial" ? <HelpCircle className="h-3 w-3" /> : <Circle className="h-3 w-3" />}
-                        {d.situacao.charAt(0).toUpperCase() + d.situacao.slice(1)}
+                        {d.situacao === "liquidado" ? <CheckCircle className="h-3 w-3" /> : <Circle className="h-3 w-3" />}
+                        {d.situacao === "liquidado" ? "Liquidado" : "Pendente"}
                       </button>
                     </form>
                   </td>
                   <td className="px-4 py-2.5 text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <EditarDividaBtn divida={d as any} categorias={categoriasDespesa} />
-                      <form action={deleteDivida}>
-                        <input type="hidden" name="id" value={d.id} />
-                        <button type="submit" className="p-1 text-slate-600 hover:text-rose-400 rounded transition-colors">
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </form>
-                    </div>
+                    <form action={deleteDivida}>
+                      <input type="hidden" name="id" value={d.id} />
+                      <button type="submit" className="p-1 text-slate-600 hover:text-rose-400 rounded transition-colors">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </form>
                   </td>
                 </tr>
               ))}
@@ -232,9 +225,10 @@ export default async function DividasPage() {
                 <th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Data</th>
                 <th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Descrição</th>
                 <th className="px-4 py-2 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500">Valor</th>
+<th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden md:table-cell">Categoria</th>
                 <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">Tipo</th>
                 <th className="px-4 py-2 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden md:table-cell">Saldo Após</th>
-                <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">Ações</th>
+                <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/30">
@@ -245,39 +239,35 @@ export default async function DividasPage() {
                   <td className="px-4 py-2.5 text-slate-400 text-xs whitespace-nowrap">{dateBR(p.data)}</td>
                   <td className="px-4 py-2.5 text-slate-200 font-medium">{p.descricao}</td>
                   <td className="px-4 py-2.5 text-right font-semibold text-white whitespace-nowrap">{currency(Number(p.valor))}</td>
+                  <td className="px-4 py-2.5 text-slate-400 text-xs hidden md:table-cell">{(p as any).categoria_id ? categorias.find(cat => cat.id === (p as any).categoria_id)?.nome || "—" : "—"}</td>
                   <td className="px-4 py-2.5 text-center">
-                    <div className="flex items-center justify-center gap-1.5">
-                      {p.tipo === "realizado" ? (
-                        <Badge variant="success" className="text-[10px]">✓ Realizado</Badge>
-                      ) : (
-                        <>
-                          <Badge variant="warning" className="text-[10px]">Orçado</Badge>
-                          <RealizarPagamentoBtn
-                            pagamentoId={p.id}
-                            descricao={p.descricao}
-                            valor={Number(p.valor)}
-                            data={p.data}
-                            contas={contasList}
-                            categorias={categoriasDespesa}
-                            categoriaId={(p as any).categoria_id}
-                          />
-                        </>
-                      )}
-                    </div>
+                    {p.tipo === "realizado" ? (
+                      <Badge variant="success" className="text-[10px]">✓ Realizado</Badge>
+                    ) : (
+                      <div className="flex items-center justify-center gap-1">
+                        <Badge variant="warning" className="text-[10px]">Orçado</Badge>
+                        <RealizarPagamentoBtn
+                          pagamentoId={p.id}
+                          descricao={p.descricao}
+                          valor={Number(p.valor)}
+                          data={p.data}
+                          contas={contasList}
+                          categorias={categoriasDespesa}
+                          categoriaId={(p as any).categoria_id}
+                        />
+                      </div>
+                    )}
                   </td>
                   <td className="px-4 py-2.5 text-right text-slate-300 font-semibold hidden md:table-cell whitespace-nowrap">
                     {p.tipo === "realizado" ? currency(p.saldoApos) : "—"}
                   </td>
                   <td className="px-4 py-2.5 text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <DesfazerPagamentoBtn pagamentoId={p.id} tipo={p.tipo} />
-                      <form action={deletePagamento}>
-                        <input type="hidden" name="id" value={p.id} />
-                        <button type="submit" className="p-1 text-slate-600 hover:text-rose-400 rounded transition-colors">
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </form>
-                    </div>
+                    <form action={deletePagamento}>
+                      <input type="hidden" name="id" value={p.id} />
+                      <button type="submit" className="p-1 text-slate-600 hover:text-rose-400 rounded transition-colors">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </form>
                   </td>
                 </tr>
               ))}
