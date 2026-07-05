@@ -22,7 +22,7 @@ export default async function CartoesPage() {
           <span>Adicionar Novo Cartão</span>
         </div>
         
-        <form action={saveCartao} className="grid gap-4 md:grid-cols-[1fr_160px_1fr_auto] relative z-10">
+        <form action={saveCartao} className="grid gap-4 md:grid-cols-[1fr_160px_1fr_1fr_auto] relative z-10">
           <FormGroup>
             <Input 
               name="nome" 
@@ -49,6 +49,15 @@ export default async function CartoesPage() {
               <option value="">Conta de pagamento</option>
               {contas.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </Select>
+          </FormGroup>
+
+          <FormGroup label="Logo (opcional)">
+            <Input 
+              name="logo" 
+              type="file" 
+              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              className="h-9 text-xs file:mr-3 file:h-full file:border-0 file:bg-slate-800/60 file:text-slate-300 file:px-3 file:text-xs file:rounded-md"
+            />
           </FormGroup>
           
           <div className="flex items-end">
@@ -80,8 +89,12 @@ export default async function CartoesPage() {
               {/* Header */}
               <div className="flex items-center justify-between mb-8 relative z-10">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-[#5DA832]/30 to-[#5DA832]/10 group-hover:from-[#5DA832]/40 group-hover:to-[#5DA832]/20 transition-all duration-300">
-                    <CreditCard className="h-6 w-6 text-[#5DA832]" />
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-[#5DA832]/30 to-[#5DA832]/10 group-hover:from-[#5DA832]/40 group-hover:to-[#5DA832]/20 transition-all duration-300 h-12 w-12 flex items-center justify-center overflow-hidden">
+                    {card.logo_url ? (
+                      <img src={card.logo_url} alt={card.nome} className="h-full w-full object-cover rounded-lg" />
+                    ) : (
+                      <CreditCard className="h-6 w-6 text-[#5DA832]" />
+                    )}
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-white">{card.nome}</h2>
@@ -172,6 +185,15 @@ export default async function CartoesPage() {
                       <Check className="h-4 w-4" />
                     </Button>
                   </div>
+                </FormGroup>
+
+                <FormGroup label="Trocar logo">
+                  <Input 
+                    name="logo" 
+                    type="file" 
+                    accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                    className="h-9 text-xs file:mr-3 file:h-full file:border-0 file:bg-slate-800/60 file:text-slate-300 file:px-3 file:text-xs file:rounded-md"
+                  />
                 </FormGroup>
               </form>
             </Card>

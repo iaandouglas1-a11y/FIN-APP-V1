@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
+import { uploadLogo } from "@/lib/storage";
 
 // Schemas de Validação
 const nullableId = z.string().uuid().optional().or(z.literal("")).transform((v) => v || null);
@@ -87,10 +88,15 @@ export async function saveConta(formData: FormData) {
   const parsed = contaSchema.safeParse(entries(formData)); 
   if (!parsed.success) throw new Error(parsed.error.errors[0].message);
 
+  const logoFile = formData.get("logo") as File | null;
+  const logo_url = await uploadLogo(logoFile, "contas");
+  const data: any = { ...parsed.data };
+  if (logo_url) data.logo_url = logo_url;
+
   const s = await createServerSupabaseClient(); 
   const result = id 
-    ? await (s.from("contas") as any).update(parsed.data).eq("id", id) 
-    : await (s.from("contas") as any).insert(parsed.data); 
+    ? await (s.from("contas") as any).update(data).eq("id", id) 
+    : await (s.from("contas") as any).insert(data); 
   
   if (result.error) throw new Error(result.error.message); 
   revalidatePath("/contas"); 
@@ -103,10 +109,15 @@ export async function saveCartao(formData: FormData) {
   const parsed = cartaoSchema.safeParse(entries(formData)); 
   if (!parsed.success) throw new Error(parsed.error.errors[0].message);
 
+  const logoFile = formData.get("logo") as File | null;
+  const logo_url = await uploadLogo(logoFile, "cartoes");
+  const data: any = { ...parsed.data };
+  if (logo_url) data.logo_url = logo_url;
+
   const s = await createServerSupabaseClient(); 
   const result = id 
-    ? await (s.from("cartoes") as any).update(parsed.data).eq("id", id) 
-    : await (s.from("cartoes") as any).insert(parsed.data); 
+    ? await (s.from("cartoes") as any).update(data).eq("id", id) 
+    : await (s.from("cartoes") as any).insert(data); 
   
   if (result.error) throw new Error(result.error.message); 
   revalidatePath("/contas/cartoes"); 

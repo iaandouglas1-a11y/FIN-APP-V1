@@ -2,7 +2,8 @@ import { deleteMovimentacao, saveMovimentacao } from "@/app/(app)/actions";
 import { Button, Card, Input, Select, Badge, PageHeader, FormGroup, EmptyState } from "@/components/ui";
 import { currency, dateBR } from "@/lib/format";
 import { getCartoesEFaturas, getCategorias, getContasWithMovs, getMovimentacoes } from "@/lib/queries";
-import { Trash2, Plus, Filter, ArrowUpRight, ArrowDownLeft, Inbox } from "lucide-react";
+import { Trash2, Plus, Filter, Inbox } from "lucide-react";
+import { getCategoryIcon } from "@/lib/categoryIcons";
 import { clsx } from "clsx";
 
 const MESES_RAPIDOS = [
@@ -197,7 +198,9 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                   </div>
 
                   {/* Linhas do dia */}
-                  {grupos[data].map((m: any) => (
+                  {grupos[data].map((m: any) => {
+                    const CatIcon = getCategoryIcon(m.categorias?.nome || "");
+                    return (
                     <div
                       key={m.id}
                       className="grid grid-cols-[28px_1fr_1fr_auto_auto] sm:grid-cols-[28px_1fr_1fr_88px_96px_auto] items-center gap-3 px-4 py-2.5 border-b border-slate-800/30 last:border-0 hover:bg-slate-800/20 transition-colors duration-150 group"
@@ -207,10 +210,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                         "h-7 w-7 rounded-md flex items-center justify-center shrink-0",
                         m.tipo === "receita" ? "bg-emerald-500/15 text-emerald-400" : "bg-rose-500/15 text-rose-400"
                       )}>
-                        {m.tipo === "receita"
-                          ? <ArrowDownLeft className="h-4 w-4" />
-                          : <ArrowUpRight className="h-4 w-4" />
-                        }
+                        <CatIcon className="h-4 w-4" />
                       </div>
 
                       {/* Categoria */}
@@ -245,7 +245,8 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                         </button>
                       </form>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ))}
             </div>

@@ -1,7 +1,7 @@
 export type Database = {
   public: {
     Tables: {
-      contas: { Row: { id: string; nome: string; tipo: string }; Insert: { id?: string; nome: string; tipo: string }; Update: { id?: string; nome?: string; tipo?: string } };
+      contas: { Row: { id: string; nome: string; tipo: string; logo_url: string | null }; Insert: { id?: string; nome: string; tipo: string; logo_url?: string | null }; Update: { id?: string; nome?: string; tipo?: string; logo_url?: string | null } };
       categorias: {
   Row: {
     id: string;
@@ -22,7 +22,7 @@ export type Database = {
     tipo?: string;
   };
 };
-      cartoes: { Row: { id: string; nome: string; limite: number; conta_id: string }; Insert: { id?: string; nome: string; limite: number; conta_id: string }; Update: { id?: string; nome?: string; limite?: number; conta_id?: string } };
+      cartoes: { Row: { id: string; nome: string; limite: number; conta_id: string; logo_url: string | null }; Insert: { id?: string; nome: string; limite: number; conta_id: string; logo_url?: string | null }; Update: { id?: string; nome?: string; limite?: number; conta_id?: string; logo_url?: string | null } };
       faturas: { Row: { id: string; cartao_id: string; data_fechamento: string; data_vencimento: string; pago: boolean; pago_em: string | null; conta_pagamento_id: string | null }; Insert: { id?: string; cartao_id: string; data_fechamento: string; data_vencimento: string; pago?: boolean; pago_em?: string | null; conta_pagamento_id?: string | null }; Update: { id?: string; cartao_id?: string; data_fechamento?: string; data_vencimento?: string; pago?: boolean; pago_em?: string | null; conta_pagamento_id?: string | null } };
       movimentacoes: { Row: { id: string; tipo: "receita" | "despesa"; valor: number; data: string; categoria_id: string; conta_id: string | null; cartao_id: string | null; fatura_id: string | null; status: "previsto" | "realizado"; descricao: string | null }; Insert: { id?: string; tipo: "receita" | "despesa"; valor: number; data: string; categoria_id: string; conta_id?: string | null; cartao_id?: string | null; fatura_id?: string | null; status: "previsto" | "realizado" }; Update: Partial<Database["public"]["Tables"]["movimentacoes"]["Insert"]> };
     }; Views: Record<string, never>; Functions: Record<string, never>; Enums: Record<string, never>; CompositeTypes: Record<string, never>;

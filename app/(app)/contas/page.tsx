@@ -37,7 +37,7 @@ export default async function ContasPage() {
           <span>Adicionar Nova Conta</span>
         </div>
         
-        <form action={saveConta} className="grid gap-4 sm:grid-cols-[1fr_200px_auto] relative z-10">
+        <form action={saveConta} className="grid gap-4 sm:grid-cols-[1fr_200px_1fr_auto] relative z-10">
           <FormGroup>
             <Input 
               name="nome" 
@@ -54,6 +54,15 @@ export default async function ContasPage() {
               <option value="investimento">Investimento</option>
               <option value="dinheiro">Dinheiro</option>
             </Select>
+          </FormGroup>
+
+          <FormGroup label="Logo (opcional)">
+            <Input 
+              name="logo" 
+              type="file" 
+              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              className="h-9 text-xs file:mr-3 file:h-full file:border-0 file:bg-slate-800/60 file:text-slate-300 file:px-3 file:text-xs file:rounded-md"
+            />
           </FormGroup>
           
           <div className="flex items-end">
@@ -80,8 +89,12 @@ export default async function ContasPage() {
 
               {/* Header */}
               <div className="flex items-start justify-between mb-6 relative z-10">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-[#5DA832]/15 to-[#5DA832]/5 text-[#5DA832] group-hover:from-[#5DA832]/30 group-hover:to-[#5DA832]/20 transition-all duration-300">
-                  {getIcon(conta.tipo)}
+                <div className="p-3 rounded-xl bg-gradient-to-br from-[#5DA832]/15 to-[#5DA832]/5 text-[#5DA832] group-hover:from-[#5DA832]/30 group-hover:to-[#5DA832]/20 transition-all duration-300 h-12 w-12 flex items-center justify-center overflow-hidden">
+                  {conta.logo_url ? (
+                    <img src={conta.logo_url} alt={conta.nome} className="h-full w-full object-cover rounded-lg" />
+                  ) : (
+                    getIcon(conta.tipo)
+                  )}
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">
@@ -121,6 +134,14 @@ export default async function ContasPage() {
                       <Check className="h-4 w-4" />
                     </Button>
                   </div>
+                </FormGroup>
+                <FormGroup label="Trocar logo">
+                  <Input 
+                    name="logo" 
+                    type="file" 
+                    accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                    className="h-9 text-xs file:mr-3 file:h-full file:border-0 file:bg-slate-800/60 file:text-slate-300 file:px-3 file:text-xs file:rounded-md"
+                  />
                 </FormGroup>
               </form>
             </Card>

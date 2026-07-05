@@ -1,7 +1,8 @@
 import { getCategorias } from "@/lib/queries";
 import { Card, Button, Input, Select, Badge, PageHeader, FormGroup, EmptyState } from "@/components/ui";
 import { saveCategoria, deleteCategoria } from "@/app/(app)/actions";
-import { Tags, Plus, Trash2, FolderOpen, AlertCircle, TrendingUp, TrendingDown } from "lucide-react";
+import { getCategoryIcon } from "@/lib/categoryIcons";
+import { Tags, Plus, Trash2, FolderOpen, AlertCircle } from "lucide-react";
 
 export default async function CategoriasPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
@@ -95,7 +96,9 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
                   description="Comece criando uma categoria ao lado para organizar suas movimentações"
                 />
               ) : (
-                categorias.map((cat, index) => (
+                categorias.map((cat, index) => {
+                  const CatIcon = getCategoryIcon(cat.nome);
+                  return (
                   <div 
                     key={cat.id} 
                     className="px-6 py-4 flex items-center justify-between hover:bg-slate-800/20 transition-all duration-200 group"
@@ -106,10 +109,7 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
                           ? "bg-emerald-500/15 text-emerald-400 group-hover:bg-emerald-500/25"
                           : "bg-rose-500/15 text-rose-400 group-hover:bg-rose-500/25"
                       }`}>
-                        {cat.tipo === "receita"
-                          ? <TrendingUp className="h-5 w-5" />
-                          : <TrendingDown className="h-5 w-5" />
-                        }
+                        <CatIcon className="h-5 w-5" />
                       </div>
                       <div>
                         <span className="text-slate-200 font-semibold text-base">{cat.nome}</span>
@@ -133,7 +133,8 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
                       </form>
                     </div>
                   </div>
-                ))
+                  );
+                })
               )}
             </div>
           </Card>
