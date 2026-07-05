@@ -96,43 +96,47 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
                   description="Comece criando uma categoria ao lado para organizar suas movimentações"
                 />
               ) : (
-                categorias.map((cat, index) => {
+                categorias.map((cat) => {
                   const CatIcon = getCategoryIcon(cat.nome);
+
+                  // ✅ NORMALIZAÇÃO CENTRAL (melhor prática)
+                  const isReceita = cat.tipo?.toLowerCase() === "receita";
+
                   return (
-                  <div 
-                    key={cat.id} 
-                    className="px-6 py-4 flex items-center justify-between hover:bg-slate-800/20 transition-all duration-200 group"
-                  >
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center transition-all duration-200 ${
-                        cat.tipo === "receita"
-                          ? "bg-emerald-500/15 text-emerald-400 group-hover:bg-emerald-500/25"
-                          : "bg-rose-500/15 text-rose-400 group-hover:bg-rose-500/25"
-                      }`}>
-                        <CatIcon className="h-5 w-5" />
+                    <div 
+                      key={cat.id} 
+                      className="px-6 py-4 flex items-center justify-between hover:bg-slate-800/20 transition-all duration-200 group"
+                    >
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className={`h-10 w-10 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                          isReceita
+                            ? "bg-emerald-500/15 text-emerald-400 group-hover:bg-emerald-500/25"
+                            : "bg-rose-500/15 text-rose-400 group-hover:bg-rose-500/25"
+                        }`}>
+                          <CatIcon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <span className="text-slate-200 font-semibold text-base">{cat.nome}</span>
+                          <p className="text-xs text-slate-500 mt-0.5 capitalize">{cat.tipo}</p>
+                        </div>
                       </div>
-                      <div>
-                        <span className="text-slate-200 font-semibold text-base">{cat.nome}</span>
-                        <p className="text-xs text-slate-500 mt-0.5 capitalize">{cat.tipo}</p>
+                      
+                      <div className="flex items-center gap-3">
+                        <Badge variant={isReceita ? "success" : "error"} className="text-[10px]">
+                          {cat.tipo}
+                        </Badge>
+                        <form action={deleteCategoria}>
+                          <input type="hidden" name="id" value={cat.id} />
+                          <button 
+                            type="submit"
+                            className="p-2 text-slate-600 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all duration-200 group/btn"
+                            title="Deletar categoria"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </form>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center gap-3">
-                      <Badge variant={cat.tipo === "receita" ? "success" : "error"} className="text-[10px]">
-                        {cat.tipo}
-                      </Badge>
-                      <form action={deleteCategoria}>
-                        <input type="hidden" name="id" value={cat.id} />
-                        <button 
-                          type="submit"
-                          className="p-2 text-slate-600 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all duration-200 group/btn"
-                          title="Deletar categoria"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </form>
-                    </div>
-                  </div>
                   );
                 })
               )}
