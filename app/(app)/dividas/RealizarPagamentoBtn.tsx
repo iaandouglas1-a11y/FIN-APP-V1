@@ -24,10 +24,10 @@ export default function RealizarPagamentoBtn({ pagamentoId, descricao, valor, da
       <button
         type="button"
         onClick={() => setAberto(true)}
-        className="flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-[#5DA832]/15 text-[#5DA832] hover:bg-[#5DA832]/25 border border-[#5DA832]/30 transition-all duration-200"
+        className="p-1 text-slate-600 hover:text-[#5DA832] rounded transition-colors"
+        title="Realizar pagamento"
       >
-        <CheckCircle className="h-3 w-3" />
-        Realizar
+        <CheckCircle className="h-3.5 w-3.5" />
       </button>
     );
   }
