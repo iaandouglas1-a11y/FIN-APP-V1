@@ -266,7 +266,7 @@ export default async function DividasPage() {
                           categoriaId={(p as any).categoria_id}
                         />
                       ) : (
-                        <DesfazerPagamentoBtn pagamentoId={p.id} tipo={p.tipo as "orcado" | "realizado"} />
+                        <DesfazerPagamentoBtn pagamentoId={p.id} tipo={p.tipo} />
                       )}
                       <a href={`/dividas?edit_pag=${p.id}`}
                         className="p-1.5 text-slate-600 hover:text-[#5DA832] rounded-lg transition-colors"
