@@ -11,8 +11,12 @@ export default async function FaturasPage() {
     getContasWithMovs(),
   ]);
 
-  const contas = contasData.contas.map((c) => ({ id: c.id, nome: c.nome }));
-  const today  = new Date();
+  const contas = contasData.contas.map((c) => ({
+    id: c.id,
+    nome: c.nome,
+  }));
+
+  const today = new Date();
 
   return (
     <div className="space-y-6">
@@ -56,7 +60,7 @@ export default async function FaturasPage() {
 
           <div className="flex-1 min-w-[140px]">
             <FormGroup label="Observação (opcional)">
-              <Input name="observacao" className="h-9 text-sm" />
+              <Input name="observacao" placeholder="Ex: Fatura de junho..." className="h-9 text-sm" />
             </FormGroup>
           </div>
 
@@ -67,7 +71,7 @@ export default async function FaturasPage() {
         </form>
       </Card>
 
-      {/* Lista */}
+      {/* Lista de Faturas */}
       <div className="space-y-3">
         {faturas.length === 0 ? (
           <Card className="text-center py-16 border-slate-800/60">
@@ -83,13 +87,17 @@ export default async function FaturasPage() {
           (faturas as any[]).map((f) => {
             const card = (cartoes as any[]).find((c) => c.id === f.cartao_id);
 
-            const expenses = (movimentacoes as any[]).filter((m) => m.fatura_id === f.id);
+            const expenses = (movimentacoes as any[]).filter(
+              (m) => m.fatura_id === f.id
+            );
+
             const total = invoiceTotal(f.id, movimentacoes);
 
             const pago = f.pago === true;
             const venc = new Date(f.data_vencimento);
 
             const isOverdue = venc < today && !pago;
+
             const isDue =
               !pago &&
               Math.abs(venc.getTime() - today.getTime()) <
@@ -101,7 +109,7 @@ export default async function FaturasPage() {
                 faturaId={f.id}
                 cartaoId={f.cartao_id}
                 cartaoNome={card?.nome ?? "Cartão"}
-                cartaoLogo={card?.logo_url ?? null} {/* 🔥 AQUI */}
+                cartaoLogo={card?.logo_url ?? null}
                 dataFechamento={f.data_fechamento}
                 dataVencimento={f.data_vencimento}
                 pago={pago}
