@@ -1,5 +1,5 @@
 import { saveConta } from "@/app/(app)/actions";
-import { Card, Button, Input, Select, PageHeader, FormGroup } from "@/components/ui";
+import { Card, Button, Input, Select, FormGroup } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { accountBalance } from "@/lib/finance";
 import { getContasWithMovs } from "@/lib/queries";
@@ -28,12 +28,6 @@ export default async function ContasPage() {
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
-      <PageHeader 
-        title="Bancos e Contas"
-        description="Gerencie seus saldos em diferentes instituições financeiras"
-      />
-
       {/* Nova Conta Card */}
       <Card className="border-[#5DA832]/30 bg-gradient-to-br from-[#5DA832]/10 to-[#5DA832]/5 relative overflow-hidden">
         <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#5DA832]/10 rounded-full blur-3xl" />

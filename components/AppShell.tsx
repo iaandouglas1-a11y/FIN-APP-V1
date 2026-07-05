@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { 
   Menu, X, LayoutDashboard, ArrowUpRight, 
-  CreditCard, Receipt, Wallet, Tags, ChevronRight, ListChecks, Users, TrendingDown
+  Receipt, Wallet, Tags, ChevronRight, ListChecks, Users, TrendingDown
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -27,7 +27,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       group: "Gestão", 
       items: [
         { href: "/contas", label: "Bancos e Contas", icon: Wallet },
-        { href: "/cartoes", label: "Meus Cartões", icon: CreditCard },
         { href: "/faturas", label: "Faturas", icon: Receipt },
         { href: "/listas", label: "Listas", icon: ListChecks },
         { href: "/clientes", label: "Acessos Clientes", icon: Users },
@@ -70,7 +69,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </p>
             <div className="space-y-1.5">
               {group.items.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
                 const Icon = item.icon;
                 return (
                   <Link

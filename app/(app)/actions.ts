@@ -109,8 +109,8 @@ export async function saveCartao(formData: FormData) {
     : await (s.from("cartoes") as any).insert(parsed.data); 
   
   if (result.error) throw new Error(result.error.message); 
-  revalidatePath("/cartoes"); 
-  redirect("/cartoes"); 
+  revalidatePath("/contas/cartoes"); 
+  redirect("/contas/cartoes"); 
 }
 
 // --- Faturas ---
@@ -226,7 +226,7 @@ export async function pagarFatura(formData: FormData) {
   if (fatError) throw new Error(fatError.message);
 
   revalidatePath("/faturas");
-  revalidatePath("/cartoes");
+  revalidatePath("/contas/cartoes");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
   redirect("/faturas");
@@ -263,7 +263,7 @@ export async function cancelarPagamentoFatura(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/faturas");
-  revalidatePath("/cartoes");
+  revalidatePath("/contas/cartoes");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
   redirect("/faturas");
