@@ -72,36 +72,36 @@ export default async function HonorariosPage() {
           <Plus className="h-4 w-4" />
           <span>Lançar Honorário</span>
         </div>
-        <form action={saveHonorario} className="relative z-10 flex flex-wrap items-end gap-2">
-          <div className="flex-1 min-w-[160px]">
+        <form action={saveHonorario} className="relative z-10 grid grid-cols-1 sm:flex sm:flex-wrap sm:items-end gap-3 sm:gap-2">
+          <div className="sm:flex-1 sm:min-w-[160px]">
             <FormGroup label="Cliente">
-              <Select name="cliente_id" required className="h-9 text-sm">
+              <Select name="cliente_id" required className="h-9 text-sm w-full">
                 <option value="">Selecione...</option>
                 {clientes.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
               </Select>
             </FormGroup>
           </div>
-          <div className="w-32 shrink-0">
+          <div className="sm:w-32 sm:shrink-0">
             <FormGroup label="Competência">
               <Input name="competencia" type="month" required defaultValue={mesAtual} className="h-9 w-full block text-sm" />
             </FormGroup>
           </div>
-          <div className="w-28 shrink-0">
+          <div className="sm:w-28 sm:shrink-0">
             <FormGroup label="Valor">
-              <Input name="valor" type="number" step="0.01" min="0" placeholder="0,00" required className="h-9 text-sm" />
+              <Input name="valor" type="number" step="0.01" min="0" placeholder="0,00" required className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <div className="w-36 shrink-0">
+          <div className="sm:w-36 sm:shrink-0">
             <FormGroup label="Vencimento">
               <Input name="vencimento" type="date" required className="h-9 w-full block text-sm" />
             </FormGroup>
           </div>
-          <div className="flex-1 min-w-[140px]">
+          <div className="sm:flex-1 sm:min-w-[140px]">
             <FormGroup label="Observação (opcional)">
-              <Input name="observacao" placeholder="Ex: Honorário contábil..." className="h-9 text-sm" />
+              <Input name="observacao" placeholder="Ex: Honorário contábil..." className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center shrink-0 mb-[1px]">
+          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
             <Plus className="h-4 w-4 mr-1.5" />
             Lançar
           </Button>
