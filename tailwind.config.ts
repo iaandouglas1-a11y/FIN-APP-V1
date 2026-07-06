@@ -17,6 +17,13 @@ const config: Config = {
           "green-light": "#6fc23b",
           "green-dark":  "#4a8828",
         },
+        /* slate-500 padrão (#64748b) tem apenas ~3.7:1 de contraste sobre o
+           fundo #091829 do app — abaixo do mínimo AA (4.5:1) para texto
+           pequeno. É usada em quase 100 lugares (labels, legendas, descrições).
+           Clareamos apenas o degrau 500 para ~6:1, mantendo os demais tons. */
+        slate: {
+          500: "#8b98ac",
+        },
       },
       boxShadow: {
         soft:      "0 8px 24px rgba(13,35,64,.12)",
