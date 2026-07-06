@@ -90,26 +90,26 @@ export default async function InvestimentosPage() {
           <TrendingUp className="h-4 w-4" />
           <span>Atualizar Saldo Mensal</span>
         </div>
-        <form action={saveSaldoMensal} className="flex flex-wrap items-end gap-2">
-          <div className="flex-1 min-w-[140px]">
+        <form action={saveSaldoMensal} className="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-end gap-3 sm:gap-2">
+          <div className="sm:flex-1 sm:min-w-[140px]">
             <FormGroup label="Investimento">
-              <Select name="investimento_id" required className="h-9 text-sm">
+              <Select name="investimento_id" required className="h-9 text-sm w-full">
                 <option value="">Selecione...</option>
                 {investimentos.map(i => <option key={i.id} value={i.id}>{i.nome}</option>)}
               </Select>
             </FormGroup>
           </div>
-          <div className="w-36 shrink-0">
+          <div className="sm:w-36 sm:shrink-0">
             <FormGroup label="Mês">
               <Input name="mes" type="month" required defaultValue={mesAtual} className="h-9 w-full block text-sm" />
             </FormGroup>
           </div>
-          <div className="w-32 shrink-0">
+          <div className="sm:w-32 sm:shrink-0">
             <FormGroup label="Saldo">
-              <Input name="saldo" type="number" step="0.01" min="0" placeholder="0,00" required className="h-9 text-sm" />
+              <Input name="saldo" type="number" step="0.01" min="0" placeholder="0,00" required className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center shrink-0 mb-[1px]">
+          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
             <Plus className="h-4 w-4 mr-1.5" />
             Salvar
           </Button>
@@ -126,39 +126,39 @@ export default async function InvestimentosPage() {
           <Plus className="h-4 w-4" />
           <span>Novo Investimento</span>
         </div>
-        <form action={saveInvestimento} className="relative z-10 flex flex-wrap items-end gap-2">
-          <div className="flex-1 min-w-[140px]">
+        <form action={saveInvestimento} className="relative z-10 grid grid-cols-1 sm:flex sm:flex-wrap sm:items-end gap-3 sm:gap-2">
+          <div className="sm:flex-1 sm:min-w-[140px]">
             <FormGroup label="Nome">
-              <Input name="nome" placeholder="Ex: CDB Nubank, PETR4..." required className="h-9 text-sm" />
+              <Input name="nome" placeholder="Ex: CDB Nubank, PETR4..." required className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <div className="w-36 shrink-0">
+          <div className="sm:w-36 sm:shrink-0">
             <FormGroup label="Tipo">
-              <Select name="tipo" required className="h-9 text-sm">
+              <Select name="tipo" required className="h-9 text-sm w-full">
                 <option value="renda_fixa">Renda Fixa</option>
                 <option value="renda_variavel">Renda Variável</option>
               </Select>
             </FormGroup>
           </div>
-          <div className="w-24 shrink-0">
+          <div className="sm:w-24 sm:shrink-0">
             <FormGroup label="Ticker">
-              <Input name="ticker" placeholder="PETR4" className="h-9 text-sm font-mono" />
+              <Input name="ticker" placeholder="PETR4" className="h-9 text-sm font-mono w-full" />
             </FormGroup>
           </div>
-          <div className="w-36 shrink-0">
+          <div className="sm:w-36 sm:shrink-0">
             <FormGroup label="Conta">
-              <Select name="conta_id" className="h-9 text-sm">
+              <Select name="conta_id" className="h-9 text-sm w-full">
                 <option value="">Nenhuma</option>
                 {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
               </Select>
             </FormGroup>
           </div>
-          <div className="w-28 shrink-0">
+          <div className="sm:w-28 sm:shrink-0">
             <FormGroup label="Valor Atual">
-              <Input name="valor_atual" type="number" step="0.01" min="0" placeholder="0,00" className="h-9 text-sm" />
+              <Input name="valor_atual" type="number" step="0.01" min="0" placeholder="0,00" className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center shrink-0 mb-[1px]">
+          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
             <Plus className="h-4 w-4 mr-1.5" />
             Adicionar
           </Button>
@@ -171,47 +171,47 @@ export default async function InvestimentosPage() {
           <BarChart3 className="h-4 w-4" />
           <span>Registrar Aporte / Resgate</span>
         </div>
-        <form action={saveMovimento} className="flex flex-wrap items-end gap-2">
-          <div className="flex-1 min-w-[140px]">
+        <form action={saveMovimento} className="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-end gap-3 sm:gap-2">
+          <div className="sm:flex-1 sm:min-w-[140px]">
             <FormGroup label="Investimento">
-              <Select name="investimento_id" required className="h-9 text-sm">
+              <Select name="investimento_id" required className="h-9 text-sm w-full">
                 <option value="">Selecione...</option>
                 {investimentos.map(i => <option key={i.id} value={i.id}>{i.nome}</option>)}
               </Select>
             </FormGroup>
           </div>
-          <div className="w-28 shrink-0">
+          <div className="sm:w-28 sm:shrink-0">
             <FormGroup label="Tipo">
-              <Select name="tipo" required className="h-9 text-sm">
+              <Select name="tipo" required className="h-9 text-sm w-full">
                 <option value="aporte">Aporte</option>
                 <option value="resgate">Resgate</option>
               </Select>
             </FormGroup>
           </div>
-          <div className="w-28 shrink-0">
+          <div className="sm:w-28 sm:shrink-0">
             <FormGroup label="Valor">
-              <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="h-9 text-sm" />
+              <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <div className="w-32 shrink-0">
+          <div className="sm:w-32 sm:shrink-0">
             <FormGroup label="Data">
               <Input name="data" type="date" required className="h-9 w-full block text-sm" />
             </FormGroup>
           </div>
-          <div className="flex-1 min-w-[120px]">
+          <div className="sm:flex-1 sm:min-w-[120px]">
             <FormGroup label="Descrição">
-              <Input name="descricao" placeholder="Opcional..." className="h-9 text-sm" />
+              <Input name="descricao" placeholder="Opcional..." className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <div className="w-32 shrink-0">
+          <div className="sm:w-32 sm:shrink-0">
             <FormGroup label="Conta">
-              <Select name="conta_id" className="h-9 text-sm">
+              <Select name="conta_id" className="h-9 text-sm w-full">
                 <option value="">Nenhuma</option>
                 {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
               </Select>
             </FormGroup>
           </div>
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center shrink-0 mb-[1px]">
+          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
             <Plus className="h-4 w-4 mr-1.5" />
             Registrar
           </Button>
