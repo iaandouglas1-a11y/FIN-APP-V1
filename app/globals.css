@@ -49,7 +49,46 @@ body {
   .input-modern[type="date"],
   .input-modern[type="month"] {
     color-scheme: dark;
+    -webkit-appearance: none;
+    appearance: none;
     @apply flex items-center py-0; /* Garante que o texto interno não cause overflow vertical */
+  }
+
+  /* Corrige alinhamento vertical do texto da data dentro do input */
+  .input-modern[type="date"]::-webkit-datetime-edit,
+  .input-modern[type="month"]::-webkit-datetime-edit {
+    flex: 1 1 auto;
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-modern[type="date"]::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+
+  /* O ícone nativo do calendário é escuro e some no fundo escuro do app.
+     Forçamos tamanho fixo, alinhamento à direita e uma cor visível (verde da marca). */
+  .input-modern[type="date"]::-webkit-calendar-picker-indicator,
+  .input-modern[type="month"]::-webkit-calendar-picker-indicator {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    margin: 0 0 0 8px;
+    padding: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    opacity: 0.9;
+    /* Deixa o ícone nativo (preto) visível em tom esverdeado sobre fundo escuro */
+    filter: invert(64%) sepia(53%) saturate(496%) hue-rotate(48deg) brightness(95%) contrast(92%);
+    background-size: 16px 16px;
+  }
+
+  /* Remove botão nativo de "limpar" que o Chrome/Android insere e que desalinha o campo */
+  .input-modern[type="date"]::-webkit-clear-button,
+  .input-modern[type="month"]::-webkit-clear-button {
+    display: none;
   }
 
   /* Select específico */
