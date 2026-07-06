@@ -62,37 +62,37 @@ export default async function DividasPage() {
           <Plus className="h-4 w-4" />
           <span>Nova Dívida</span>
         </div>
-        <form action={saveDivida} className="relative z-10 flex flex-wrap items-end gap-2">
-          <div className="w-32 shrink-0">
+        <form action={saveDivida} className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2 items-end">
+          <div className="col-span-1">
             <FormGroup label="Data">
               <Input name="data" type="date" required className="h-9 w-full block text-sm" />
             </FormGroup>
           </div>
-          <div className="flex-1 min-w-[140px]">
+          <div className="col-span-1 sm:col-span-1">
             <FormGroup label="Descrição">
-              <Input name="descricao" placeholder="Ex: Celular, Empréstimo..." required className="h-9 text-sm" />
+              <Input name="descricao" placeholder="Ex: Celular, Empréstimo..." required className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <div className="w-28 shrink-0">
+          <div className="col-span-1">
             <FormGroup label="Valor Total">
-              <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="h-9 text-sm" />
+              <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <div className="flex-1 min-w-[120px]">
+          <div className="col-span-1 sm:col-span-1">
             <FormGroup label="Observação">
-              <Input name="observacao" placeholder="Ex: 10x R$ 140,00" className="h-9 text-sm" />
+              <Input name="observacao" placeholder="Ex: 10x R$ 140,00" className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <div className="w-36 shrink-0">
+          <div className="col-span-1">
             <FormGroup label="Categoria">
-              <Select name="categoria_id" className="h-9 text-sm">
+              <Select name="categoria_id" className="h-9 text-sm w-full">
                 <option value="">Sem categoria</option>
                 {categoriasDespesa.map((cat) => <option key={cat.id} value={cat.id}>{cat.nome}</option>)}
               </Select>
             </FormGroup>
           </div>
           <input type="hidden" name="situacao" value="pendente" />
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center shrink-0 mb-[1px]">
+          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center shrink-0 col-span-1">
             <Plus className="h-4 w-4 mr-1.5" />
             Adicionar
           </Button>
@@ -177,47 +177,47 @@ export default async function DividasPage() {
 
         {/* Form novo pagamento */}
         <div className="px-4 py-3 border-b border-slate-800/40 bg-[#0D2340]/30">
-          <form action={savePagamento} className="flex flex-wrap items-end gap-2">
-            <div className="w-32 shrink-0">
+          <form action={savePagamento} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-2 items-end">
+            <div className="col-span-1">
               <FormGroup label="Data">
                 <Input name="data" type="date" required className="h-9 w-full block text-sm" />
               </FormGroup>
             </div>
-            <div className="flex-1 min-w-[140px]">
+            <div className="col-span-1 sm:col-span-1">
               <FormGroup label="Descrição">
-                <Input name="descricao" placeholder="Ex: Gasolina, Cerveja..." required className="h-9 text-sm" />
+                <Input name="descricao" placeholder="Ex: Gasolina, Cerveja..." required className="h-9 text-sm w-full" />
               </FormGroup>
             </div>
-            <div className="w-24 shrink-0">
+            <div className="col-span-1">
               <FormGroup label="Valor">
-                <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="h-9 text-sm" />
+                <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="h-9 text-sm w-full" />
               </FormGroup>
             </div>
-            <div className="w-28 shrink-0">
+            <div className="col-span-1">
               <FormGroup label="Tipo">
-                <Select name="tipo" required className="h-9 text-sm">
+                <Select name="tipo" required className="h-9 text-sm w-full">
                   <option value="orcado">Orçado</option>
                   <option value="realizado">Realizado</option>
                 </Select>
               </FormGroup>
             </div>
-            <div className="w-32 shrink-0">
+            <div className="col-span-1">
               <FormGroup label="Conta">
-                <Select name="conta_id" className="h-9 text-sm">
+                <Select name="conta_id" className="h-9 text-sm w-full">
                   <option value="">Nenhuma</option>
                   {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
                 </Select>
               </FormGroup>
             </div>
-            <div className="w-36 shrink-0">
+            <div className="col-span-1 sm:col-span-1">
               <FormGroup label="Categoria">
-                <Select name="categoria_id" className="h-9 text-sm">
+                <Select name="categoria_id" className="h-9 text-sm w-full">
                   <option value="">Sem categoria</option>
                   {categoriasDespesa.map((cat) => <option key={cat.id} value={cat.id}>{cat.nome}</option>)}
                 </Select>
               </FormGroup>
             </div>
-            <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center shrink-0 mb-[1px]">
+            <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center shrink-0 col-span-1">
               <Plus className="h-4 w-4 mr-1.5" />
               Adicionar
             </Button>
