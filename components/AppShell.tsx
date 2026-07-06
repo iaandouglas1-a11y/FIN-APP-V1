@@ -46,7 +46,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-[#0D2340] border-r border-[#142d52]/80">
       <div className="p-4 border-b border-[#142d52]/80">
-        <div className="flex items-center gap-3 group cursor-pointer">
+        <div className={clsx(
+          "flex items-center gap-3 group cursor-pointer",
+          !isSidebarOpen && "md:justify-center md:gap-0"
+        )}>
           <div className="h-10 w-10 rounded-xl overflow-hidden shrink-0">
             <Image src="/icon-512.png" alt="On Finanças" width={40} height={40} className="rounded-xl" />
           </div>
@@ -80,10 +83,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     onClick={() => setIsMobileOpen(false)}
                     className={clsx(
                       "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group/nav relative overflow-hidden",
+                      !isSidebarOpen && "md:justify-center md:px-0 md:gap-0",
                       isActive 
                         ? "bg-[#5DA832]/15 text-[#6fc23b] border border-[#5DA832]/30" 
                         : "text-slate-400 hover:bg-[#142d52]/60 hover:text-slate-200 border border-transparent hover:border-[#1e3a66]/40"
                     )}
+                    title={!isSidebarOpen ? item.label : undefined}
                   >
                     <Icon className={clsx(
                       "h-5 w-5 shrink-0 transition-all duration-200",
