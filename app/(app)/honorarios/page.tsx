@@ -83,7 +83,13 @@ export default async function HonorariosPage() {
           {/* Linha 2: Competência | Valor */}
           <div className="grid grid-cols-2 gap-2">
             <FormGroup label="Competência">
-              <Input name="competencia" type="month" required defaultValue={mesAtual} className="h-9 w-full block text-sm appearance-none" />
+              <Select name="competencia" required className="h-9 text-sm w-full" defaultValue={mesAtual}>
+                {Array.from({ length: 12 }, (_, i) => {
+                  const d = new Date(); d.setMonth(i);
+                  const val = `${new Date().getFullYear()}-${String(i+1).padStart(2,"0")}`;
+                  return <option key={val} value={val}>{d.toLocaleDateString("pt-BR",{month:"long"})} {new Date().getFullYear()}</option>;
+                })}
+              </Select>
             </FormGroup>
             <FormGroup label="Valor">
               <Input name="valor" type="number" step="0.01" min="0" placeholder="0,00" required className="h-9 text-sm w-full" />
