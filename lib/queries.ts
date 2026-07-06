@@ -173,3 +173,22 @@ export async function getInvestimentoSaldos() {
   if (error) throw error;
   return { saldos: (data || []) as InvestimentoSaldo[] };
 }
+
+// ── Honorários ─────────────────────────────────────────────
+import type { Honorario } from "@/types/database";
+import type { Cliente } from "@/types/database";
+
+export async function getHonorarios() {
+  noStore();
+  const s = await createServerSupabaseClient();
+  const [honorariosRes, clientesRes] = await Promise.all([
+    s.from("honorarios").select("*").order("vencimento", { ascending: true }),
+    s.from("clientes").select("id, nome").order("nome"),
+  ]);
+  if (honorariosRes.error) throw honorariosRes.error;
+  if (clientesRes.error) throw clientesRes.error;
+  return {
+    honorarios: (honorariosRes.data || []) as Honorario[],
+    clientes:   (clientesRes.data || []) as Pick<Cliente, "id" | "nome">[],
+  };
+}
