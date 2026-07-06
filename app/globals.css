@@ -50,7 +50,12 @@ body {
   .input-modern[type="month"] {
     @apply appearance-none;
     color-scheme: dark;
-    line-height: normal;
+    line-height: 1;
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 2.25rem; /* h-9 = 36px */
+    display: flex;
+    align-items: center;
   }
 
   /* Select */
