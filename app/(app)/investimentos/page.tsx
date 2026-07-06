@@ -99,7 +99,7 @@ export default async function InvestimentosPage() {
           </FormGroup>
           <div className="grid grid-cols-2 gap-2">
             <FormGroup label="Mês">
-              <Input name="mes" type="month" required defaultValue={mesAtual} className="h-9 w-full block text-sm" />
+              <Input name="mes" type="month" required defaultValue={mesAtual} className="h-9 w-full block text-sm appearance-none" />
             </FormGroup>
             <FormGroup label="Saldo">
               <Input name="saldo" type="number" step="0.01" min="0" placeholder="0,00" required className="h-9 text-sm w-full" />
