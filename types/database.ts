@@ -98,3 +98,25 @@ export interface DividaPagamento {
   categoria_id: string | null;
   created_at: string;
 }
+
+// ── Investimentos ─────────────────────────────────────────
+export interface Investimento {
+  id: string;
+  nome: string;
+  tipo: "renda_fixa" | "renda_variavel";
+  ticker: string | null;
+  conta_id: string | null;
+  valor_atual: number;
+  created_at: string;
+}
+
+export interface InvestimentoMovimento {
+  id: string;
+  investimento_id: string;
+  tipo: "aporte" | "resgate";
+  valor: number;
+  data: string;
+  descricao: string | null;
+  movimentacao_id: string | null;
+  created_at: string;
+}
