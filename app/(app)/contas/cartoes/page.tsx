@@ -22,7 +22,7 @@ export default async function CartoesPage() {
           <span>Adicionar Novo Cartão</span>
         </div>
         
-        <form action={saveCartao} className="grid gap-4 md:grid-cols-[1fr_160px_1fr_1fr_auto] relative z-10">
+        <form action={saveCartao} className="grid gap-4 md:grid-cols-[1fr_160px_1fr_auto] relative z-10">
           <FormGroup>
             <Input name="nome" placeholder="Nome do cartão" required className="h-9" />
           </FormGroup>
@@ -36,10 +36,6 @@ export default async function CartoesPage() {
               <option value="">Conta de pagamento</option>
               {contas.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </Select>
-          </FormGroup>
-
-          <FormGroup label="Logo (opcional)">
-            <Input name="logo" type="file" className="h-9 text-xs" />
           </FormGroup>
           
           <div className="flex items-end">
@@ -121,10 +117,6 @@ export default async function CartoesPage() {
                       <Check className="h-4 w-4" />
                     </Button>
                   </div>
-                </FormGroup>
-
-                <FormGroup label="Trocar logo">
-                  <Input name="logo" type="file" className="h-9 text-xs" />
                 </FormGroup>
               </form>
             </Card>
