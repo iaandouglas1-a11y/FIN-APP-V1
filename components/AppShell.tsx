@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { 
   Menu, X, LayoutDashboard, ArrowUpRight, 
-  Receipt, Wallet, Tags, ChevronRight, ListChecks, Users, TrendingDown
+  Receipt, Wallet, Tags, ChevronRight, ListChecks, Users, TrendingDown, TrendingUp
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
