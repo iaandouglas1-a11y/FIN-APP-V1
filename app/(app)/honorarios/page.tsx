@@ -98,7 +98,7 @@ export default async function HonorariosPage() {
           {/* Linha 3: Vencimento | Observação */}
           <div className="grid grid-cols-2 gap-2">
             <FormGroup label="Vencimento">
-              <Input name="vencimento" type="date" required className="h-9 w-full block text-sm" />
+              <Input name="vencimento" type="date" required className="h-9 w-full text-sm" />
             </FormGroup>
             <FormGroup label="Observação">
               <Input name="observacao" placeholder="Ex: Honorário contábil..." className="h-9 text-sm w-full" />
