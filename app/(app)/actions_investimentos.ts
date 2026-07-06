@@ -47,6 +47,48 @@ export async function deleteInvestimento(formData: FormData) {
   revalidatePath("/investimentos");
 }
 
+// ── Saldos mensais (evolução) ──────────────────────────────
+const saldoMensalSchema = z.object({
+  investimento_id: z.string().uuid("Investimento inválido"),
+  mes:             z.string().min(7, "Mês inválido"), // formato yyyy-MM (input type="month")
+  saldo:           z.coerce.number().nonnegative("Valor inválido"),
+});
+
+export async function saveSaldoMensal(formData: FormData) {
+  const parsed = saldoMensalSchema.safeParse(entries(formData));
+  if (!parsed.success) throw new Error(parsed.error.errors[0].message);
+
+  const s = await createServerSupabaseClient();
+  const mesCompleto = `${parsed.data.mes}-01`; // yyyy-MM -> yyyy-MM-01
+
+  const { error } = await (s.from("investimento_saldos") as any)
+    .upsert(
+      {
+        investimento_id: parsed.data.investimento_id,
+        mes:             mesCompleto,
+        saldo:           parsed.data.saldo,
+      },
+      { onConflict: "investimento_id,mes" }
+    );
+  if (error) throw new Error(error.message);
+
+  // Atualiza também o valor_atual do investimento com o saldo informado
+  await (s.from("investimentos") as any)
+    .update({ valor_atual: parsed.data.saldo })
+    .eq("id", parsed.data.investimento_id);
+
+  revalidatePath("/investimentos");
+  redirect("/investimentos");
+}
+
+export async function deleteSaldoMensal(formData: FormData) {
+  const id = String(formData.get("id"));
+  const s  = await createServerSupabaseClient();
+  const { error } = await (s.from("investimento_saldos") as any).delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/investimentos");
+}
+
 export async function atualizarValorAtual(formData: FormData) {
   const id          = String(formData.get("id"));
   const valor_atual = Number(formData.get("valor_atual"));
