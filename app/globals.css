@@ -140,6 +140,19 @@ body {
   .transition-smooth {
     @apply transition-all duration-300 ease-out;
   }
+
+  /* Foco visível (apenas navegação por teclado) — antes não havia nenhum
+     indicador de foco custom, então botões/links/inputs ficavam sem
+     feedback visual para quem navega via Tab. */
+  .btn-primary:focus-visible,
+  .btn-secondary:focus-visible {
+    @apply ring-2 ring-[#5DA832]/60 ring-offset-2 ring-offset-[#091829] outline-none;
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    @apply outline-none ring-2 ring-[#5DA832]/50 ring-offset-2 ring-offset-[#091829] rounded-lg;
+  }
 }
 
 /* Scrollbar */
