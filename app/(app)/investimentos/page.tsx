@@ -90,8 +90,8 @@ export default async function InvestimentosPage() {
           <TrendingUp className="h-4 w-4" />
           <span>Atualizar Saldo Mensal</span>
         </div>
-        <form action={saveSaldoMensal} className="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-end gap-3 sm:gap-2">
-          <div className="sm:flex-1 sm:min-w-[140px]">
+        <form action={saveSaldoMensal} className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-end gap-2">
+          <div className="col-span-2 sm:flex-1 sm:min-w-[140px]">
             <FormGroup label="Investimento">
               <Select name="investimento_id" required className="h-9 text-sm w-full">
                 <option value="">Selecione...</option>
@@ -109,7 +109,7 @@ export default async function InvestimentosPage() {
               <Input name="saldo" type="number" step="0.01" min="0" placeholder="0,00" required className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
+          <Button type="submit" className="col-span-2 h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
             <Plus className="h-4 w-4 mr-1.5" />
             Salvar
           </Button>
@@ -126,8 +126,8 @@ export default async function InvestimentosPage() {
           <Plus className="h-4 w-4" />
           <span>Novo Investimento</span>
         </div>
-        <form action={saveInvestimento} className="relative z-10 grid grid-cols-1 sm:flex sm:flex-wrap sm:items-end gap-3 sm:gap-2">
-          <div className="sm:flex-1 sm:min-w-[140px]">
+        <form action={saveInvestimento} className="relative z-10 grid grid-cols-2 sm:flex sm:flex-wrap sm:items-end gap-2">
+          <div className="col-span-2 sm:flex-1 sm:min-w-[140px]">
             <FormGroup label="Nome">
               <Input name="nome" placeholder="Ex: CDB Nubank, PETR4..." required className="h-9 text-sm w-full" />
             </FormGroup>
@@ -158,7 +158,7 @@ export default async function InvestimentosPage() {
               <Input name="valor_atual" type="number" step="0.01" min="0" placeholder="0,00" className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
+          <Button type="submit" className="col-span-2 h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
             <Plus className="h-4 w-4 mr-1.5" />
             Adicionar
           </Button>
@@ -171,8 +171,8 @@ export default async function InvestimentosPage() {
           <BarChart3 className="h-4 w-4" />
           <span>Registrar Aporte / Resgate</span>
         </div>
-        <form action={saveMovimento} className="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-end gap-3 sm:gap-2">
-          <div className="sm:flex-1 sm:min-w-[140px]">
+        <form action={saveMovimento} className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-end gap-2">
+          <div className="col-span-2 sm:flex-1 sm:min-w-[140px]">
             <FormGroup label="Investimento">
               <Select name="investimento_id" required className="h-9 text-sm w-full">
                 <option value="">Selecione...</option>
@@ -198,7 +198,7 @@ export default async function InvestimentosPage() {
               <Input name="data" type="date" required className="h-9 w-full block text-sm" />
             </FormGroup>
           </div>
-          <div className="sm:flex-1 sm:min-w-[120px]">
+          <div className="col-span-2 sm:flex-1 sm:min-w-[120px]">
             <FormGroup label="Descrição">
               <Input name="descricao" placeholder="Opcional..." className="h-9 text-sm w-full" />
             </FormGroup>
@@ -211,7 +211,7 @@ export default async function InvestimentosPage() {
               </Select>
             </FormGroup>
           </div>
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
+          <Button type="submit" className="col-span-2 h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
             <Plus className="h-4 w-4 mr-1.5" />
             Registrar
           </Button>
