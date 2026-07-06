@@ -63,6 +63,21 @@ export interface Cliente {
   created_at: string;
 }
 
+// ── Honorários ────────────────────────────────────────────
+export interface Honorario {
+  id: string;
+  cliente_id: string;
+  competencia: string;      // primeiro dia do mês, ex: "2026-07-01"
+  valor: number;
+  vencimento: string;
+  pago: boolean;
+  pago_em: string | null;
+  conta_id: string | null;
+  movimentacao_id: string | null;
+  observacao: string | null;
+  created_at: string;
+}
+
 // ── Fatura estendida (com campos de pagamento) ────────────
 export interface FaturaExtendida {
   id: string;
