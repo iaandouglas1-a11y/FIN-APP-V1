@@ -48,15 +48,15 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
         </div>
         <form action={saveMovimentacao} className="relative z-10 space-y-2">
           {/* Linha 1: Tipo | Categoria | Valor | Data */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 items-end">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 items-end">
             <FormGroup label="Tipo">
-              <Select name="tipo" required className="h-10 text-sm">
+              <Select name="tipo" required className="h-10 text-sm w-full">
                 <option value="despesa">Despesa</option>
                 <option value="receita">Receita</option>
               </Select>
             </FormGroup>
             <FormGroup label="Categoria">
-              <Select name="categoria_id" required className="h-10 text-sm">
+              <Select name="categoria_id" required className="h-10 text-sm w-full">
                 <option value="">Selecione...</option>
                 {categorias.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
               </Select>
@@ -72,21 +72,21 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
             </FormGroup>
           </div>
           {/* Linha 2: Conta | Cartão | Fatura | Botão */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 items-end">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 items-end">
             <FormGroup label="Conta / Origem">
-              <Select name="conta_id" className="h-10 text-sm">
+              <Select name="conta_id" className="h-10 text-sm w-full">
                 <option value="">Nenhuma</option>
                 {contasData.contas.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
               </Select>
             </FormGroup>
             <FormGroup label="Cartão">
-              <Select name="cartao_id" className="h-10 text-sm">
+              <Select name="cartao_id" className="h-10 text-sm w-full">
                 <option value="">Nenhum</option>
                 {cardsData.cartoes.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
               </Select>
             </FormGroup>
             <FormGroup label="Fatura">
-              <Select name="fatura_id" className="h-10 text-sm">
+              <Select name="fatura_id" className="h-10 text-sm w-full">
                 <option value="">Nenhuma</option>
                 {cardsData.faturas.map((f) => <option key={f.id} value={f.id}>{f.data_vencimento}</option>)}
               </Select>
@@ -130,10 +130,10 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
         {/* Linha 2: form de período + tipo + categoria + botão */}
         <form className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           {/* Datas */}
-          <div className="flex items-center gap-2 flex-1">
-            <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-9 flex-1 min-w-0 block text-xs" />
-            <span className="text-slate-600 text-xs shrink-0">até</span>
-            <Input type="date" name="fim" defaultValue={sp.fim} className="h-9 flex-1 min-w-0 block text-xs" />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
+            <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-9 flex-1 min-w-0 block text-xs w-full" />
+            <span className="text-slate-600 text-xs shrink-0 hidden sm:inline">até</span>
+            <Input type="date" name="fim" defaultValue={sp.fim} className="h-9 flex-1 min-w-0 block text-xs w-full" />
           </div>
           {/* Tipo + Categoria */}
           <div className="flex gap-2">
