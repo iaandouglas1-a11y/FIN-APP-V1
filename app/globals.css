@@ -49,6 +49,8 @@ body {
   .input-modern[type="date"],
   .input-modern[type="month"] {
     color-scheme: dark;
+    height: auto;
+    min-height: 2.5rem;
   }
 
   /* Select */
