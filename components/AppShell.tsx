@@ -31,6 +31,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         { href: "/listas", label: "Listas", icon: ListChecks },
         { href: "/clientes", label: "Acessos Clientes", icon: Users },
         { href: "/dividas", label: "Dívidas", icon: TrendingDown },
+        { href: "/investimentos", label: "Investimentos", icon: TrendingUp },
       ]
     },
     { 
