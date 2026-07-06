@@ -1,0 +1,183 @@
+import { getInvestimentos, getContasWithMovs, getCategorias } from "@/lib/queries";
+import { saveInvestimento, deleteInvestimento, saveMovimento } from "@/app/(app)/actions_investimentos";
+import { Card, Button, Input, Select, PageHeader, FormGroup } from "@/components/ui";
+import { currency } from "@/lib/format";
+import { TrendingUp, Plus, Trash2, BarChart3 } from "lucide-react";
+import InvestimentoAccordion from "./InvestimentoAccordion";
+
+export default async function InvestimentosPage() {
+  const [{ investimentos, movimentos }, { contas }] = await Promise.all([
+    getInvestimentos(),
+    getContasWithMovs(),
+  ]);
+
+  const contasList = contas.map(c => ({ id: c.id, nome: c.nome }));
+
+  // Resumo geral
+  const totalAtual     = investimentos.reduce((s, i) => s + Number(i.valor_atual), 0);
+  const totalAportado  = movimentos.filter(m => m.tipo === "aporte").reduce((s, m) => s + Number(m.valor), 0);
+  const totalResgatado = movimentos.filter(m => m.tipo === "resgate").reduce((s, m) => s + Number(m.valor), 0);
+  const totalInvestido = totalAportado - totalResgatado;
+  const rentTotal      = totalInvestido > 0 ? ((totalAtual - totalInvestido) / totalInvestido) * 100 : 0;
+  const positivo       = rentTotal >= 0;
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="Investimentos"
+        description="Acompanhe seus aportes, resgates e rentabilidade"
+      />
+
+      {/* Resumo */}
+      <div className="grid grid-cols-3 gap-3">
+        <Card className="border-slate-700/40 p-4 flex flex-col justify-between min-h-[80px]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 leading-tight">Total Investido</p>
+          <p className="text-base sm:text-lg font-bold text-white mt-2 tabular-nums">{currency(totalInvestido)}</p>
+        </Card>
+        <Card className="border-[#5DA832]/20 bg-[#5DA832]/5 p-4 flex flex-col justify-between min-h-[80px]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#5DA832]/70 leading-tight">Valor Atual</p>
+          <p className="text-base sm:text-lg font-bold text-[#5DA832] mt-2 tabular-nums">{currency(totalAtual)}</p>
+        </Card>
+        <Card className={`p-4 flex flex-col justify-between min-h-[80px] border ${positivo ? "border-[#5DA832]/20 bg-[#5DA832]/5" : "border-rose-500/20 bg-rose-500/5"}`}>
+          <p className={`text-[10px] font-bold uppercase tracking-widest leading-tight ${positivo ? "text-[#5DA832]/70" : "text-rose-400/70"}`}>Rentabilidade</p>
+          <p className={`text-base sm:text-lg font-bold mt-2 tabular-nums ${positivo ? "text-[#5DA832]" : "text-rose-400"}`}>
+            {positivo ? "+" : ""}{rentTotal.toFixed(2)}%
+          </p>
+        </Card>
+      </div>
+
+      {/* Formulário novo investimento */}
+      <Card className="border-[#5DA832]/30 bg-gradient-to-br from-[#5DA832]/10 to-[#5DA832]/5 relative overflow-hidden">
+        <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#5DA832]/10 rounded-full blur-3xl" />
+        <div className="flex items-center gap-2 mb-4 text-[#5DA832] font-bold uppercase text-xs tracking-widest relative z-10">
+          <Plus className="h-4 w-4" />
+          <span>Novo Investimento</span>
+        </div>
+        <form action={saveInvestimento} className="relative z-10 flex flex-wrap items-end gap-2">
+          <div className="flex-1 min-w-[140px]">
+            <FormGroup label="Nome">
+              <Input name="nome" placeholder="Ex: CDB Nubank, PETR4..." required className="h-9 text-sm" />
+            </FormGroup>
+          </div>
+          <div className="w-36 shrink-0">
+            <FormGroup label="Tipo">
+              <Select name="tipo" required className="h-9 text-sm">
+                <option value="renda_fixa">Renda Fixa</option>
+                <option value="renda_variavel">Renda Variável</option>
+              </Select>
+            </FormGroup>
+          </div>
+          <div className="w-24 shrink-0">
+            <FormGroup label="Ticker">
+              <Input name="ticker" placeholder="PETR4" className="h-9 text-sm font-mono" />
+            </FormGroup>
+          </div>
+          <div className="w-36 shrink-0">
+            <FormGroup label="Conta">
+              <Select name="conta_id" className="h-9 text-sm">
+                <option value="">Nenhuma</option>
+                {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+              </Select>
+            </FormGroup>
+          </div>
+          <div className="w-28 shrink-0">
+            <FormGroup label="Valor Atual">
+              <Input name="valor_atual" type="number" step="0.01" min="0" placeholder="0,00" className="h-9 text-sm" />
+            </FormGroup>
+          </div>
+          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center shrink-0 mb-[1px]">
+            <Plus className="h-4 w-4 mr-1.5" />
+            Adicionar
+          </Button>
+        </form>
+      </Card>
+
+      {/* Formulário aporte/resgate */}
+      <Card className="border-slate-800/60 p-4">
+        <div className="flex items-center gap-2 mb-4 text-slate-400 font-bold uppercase text-xs tracking-widest">
+          <BarChart3 className="h-4 w-4" />
+          <span>Registrar Aporte / Resgate</span>
+        </div>
+        <form action={saveMovimento} className="flex flex-wrap items-end gap-2">
+          <div className="flex-1 min-w-[140px]">
+            <FormGroup label="Investimento">
+              <Select name="investimento_id" required className="h-9 text-sm">
+                <option value="">Selecione...</option>
+                {investimentos.map(i => <option key={i.id} value={i.id}>{i.nome}</option>)}
+              </Select>
+            </FormGroup>
+          </div>
+          <div className="w-28 shrink-0">
+            <FormGroup label="Tipo">
+              <Select name="tipo" required className="h-9 text-sm">
+                <option value="aporte">Aporte</option>
+                <option value="resgate">Resgate</option>
+              </Select>
+            </FormGroup>
+          </div>
+          <div className="w-28 shrink-0">
+            <FormGroup label="Valor">
+              <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="h-9 text-sm" />
+            </FormGroup>
+          </div>
+          <div className="w-32 shrink-0">
+            <FormGroup label="Data">
+              <Input name="data" type="date" required className="h-9 w-full block text-sm" />
+            </FormGroup>
+          </div>
+          <div className="flex-1 min-w-[120px]">
+            <FormGroup label="Descrição">
+              <Input name="descricao" placeholder="Opcional..." className="h-9 text-sm" />
+            </FormGroup>
+          </div>
+          <div className="w-32 shrink-0">
+            <FormGroup label="Conta">
+              <Select name="conta_id" className="h-9 text-sm">
+                <option value="">Nenhuma</option>
+                {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+              </Select>
+            </FormGroup>
+          </div>
+          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center shrink-0 mb-[1px]">
+            <Plus className="h-4 w-4 mr-1.5" />
+            Registrar
+          </Button>
+        </form>
+      </Card>
+
+      {/* Lista de investimentos */}
+      <div className="space-y-3">
+        {investimentos.length === 0 ? (
+          <Card className="text-center py-16 border-slate-800/60">
+            <TrendingUp className="h-12 w-12 text-slate-600 mx-auto mb-4" />
+            <h3 className="text-base font-semibold text-slate-300 mb-2">Nenhum investimento cadastrado</h3>
+            <p className="text-slate-500 text-sm">Adicione seu primeiro investimento acima</p>
+          </Card>
+        ) : (
+          investimentos.map(inv => {
+            const movInv = movimentos.filter(m => m.investimento_id === inv.id);
+            return (
+              <div key={inv.id} className="relative group/inv">
+                <InvestimentoAccordion
+                  id={inv.id}
+                  nome={inv.nome}
+                  tipo={inv.tipo}
+                  ticker={inv.ticker}
+                  contaNome={inv.contas?.nome ?? null}
+                  valorAtual={Number(inv.valor_atual)}
+                  movimentos={movInv}
+                />
+                <form action={deleteInvestimento} className="absolute top-4 right-14 opacity-0 group-hover/inv:opacity-100 transition-opacity">
+                  <input type="hidden" name="id" value={inv.id} />
+                  <button type="submit" className="p-1.5 text-slate-600 hover:text-rose-400 rounded transition-colors">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </form>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
