@@ -146,7 +146,7 @@ export async function getDividas() {
 }
 
 // ── Investimentos ─────────────────────────────────────────
-import type { Investimento, InvestimentoMovimento } from "@/types/database";
+import type { Investimento, InvestimentoMovimento, InvestimentoSaldo } from "@/types/database";
 
 export async function getInvestimentos() {
   noStore();
@@ -161,4 +161,15 @@ export async function getInvestimentos() {
     investimentos: (invs.data || []) as (Investimento & { contas: { nome: string } | null })[],
     movimentos:    (movs.data || []) as InvestimentoMovimento[],
   };
+}
+
+export async function getInvestimentoSaldos() {
+  noStore();
+  const s = await createServerSupabaseClient();
+  const { data, error } = await s
+    .from("investimento_saldos")
+    .select("*")
+    .order("mes", { ascending: true });
+  if (error) throw error;
+  return { saldos: (data || []) as InvestimentoSaldo[] };
 }
