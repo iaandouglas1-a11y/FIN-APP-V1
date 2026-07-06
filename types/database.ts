@@ -120,3 +120,11 @@ export interface InvestimentoMovimento {
   movimentacao_id: string | null;
   created_at: string;
 }
+
+export interface InvestimentoSaldo {
+  id: string;
+  investimento_id: string;
+  mes: string; // sempre primeiro dia do mês, ex: "2026-07-01"
+  saldo: number;
+  created_at: string;
+}
