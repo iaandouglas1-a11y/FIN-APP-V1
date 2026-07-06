@@ -72,8 +72,8 @@ export default async function HonorariosPage() {
           <Plus className="h-4 w-4" />
           <span>Lançar Honorário</span>
         </div>
-        <form action={saveHonorario} className="relative z-10 grid grid-cols-1 sm:flex sm:flex-wrap sm:items-end gap-3 sm:gap-2">
-          <div className="sm:flex-1 sm:min-w-[160px]">
+        <form action={saveHonorario} className="relative z-10 grid grid-cols-2 sm:flex sm:flex-wrap sm:items-end gap-2">
+          <div className="col-span-2 sm:flex-1 sm:min-w-[160px]">
             <FormGroup label="Cliente">
               <Select name="cliente_id" required className="h-9 text-sm w-full">
                 <option value="">Selecione...</option>
@@ -96,12 +96,12 @@ export default async function HonorariosPage() {
               <Input name="vencimento" type="date" required className="h-9 w-full block text-sm" />
             </FormGroup>
           </div>
-          <div className="sm:flex-1 sm:min-w-[140px]">
+          <div className="col-span-2 sm:flex-1 sm:min-w-[140px]">
             <FormGroup label="Observação (opcional)">
               <Input name="observacao" placeholder="Ex: Honorário contábil..." className="h-9 text-sm w-full" />
             </FormGroup>
           </div>
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
+          <Button type="submit" className="col-span-2 h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full sm:w-auto sm:shrink-0 sm:mb-[1px]">
             <Plus className="h-4 w-4 mr-1.5" />
             Lançar
           </Button>
