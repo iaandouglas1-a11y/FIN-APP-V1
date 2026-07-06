@@ -187,7 +187,7 @@ export default async function InvestimentosPage() {
           </div>
           <div className="grid grid-cols-2 gap-2">
             <FormGroup label="Data">
-              <Input name="data" type="date" required className="h-9 w-full block text-sm" />
+              <Input name="data" type="date" required className="h-9 w-full text-sm" />
             </FormGroup>
             <FormGroup label="Conta">
               <Select name="conta_id" className="h-9 text-sm w-full">
