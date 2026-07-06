@@ -144,3 +144,21 @@ export async function getDividas() {
     pagamentos: (pagamentos.data || []) as DividaPagamento[],
   };
 }
+
+// ── Investimentos ─────────────────────────────────────────
+import type { Investimento, InvestimentoMovimento } from "@/types/database";
+
+export async function getInvestimentos() {
+  noStore();
+  const s = await createServerSupabaseClient();
+  const [invs, movs] = await Promise.all([
+    s.from("investimentos").select("*, contas(nome)").order("nome"),
+    s.from("investimento_movimentos").select("*").order("data", { ascending: false }),
+  ]);
+  if (invs.error) throw invs.error;
+  if (movs.error) throw movs.error;
+  return {
+    investimentos: (invs.data || []) as (Investimento & { contas: { nome: string } | null })[],
+    movimentos:    (movs.data || []) as InvestimentoMovimento[],
+  };
+}
