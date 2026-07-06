@@ -228,6 +228,46 @@ export function EvolutionChart({ data }: any) {
 }
 
 // ======================
+// LINE CHART — EVOLUÇÃO DE INVESTIMENTOS
+// ======================
+export function InvestimentoEvolutionChart({ data }: { data: { mes: string; saldo: number }[] }) {
+  const isMobile = useIsMobile();
+
+  return (
+    <ResponsiveContainer width="100%" height={isMobile ? 260 : 300}>
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" stroke={chartGridColor} opacity={0.5} />
+
+        <XAxis
+          dataKey="mes"
+          tick={{ fill: chartTextColor, fontSize: isMobile ? 11 : 13 }}
+          stroke={chartGridColor}
+        />
+
+        <YAxis
+          tickFormatter={formatCurrency}
+          tick={{ fill: chartTextColor, fontSize: isMobile ? 11 : 13 }}
+          stroke={chartGridColor}
+          width={isMobile ? 60 : 80}
+        />
+
+        <Tooltip content={<CustomTooltip />} />
+
+        <Line
+          type="monotone"
+          dataKey="saldo"
+          name="Patrimônio"
+          stroke="#5DA832"
+          strokeWidth={2}
+          dot={{ fill: "#5DA832", r: 3 }}
+          activeDot={{ r: 5 }}
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+}
+
+// ======================
 // BAR CHART
 // ======================
 export function DreChart({ data }: any) {
