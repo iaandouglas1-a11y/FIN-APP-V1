@@ -33,9 +33,9 @@ export function MetricCard({
   return (
     <div className={clsx("metric-card border bg-gradient-to-br p-6 transition-all duration-300", tones[tone])}>
       <div className="flex items-start justify-between mb-4">
-        <div>
-          <p className="text-sm font-medium opacity-70">{title}</p>
-          <p className="mt-3 text-4xl font-bold tracking-tight">{value}</p>
+        <div className="min-w-0">
+          <p className="text-sm font-medium opacity-70 truncate">{title}</p>
+          <p className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight truncate">{value}</p>
           {change && (
             <p className={clsx("text-xs font-semibold mt-2", trend === "up" ? "text-emerald-400" : "text-rose-400")}>
               {trend === "up" ? "↑" : "↓"} {change}
@@ -43,7 +43,7 @@ export function MetricCard({
           )}
         </div>
         {Icon && (
-          <div className="opacity-20">
+          <div className="opacity-20 shrink-0 ml-3">
             {Icon}
           </div>
         )}
@@ -188,12 +188,12 @@ export function PageHeader({
   action?: React.ReactNode 
 }) {
   return (
-    <div className="flex items-start justify-between mb-8">
-      <div>
-        <h1 className="text-4xl font-bold tracking-tight text-white">{title}</h1>
-        {description && <p className="text-slate-400 mt-2">{description}</p>}
+    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
+      <div className="min-w-0">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">{title}</h1>
+        {description && <p className="text-slate-400 mt-2 text-sm sm:text-base">{description}</p>}
       </div>
-      {action && <div>{action}</div>}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }
