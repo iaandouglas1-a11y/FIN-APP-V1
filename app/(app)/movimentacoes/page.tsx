@@ -50,13 +50,13 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
           {/* Linha 1: Tipo | Categoria | Valor | Data */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 items-end">
             <FormGroup label="Tipo">
-              <Select name="tipo" required className="h-10 text-sm w-full">
+              <Select name="tipo" required className="text-sm">
                 <option value="despesa">Despesa</option>
                 <option value="receita">Receita</option>
               </Select>
             </FormGroup>
             <FormGroup label="Categoria">
-              <Select name="categoria_id" required className="h-10 text-sm w-full">
+              <Select name="categoria_id" required className="text-sm">
                 <option value="">Selecione...</option>
                 {categorias.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
               </Select>
@@ -64,36 +64,36 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
             <FormGroup label="Valor">
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">R$</span>
-                <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="pl-8 h-10 text-sm font-bold w-full block" />
+                <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="pl-8 text-sm font-bold" />
               </div>
             </FormGroup>
             <FormGroup label="Data">
-              <Input name="data" type="date" required className="h-10 text-sm w-full block" />
+              <Input name="data" type="date" required className="text-sm" />
             </FormGroup>
           </div>
           {/* Linha 2: Conta | Cartão | Fatura | Botão */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 items-end">
             <FormGroup label="Conta / Origem">
-              <Select name="conta_id" className="h-10 text-sm w-full">
+              <Select name="conta_id" className="text-sm">
                 <option value="">Nenhuma</option>
                 {contasData.contas.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
               </Select>
             </FormGroup>
             <FormGroup label="Cartão">
-              <Select name="cartao_id" className="h-10 text-sm w-full">
+              <Select name="cartao_id" className="text-sm">
                 <option value="">Nenhum</option>
                 {cardsData.cartoes.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
               </Select>
             </FormGroup>
             <FormGroup label="Fatura">
-              <Select name="fatura_id" className="h-10 text-sm w-full">
+              <Select name="fatura_id" className="text-sm">
                 <option value="">Nenhuma</option>
                 {cardsData.faturas.map((f) => <option key={f.id} value={f.id}>{f.data_vencimento}</option>)}
               </Select>
             </FormGroup>
             {/* hidden status default */}
             <input type="hidden" name="status" value="realizado" />
-            <Button className="h-10 text-sm font-semibold inline-flex items-center justify-center">
+            <Button className="text-sm font-semibold inline-flex items-center justify-center">
               <Plus className="h-4 w-4 mr-1.5" />
               Confirmar
             </Button>
