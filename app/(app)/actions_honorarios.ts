@@ -62,6 +62,7 @@ export async function marcarHonorarioPago(formData: FormData) {
   const contaId  = String(formData.get("conta_id") || "") || null;
   const valor    = Number(formData.get("valor"));
   const clienteNome = String(formData.get("cliente_nome") || "");
+  const dataPagamento = String(formData.get("data_pagamento") || "") || new Date().toISOString().slice(0, 10);
 
   const s = await createServerSupabaseClient();
 
@@ -85,7 +86,7 @@ export async function marcarHonorarioPago(formData: FormData) {
         .insert({
           tipo:         "receita",
           valor,
-          data:         new Date().toISOString().slice(0, 10),
+          data:         dataPagamento,
           categoria_id: catId,
           conta_id:     contaId,
           status:       "realizado",
@@ -100,7 +101,7 @@ export async function marcarHonorarioPago(formData: FormData) {
   const { error } = await (s.from("honorarios") as any)
     .update({
       pago:            true,
-      pago_em:         new Date().toISOString().slice(0, 10),
+      pago_em:         dataPagamento,
       conta_id:        contaId,
       movimentacao_id,
     })
