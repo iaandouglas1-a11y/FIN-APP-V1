@@ -4,6 +4,7 @@ import { Card, Button, Input, Select, PageHeader, FormGroup, Badge } from "@/com
 import { currency, dateBR } from "@/lib/format";
 import { HandCoins, Plus, Trash2 } from "lucide-react";
 import PagarHonorarioBtn from "./PagarHonorarioBtn";
+import EditarHonorarioBtn from "./EditarHonorarioBtn";
 
 function formatCompetencia(competencia: string) {
   const [ano, mes] = competencia.slice(0, 7).split("-");
@@ -160,6 +161,18 @@ export default async function HonorariosPage() {
                     pago={h.pago}
                     pagoEm={h.pago_em}
                     contas={contasList}
+                  />
+
+                  <EditarHonorarioBtn
+                    honorario={{
+                      id: h.id,
+                      cliente_id: h.cliente_id,
+                      competencia: h.competencia,
+                      valor: Number(h.valor),
+                      vencimento: h.vencimento,
+                      observacao: h.observacao,
+                    }}
+                    clientes={clientes.map(c => ({ id: c.id, nome: c.nome }))}
                   />
 
                   <form action={deleteHonorario}>

@@ -18,6 +18,8 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
   const [aberto, setAberto] = useState(false);
   const [cancelando, setCancelando] = useState(false);
   const [contaSelecionada, setContaSelecionada] = useState(contas[0]?.id ?? "");
+  const hojeStr = new Date().toISOString().slice(0, 10);
+  const [dataPagamento, setDataPagamento] = useState(hojeStr);
 
   // --- Já pago ---
   if (pago) {
@@ -80,39 +82,60 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
           Marcar como pago
         </button>
       ) : (
-        <div className="flex items-center gap-2 p-1.5 rounded-xl bg-[#0D2340] border border-[#5DA832]/40">
-          <select
-            value={contaSelecionada}
-            onChange={(e) => setContaSelecionada(e.target.value)}
-            className="select-modern h-8 text-xs flex-1 min-w-[120px]"
-          >
-            <option value="">Sem conta (só marcar)</option>
-            {contas.map((c) => (
-              <option key={c.id} value={c.id}>{c.nome}</option>
-            ))}
-          </select>
+        <div className="w-full sm:w-auto p-3 rounded-xl bg-[#0D2340] border border-[#5DA832]/40 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#5DA832]/70">
+              Receber {currency(valor)}
+            </span>
+            <button
+              type="button"
+              onClick={() => setAberto(false)}
+              className="p-0.5 text-slate-500 hover:text-slate-300 rounded transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="text-[9px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Data</label>
+              <input
+                type="date"
+                value={dataPagamento}
+                onChange={(e) => setDataPagamento(e.target.value)}
+                max={hojeStr}
+                className="input-modern h-8 text-xs w-full"
+              />
+            </div>
+            <div>
+              <label className="text-[9px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Conta</label>
+              <select
+                value={contaSelecionada}
+                onChange={(e) => setContaSelecionada(e.target.value)}
+                className="select-modern h-8 text-xs w-full"
+              >
+                <option value="">Sem conta</option>
+                {contas.map((c) => (
+                  <option key={c.id} value={c.id}>{c.nome}</option>
+                ))}
+              </select>
+            </div>
+          </div>
 
           <form action={marcarHonorarioPago}>
             <input type="hidden" name="id" value={honorarioId} />
             <input type="hidden" name="conta_id" value={contaSelecionada} />
             <input type="hidden" name="valor" value={valor} />
             <input type="hidden" name="cliente_nome" value={clienteNome} />
+            <input type="hidden" name="data_pagamento" value={dataPagamento} />
             <button
               type="submit"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all duration-200 whitespace-nowrap"
+              className="flex items-center justify-center gap-1.5 w-full px-2.5 py-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all duration-200 whitespace-nowrap"
             >
               <CheckCircle className="h-3.5 w-3.5" />
-              Confirmar {currency(valor)}
+              Confirmar recebimento
             </button>
           </form>
-
-          <button
-            type="button"
-            onClick={() => setAberto(false)}
-            className="p-1.5 text-slate-500 hover:text-slate-300 rounded-lg transition-colors"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
         </div>
       )}
     </div>
