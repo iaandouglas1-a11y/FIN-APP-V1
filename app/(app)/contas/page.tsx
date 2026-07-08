@@ -1,62 +1,44 @@
-import { saveConta } from "@/app/(app)/actions";
-import { Card, Button } from "@/components/ui";
-import { currency } from "@/lib/format";
-import { accountBalance } from "@/lib/finance";
-import { getContasWithMovs } from "@/lib/queries";
-import { Wallet, Landmark, PiggyBank, Banknote, Plus } from "lucide-react";
-import EditarContaBtn from "./EditarContaBtn";
+import { saveCartao } from "@/app/(app)/actions";
+import { Card, Button, Input, Select, FormGroup } from "@/components/ui";
+import { currency, dateBR } from "@/lib/format";
+import { invoiceTotal } from "@/lib/finance";
+import { getCartoesEFaturas, getContasWithMovs } from "@/lib/queries";
+import { CreditCard, Plus } from "lucide-react";
+import EditarCartaoBtn from "./EditarCartaoBtn";
 
-export default async function ContasPage() {
-  const { contas, movimentacoes } = await getContasWithMovs();
-
-  const getIcon = (tipo: string) => {
-    switch (tipo) {
-      case "poupanca": return <PiggyBank className="h-6 w-6" />;
-      case "investimento": return <Landmark className="h-6 w-6" />;
-      case "dinheiro": return <Banknote className="h-6 w-6" />;
-      default: return <Wallet className="h-6 w-6" />;
-    }
-  };
-
-  const getTypeLabel = (tipo: string) => {
-    switch (tipo) {
-      case "poupanca": return "Poupança";
-      case "investimento": return "Investimento";
-      case "dinheiro": return "Dinheiro";
-      default: return "Conta Corrente";
-    }
-  };
+export default async function CartoesPage() {
+  const [{ cartoes, faturas, movimentacoes }, { contas }] = await Promise.all([
+    getCartoesEFaturas(),
+    getContasWithMovs()
+  ]);
 
   return (
     <div className="space-y-8">
-      {/* Nova Conta */}
+      {/* Novo Cartão */}
       <Card className="border-[#5DA832]/30 bg-gradient-to-br from-[#5DA832]/10 to-[#5DA832]/5 relative overflow-hidden">
         <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#5DA832]/10 rounded-full blur-3xl" />
-
+        
         <div className="flex items-center gap-2 mb-6 text-[#5DA832] font-bold uppercase text-xs tracking-widest relative z-10">
           <Plus className="h-4 w-4" />
-          <span>Adicionar Nova Conta</span>
+          <span>Adicionar Novo Cartão</span>
         </div>
-
-        <form action={saveConta} className="grid gap-4 sm:grid-cols-[1fr_200px_auto] relative z-10">
+        
+        <form action={saveCartao} className="grid gap-4 md:grid-cols-[1fr_160px_1fr_auto] relative z-10">
           <FormGroup>
-            <Input 
-              name="nome" 
-              placeholder="Nome da conta (Ex: Nubank, Bradesco...)" 
-              required 
-              className="h-9"
-            />
+            <Input name="nome" placeholder="Nome do cartão" required className="h-9" />
           </FormGroup>
-
+          
           <FormGroup>
-            <Select name="tipo" defaultValue="corrente" className="h-9">
-              <option value="corrente">Conta Corrente</option>
-              <option value="poupanca">Poupança</option>
-              <option value="investimento">Investimento</option>
-              <option value="dinheiro">Dinheiro</option>
+            <Input name="limite" type="number" step="0.01" min="0" placeholder="Limite" required className="h-9" />
+          </FormGroup>
+          
+          <FormGroup>
+            <Select name="conta_id" required className="h-9">
+              <option value="">Conta de pagamento</option>
+              {contas.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </Select>
           </FormGroup>
-
+          
           <div className="flex items-end">
             <Button type="submit" className="h-9 px-5">
               <Plus className="h-4 w-4 mr-2" />
@@ -66,92 +48,74 @@ export default async function ContasPage() {
         </form>
       </Card>
 
-      {/* Grid de Contas */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {contas.map((conta) => {
-          const balance = accountBalance(conta.id, movimentacoes);
+      {/* Grid */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {(cartoes as any[]).map((card) => {
+          const cardInvoices = faturas.filter((f) => f.cartao_id === card.id);
+          const faturasEmAberto = cardInvoices.filter((f) => !(f as any).pago);
+          const totalUsed = faturasEmAberto.reduce((sum, f) => sum + invoiceTotal(f.id, movimentacoes), 0);
+          const utilization = (totalUsed / Number(card.limite)) * 100;
 
           return (
-            <Card 
-              key={conta.id} 
-              className="group relative overflow-hidden border-slate-800/60 hover:border-[#5DA832]/40 transition-all duration-300 flex flex-col"
-            >
-              {/* Background */}
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#5DA832]/10 blur-3xl group-hover:bg-[#5DA832]/15 transition-all duration-300" />
-              <div className="absolute -left-8 -bottom-8 h-24 w-24 rounded-full bg-slate-600/5 blur-3xl" />
-
+            <Card key={card.id} className="group overflow-hidden border-slate-800/60 flex flex-col relative">
+              
               {/* Header */}
-              <div className="flex items-start justify-between mb-6 relative z-10">
-                
-                {/* 🔥 LOGO / ÍCONE AJUSTADO */}
-                <div className={`h-12 w-12 rounded-xl overflow-hidden transition-all duration-300 ${
-                  conta.logo_url
-                    ? "bg-transparent"
-                    : "bg-gradient-to-br from-[#5DA832]/15 to-[#5DA832]/5 text-[#5DA832] flex items-center justify-center"
-                }`}>
-                  {conta.logo_url ? (
-                    <img
-                      src={conta.logo_url}
-                      alt={conta.nome}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    getIcon(conta.tipo)
-                  )}
-                </div>
+              <div className="flex items-center justify-between mb-8 relative z-10">
+                <div className="flex items-center gap-4">
 
-                <div className="text-right">
-                  <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">
-                    {getTypeLabel(conta.tipo)}
-                  </p>
-                  <p className="text-sm font-bold text-slate-200 mt-1">
-                    {conta.nome}
-                  </p>
+                  {/* 🔥 LOGO CORRIGIDO */}
+                  <div className={`h-12 w-12 rounded-xl overflow-hidden ${
+                    card.logo_url
+                      ? ""
+                      : "bg-gradient-to-br from-[#5DA832]/30 to-[#5DA832]/10 flex items-center justify-center"
+                  }`}>
+                    {card.logo_url ? (
+                      <img
+                        src={card.logo_url}
+                        alt={card.nome}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <CreditCard className="h-6 w-6 text-[#5DA832]" />
+                    )}
+                  </div>
+
+                  <div>
+                    <h2 className="text-lg font-bold text-white">{card.nome}</h2>
+                    <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold">
+                      Limite: <span className="text-[#5DA832]">{currency(Number(card.limite))}</span>
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* Saldo */}
-              <div className="mt-auto relative z-10">
-                <p className="text-xs text-slate-500 uppercase font-semibold tracking-wider mb-2">
-                  Saldo Atual
-                </p>
-                <p className={`text-3xl font-bold tracking-tight ${
-                  balance >= 0 ? "text-emerald-400" : "text-rose-400"
-                }`}>
-                  {currency(balance)}
-                </p>
+              {/* Barra */}
+              <div className="mb-6">
+                <div className="flex justify-between mb-2">
+                  <span className="text-xs text-slate-400">Utilização</span>
+                  <span className="text-sm font-bold">{Math.round(utilization)}%</span>
+                </div>
+                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500"
+                    style={{ width: `${Math.min(utilization, 100)}%` }}
+                  />
+                </div>
               </div>
-
-              <div className="my-6 h-px bg-slate-800/40 relative z-10" />
 
               <div className="relative z-10">
-                <EditarContaBtn
-                  id={conta.id}
-                  nome={conta.nome}
-                  tipo={conta.tipo}
+                <EditarCartaoBtn
+                  id={card.id}
+                  nome={card.nome}
+                  limite={Number(card.limite)}
+                  contaId={card.conta_id ?? ""}
+                  contas={contas.map(c => ({ id: c.id, nome: c.nome }))}
                 />
               </div>
             </Card>
           );
         })}
       </div>
-
-      {/* Empty State */}
-      {contas.length === 0 && (
-        <Card className="text-center py-16 border-slate-800/60">
-          <Wallet className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-slate-300 mb-2">
-            Nenhuma conta registrada
-          </h3>
-          <p className="text-slate-500 mb-6">
-            Comece adicionando uma conta para rastrear seus saldos
-          </p>
-          <Button variant="secondary">
-            <Plus className="h-4 w-4 mr-2" />
-            Adicionar Primeira Conta
-          </Button>
-        </Card>
-      )}
     </div>
   );
 }
