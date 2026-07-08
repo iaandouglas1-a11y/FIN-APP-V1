@@ -1,9 +1,10 @@
 import { saveConta } from "@/app/(app)/actions";
-import { Card, Button, Input, Select, FormGroup } from "@/components/ui";
+import { Card, Button } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { accountBalance } from "@/lib/finance";
 import { getContasWithMovs } from "@/lib/queries";
-import { Wallet, Landmark, PiggyBank, Banknote, Plus, Check } from "lucide-react";
+import { Wallet, Landmark, PiggyBank, Banknote, Plus } from "lucide-react";
+import EditarContaBtn from "./EditarContaBtn";
 
 export default async function ContasPage() {
   const { contas, movimentacoes } = await getContasWithMovs();
@@ -123,24 +124,13 @@ export default async function ContasPage() {
 
               <div className="my-6 h-px bg-slate-800/40 relative z-10" />
 
-              {/* Editar */}
-              <form action={saveConta} className="space-y-3 relative z-10">
-                <input type="hidden" name="id" value={conta.id} />
-                <input type="hidden" name="tipo" value={conta.tipo} />
-
-                <FormGroup label="Editar Nome">
-                  <div className="flex gap-2">
-                    <Input 
-                      name="nome" 
-                      defaultValue={conta.nome} 
-                      className="h-9 text-sm flex-1"
-                    />
-                    <Button type="submit" variant="secondary" className="h-9 px-3">
-                      <Check className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </FormGroup>
-              </form>
+              <div className="relative z-10">
+                <EditarContaBtn
+                  id={conta.id}
+                  nome={conta.nome}
+                  tipo={conta.tipo}
+                />
+              </div>
             </Card>
           );
         })}
