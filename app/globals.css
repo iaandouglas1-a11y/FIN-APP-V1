@@ -43,7 +43,12 @@ body {
 
   /* Input & Select base */
   .input-modern, .select-modern {
-    @apply w-full h-10 box-border bg-[#091829]/80 border border-[#1e3a66]/80 focus:border-[#5DA832]/70 focus:ring-2 focus:ring-[#5DA832]/20 rounded-lg transition-all duration-200 outline-none px-3 py-2 text-sm text-slate-200 placeholder:text-slate-600;
+    @apply w-full box-border bg-[#091829]/80 border border-[#1e3a66]/80 focus:border-[#5DA832]/70 focus:ring-2 focus:ring-[#5DA832]/20 rounded-lg transition-all duration-200 outline-none px-3 text-sm text-slate-200 placeholder:text-slate-600;
+    height: 2.25rem !important;
+    min-height: 2.25rem !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    box-sizing: border-box !important;
   }
 
   .input-modern[type="date"],
@@ -51,19 +56,16 @@ body {
     color-scheme: dark;
     -webkit-appearance: none;
     appearance: none;
-    @apply flex items-center py-0; /* Garante que o texto interno não cause overflow vertical */
   }
 
-  /* Corrige alinhamento vertical do texto da data dentro do input */
   .input-modern[type="date"]::-webkit-datetime-edit,
   .input-modern[type="month"]::-webkit-datetime-edit {
-    flex: 1 1 auto;
     padding: 0;
-    display: flex;
-    align-items: center;
+    line-height: 1;
   }
 
-  .input-modern[type="date"]::-webkit-datetime-edit-fields-wrapper {
+  .input-modern[type="date"]::-webkit-datetime-edit-fields-wrapper,
+  .input-modern[type="month"]::-webkit-datetime-edit-fields-wrapper {
     padding: 0;
   }
 
