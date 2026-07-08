@@ -112,13 +112,13 @@ export default function RealizarPagamentoBtn({ pagamentoId, descricao, valor, da
             <button 
               type="button" 
               onClick={() => setAberto(false)} 
-              className="flex-1 h-10 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-sm font-semibold"
+              className="flex-1 h-9 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-sm font-semibold"
             >
               Cancelar
             </button>
             <button 
               type="submit" 
-              className="flex-1 h-10 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#5DA832]/20"
+              className="flex-1 h-9 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#5DA832]/20"
             >
               <CheckCircle className="h-4 w-4" />
               Confirmar
