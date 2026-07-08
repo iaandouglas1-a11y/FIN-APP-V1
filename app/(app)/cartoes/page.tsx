@@ -1,9 +1,10 @@
 import { saveCartao } from "@/app/(app)/actions";
-import { Button, Card, Input, Select, FormGroup } from "@/components/ui";
+import { Card } from "@/components/ui";
 import { currency, dateBR } from "@/lib/format";
 import { invoiceTotal } from "@/lib/finance";
 import { getCartoesEFaturas, getContasWithMovs } from "@/lib/queries";
-import { CreditCard, Calendar, Plus, Check } from "lucide-react";
+import { CreditCard, Plus } from "lucide-react";
+import EditarCartaoBtn from "./EditarCartaoBtn";
 
 export default async function CartoesPage() {
   const [{ cartoes, faturas, movimentacoes }, { contas }] = await Promise.all([
@@ -102,23 +103,15 @@ export default async function CartoesPage() {
                 </div>
               </div>
 
-              {/* Edit */}
-              <form action={saveCartao} className="space-y-3">
-                <input type="hidden" name="id" value={card.id} />
-
-                <FormGroup label="Nome">
-                  <Input name="nome" defaultValue={card.nome} className="h-9" />
-                </FormGroup>
-
-                <FormGroup label="Limite">
-                  <div className="flex gap-2">
-                    <Input name="limite" defaultValue={card.limite} className="h-9 flex-1" />
-                    <Button type="submit" className="h-9 px-3">
-                      <Check className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </FormGroup>
-              </form>
+              <div className="relative z-10">
+                <EditarCartaoBtn
+                  id={card.id}
+                  nome={card.nome}
+                  limite={Number(card.limite)}
+                  contaId={card.conta_id ?? ""}
+                  contas={contas.map(c => ({ id: c.id, nome: c.nome }))}
+                />
+              </div>
             </Card>
           );
         })}
