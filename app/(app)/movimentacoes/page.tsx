@@ -100,7 +100,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
           </div>
           {/* Linha 3: Descrição */}
           <FormGroup label="Descrição (opcional)">
-            <Input name="descricao" placeholder="Ex: Almoço com cliente, parcela 1/12..." className="h-10 text-sm w-full block" />
+            <Input name="descricao" placeholder="Ex: Almoço com cliente, parcela 1/12..." className="h-9 text-sm w-full block" />
           </FormGroup>
         </form>
       </Card>
