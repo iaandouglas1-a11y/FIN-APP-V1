@@ -52,26 +52,26 @@ export default function EditarPagamentoBtn({ pagamento, contas, categorias }: Pr
           
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="Data">
-              <Input name="data" type="date" defaultValue={pagamento.data} required className="h-10" />
+              <Input name="data" type="date" defaultValue={pagamento.data} required className="h-9" />
             </FormGroup>
             <FormGroup label="Valor">
-              <Input name="valor" type="number" step="0.01" min="0.01" defaultValue={pagamento.valor} required className="h-10" />
+              <Input name="valor" type="number" step="0.01" min="0.01" defaultValue={pagamento.valor} required className="h-9" />
             </FormGroup>
           </div>
 
           <FormGroup label="Descrição">
-            <Input name="descricao" defaultValue={pagamento.descricao} required className="h-10" />
+            <Input name="descricao" defaultValue={pagamento.descricao} required className="h-9" />
           </FormGroup>
 
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="Tipo">
-              <Select name="tipo" defaultValue={pagamento.tipo} required className="h-10">
+              <Select name="tipo" defaultValue={pagamento.tipo} required className="h-9">
                 <option value="orcado">Orçado</option>
                 <option value="realizado">Realizado</option>
               </Select>
             </FormGroup>
             <FormGroup label="Conta">
-              <Select name="conta_id" defaultValue={pagamento.conta_id || ""} className="h-10">
+              <Select name="conta_id" defaultValue={pagamento.conta_id || ""} className="h-9">
                 <option value="">Nenhuma</option>
                 {contas.map((c) => (
                   <option key={c.id} value={c.id}>{c.nome}</option>
@@ -81,7 +81,7 @@ export default function EditarPagamentoBtn({ pagamento, contas, categorias }: Pr
           </div>
 
           <FormGroup label="Categoria">
-            <Select name="categoria_id" defaultValue={pagamento.categoria_id || ""} className="h-10">
+            <Select name="categoria_id" defaultValue={pagamento.categoria_id || ""} className="h-9">
               <option value="">Sem categoria</option>
               {categorias.map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.nome}</option>
