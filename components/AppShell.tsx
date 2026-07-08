@@ -50,7 +50,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           "flex items-center gap-3 group cursor-pointer",
           !isSidebarOpen && "md:justify-center md:gap-0"
         )}>
-          <div className="h-10 w-10 rounded-xl overflow-hidden shrink-0">
+          <div className="h-9 w-10 rounded-xl overflow-hidden shrink-0">
             <Image src="/icon-512.png" alt="On Finanças" width={40} height={40} className="rounded-xl" />
           </div>
           <div className={clsx(
