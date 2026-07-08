@@ -50,7 +50,7 @@ export default function EditarHonorarioBtn({ honorario, clientes }: Props) {
           <input type="hidden" name="id" value={honorario.id} />
 
           <FormGroup label="Cliente">
-            <Select name="cliente_id" defaultValue={honorario.cliente_id} required className="h-10">
+            <Select name="cliente_id" defaultValue={honorario.cliente_id} required className="h-9">
               {clientes.map((c) => (
                 <option key={c.id} value={c.id}>{c.nome}</option>
               ))}
@@ -64,20 +64,20 @@ export default function EditarHonorarioBtn({ honorario, clientes }: Props) {
                 type="month"
                 defaultValue={honorario.competencia.slice(0, 7)}
                 required
-                className="h-10"
+                className="h-9"
               />
             </FormGroup>
             <FormGroup label="Valor">
-              <Input name="valor" type="number" step="0.01" min="0" defaultValue={honorario.valor} required className="h-10" />
+              <Input name="valor" type="number" step="0.01" min="0" defaultValue={honorario.valor} required className="h-9" />
             </FormGroup>
           </div>
 
           <FormGroup label="Vencimento">
-            <Input name="vencimento" type="date" defaultValue={honorario.vencimento} required className="h-10" />
+            <Input name="vencimento" type="date" defaultValue={honorario.vencimento} required className="h-9" />
           </FormGroup>
 
           <FormGroup label="Observação">
-            <Input name="observacao" defaultValue={honorario.observacao || ""} placeholder="Ex: Honorário contábil..." className="h-10" />
+            <Input name="observacao" defaultValue={honorario.observacao || ""} placeholder="Ex: Honorário contábil..." className="h-9" />
           </FormGroup>
 
           <div className="pt-4 flex gap-3">
