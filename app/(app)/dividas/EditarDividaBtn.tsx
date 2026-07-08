@@ -51,24 +51,24 @@ export default function EditarDividaBtn({ divida, categorias }: Props) {
           
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="Data">
-              <Input name="data" type="date" defaultValue={divida.data} required className="h-10" />
+              <Input name="data" type="date" defaultValue={divida.data} required className="h-9" />
             </FormGroup>
             <FormGroup label="Valor Total">
-              <Input name="valor" type="number" step="0.01" min="0.01" defaultValue={divida.valor} required className="h-10" />
+              <Input name="valor" type="number" step="0.01" min="0.01" defaultValue={divida.valor} required className="h-9" />
             </FormGroup>
           </div>
 
           <FormGroup label="Descrição">
-            <Input name="descricao" defaultValue={divida.descricao} required className="h-10" />
+            <Input name="descricao" defaultValue={divida.descricao} required className="h-9" />
           </FormGroup>
 
           <FormGroup label="Observação">
-            <Input name="observacao" defaultValue={divida.observacao || ""} className="h-10" />
+            <Input name="observacao" defaultValue={divida.observacao || ""} className="h-9" />
           </FormGroup>
 
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="Categoria">
-              <Select name="categoria_id" defaultValue={divida.categoria_id || ""} className="h-10">
+              <Select name="categoria_id" defaultValue={divida.categoria_id || ""} className="h-9">
                 <option value="">Sem categoria</option>
                 {categorias.map((cat) => (
                   <option key={cat.id} value={cat.id}>{cat.nome}</option>
@@ -76,7 +76,7 @@ export default function EditarDividaBtn({ divida, categorias }: Props) {
               </Select>
             </FormGroup>
             <FormGroup label="Situação">
-              <Select name="situacao" defaultValue={divida.situacao} className="h-10">
+              <Select name="situacao" defaultValue={divida.situacao} className="h-9">
                 <option value="pendente">Pendente</option>
                 <option value="parcial">Parcial</option>
                 <option value="liquidado">Liquidado</option>
