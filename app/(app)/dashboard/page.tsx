@@ -1,4 +1,4 @@
-import { CategoryPie, DreChart, EvolutionChart } from "@/components/Charts";
+import { CategoryPie, EvolutionChart, WaterfallChart } from "@/components/Charts";
 import { Card, MetricCard, PageHeader, Button, Input, FormGroup } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { totalBalance } from "@/lib/finance";
@@ -139,11 +139,15 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
       <Card className="flex flex-col">
         <div className="mb-6 pb-4 border-b border-slate-800/40">
-          <h2 className="text-lg font-bold text-white">Demonstrativo Mensal (DRE)</h2>
-          <p className="text-xs text-slate-500 mt-1">Receitas, despesas e resultado</p>
+          <h2 className="text-lg font-bold text-white">Fluxo de Caixa</h2>
+          <p className="text-xs text-slate-500 mt-1">Saldo inicial → entradas → saídas → saldo final</p>
         </div>
         <div className="min-h-[350px] flex items-center justify-center">
-          <DreChart data={dre} />
+          <WaterfallChart
+            saldoInicial={saldo}
+            entradas={receitas}
+            saidas={despesas}
+          />
         </div>
       </Card>
 
