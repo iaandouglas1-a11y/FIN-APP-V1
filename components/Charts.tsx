@@ -300,3 +300,75 @@ export function DreChart({ data }: any) {
     </ResponsiveContainer>
   );
 }
+
+// ======================
+// WATERFALL — FLUXO DE CAIXA
+// ======================
+export function WaterfallChart({
+  saldoInicial,
+  entradas,
+  saidas,
+}: {
+  saldoInicial: number;
+  entradas: number;
+  saidas: number;
+}) {
+  const saldoFinal = saldoInicial + entradas - saidas;
+
+  const labels  = ["Saldo Inicial", "Entradas", "Saídas", "Saldo Final"];
+  const offsets = [0, saldoInicial, saldoInicial + entradas - saidas, 0];
+  const bars    = [saldoInicial, entradas, saidas, saldoFinal];
+  // amarelo para saldo inicial/final, verde para entradas, vermelho para saídas
+  const barColors = ["#f59e0b", "#10b981", "#f43f5e", "#f59e0b"];
+
+  const data = labels.map((label, i) => ({
+    label,
+    offset: offsets[i],
+    bar: bars[i],
+    color: barColors[i],
+  }));
+
+  return (
+    <ResponsiveContainer width="100%" height={320}>
+      <BarChart data={data} barCategoryGap="30%">
+        <CartesianGrid strokeDasharray="3 3" stroke={chartGridColor} opacity={0.5} vertical={false} />
+        <XAxis
+          dataKey="label"
+          tick={{ fill: chartTextColor, fontSize: 13 }}
+          stroke={chartGridColor}
+        />
+        <YAxis
+          tickFormatter={formatCurrency}
+          tick={{ fill: chartTextColor, fontSize: 12 }}
+          stroke={chartGridColor}
+          width={90}
+        />
+        <Tooltip
+          content={({ active, payload, label }) => {
+            if (active && payload && payload.length) {
+              const bar = payload.find((p: any) => p.dataKey === "bar");
+              if (!bar) return null;
+              return (
+                <div className="bg-slate-800/95 border border-slate-700/60 rounded-lg p-3 shadow-xl">
+                  <p className="text-xs text-slate-400 mb-1">{label}</p>
+                  <p className="text-sm font-medium" style={{ color: bar.payload.color }}>
+                    {formatCurrency(bar.value as number)}
+                  </p>
+                </div>
+              );
+            }
+            return null;
+          }}
+        />
+        {/* Barra invisível de offset */}
+        <Bar dataKey="offset" stackId="wf" fill="transparent" />
+        {/* Barra real com cor dinâmica */}
+        <Bar dataKey="bar" stackId="wf" radius={[6, 6, 0, 0]}>
+          {data.map((entry, i) => (
+            <Cell key={i} fill={entry.color} />
+          ))}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
