@@ -34,6 +34,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
 
   return (
     <div className="space-y-5">
+      <FiltroDataPersist pagina="movimentacoes" basePath="/movimentacoes" inicio={sp.inicio} fim={sp.fim} />
       <PageHeader
         title="Movimentações"
         description="Controle total sobre o seu fluxo de caixa"
