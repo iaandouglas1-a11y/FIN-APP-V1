@@ -3,7 +3,7 @@ import { Button, Card, Input, Select, Badge, PageHeader, FormGroup, EmptyState }
 import { currency, dateBR } from "@/lib/format";
 import { getCartoesEFaturas, getCategorias, getContasWithMovs, getMovimentacoes } from "@/lib/queries";
 import { Trash2, Plus, Filter, Inbox } from "lucide-react";
-import { getCategoryIcon } from "@/lib/categoryIcons";
+import { getCategoryIcon } from "@/lib/icategoryIcons";
 import { clsx } from "clsx";
 
 const MESES_RAPIDOS = [
