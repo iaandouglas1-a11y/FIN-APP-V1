@@ -3,8 +3,9 @@ import { Button, Card, Input, Select, Badge, PageHeader, FormGroup, EmptyState }
 import { currency, dateBR } from "@/lib/format";
 import { getCartoesEFaturas, getCategorias, getContasWithMovs, getMovimentacoes } from "@/lib/queries";
 import { Trash2, Plus, Filter, Inbox } from "lucide-react";
-import { getCategoryIcon } from "@/lib/icategoryIcons";
+import { getCategoryIcon } from "@/lib/categoryIcons";
 import { clsx } from "clsx";
+import FiltroDataPersist from "@/components/FiltroDataPersist";
 
 const MESES_RAPIDOS = [
   { label: "Este mês", offset: 0 },
