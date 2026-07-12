@@ -4,6 +4,7 @@ import { currency } from "@/lib/format";
 import { totalBalance } from "@/lib/finance";
 import { getDashboardData, monthlyDre } from "@/lib/queries";
 import { TrendingUp, TrendingDown, Wallet, Filter, CalendarRange } from "lucide-react";
+import FiltroDataPersist from "@/components/FiltroDataPersist";
 
 const MESES_RAPIDOS = [
   { label: "Este mês", offset: 0 },
@@ -44,6 +45,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
   return (
     <div className="space-y-8">
+      <FiltroDataPersist pagina="dashboard" basePath="/dashboard" inicio={sp.inicio} fim={sp.fim} />
       <PageHeader 
         title="Dashboard"
         description="Visão geral do seu controle financeiro pessoal"
@@ -82,7 +84,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <span className="hidden sm:inline">Filtrar</span>
           </Button>
           {(sp.inicio || sp.fim) && (
-            <a href="/dashboard" className="h-9 px-2 flex items-center text-xs text-slate-500 hover:text-slate-300 transition-colors shrink-0">
+            <a
+              href="/dashboard"
+              onClick={() => { localStorage.removeItem("filtro_dashboard_inicio"); localStorage.removeItem("filtro_dashboard_fim"); }}
+              className="h-9 px-2 flex items-center text-xs text-slate-500 hover:text-slate-300 transition-colors shrink-0"
+            >
               ✕
             </a>
           )}
