@@ -11,6 +11,7 @@ import {
   Briefcase, Scissors, Users, HandCoins, HeartHandshake,
   Award, Shield, Milestone,
   Tag,
+  ArrowLeftRight, Plus, X,
   type LucideIcon,
 } from "lucide-react";
 
