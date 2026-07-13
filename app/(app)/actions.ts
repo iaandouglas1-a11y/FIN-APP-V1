@@ -140,7 +140,7 @@ export async function saveCategoria(formData: FormData) {
 
     if (error) {
       console.error("Erro Supabase:", error);
-      throw new Error(`Erro no Banco de Dados: ${error.message}`);
+      throw new Error(`Erro no Banco de Dados: <LaTex>${error.message}`);
     }
 
     revalidatePath("/categorias");
@@ -148,7 +148,7 @@ export async function saveCategoria(formData: FormData) {
   } catch (e: any) {
     console.error("Erro completo:", e);
 
-    redirect(`/categorias?error=${encodeURIComponent(e.message)}`);
+    redirect(`/categorias?error=$</LaTex>{encodeURIComponent(e.message)}`);
   }
 
   redirect("/categorias");
