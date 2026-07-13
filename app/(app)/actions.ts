@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
-import { uploadLogo } from "@/lib/storage";
 
 // Schemas de Validação
 const nullableId = z.string().uuid().optional().or(z.literal("")).transform((v) => v || null);
@@ -88,15 +87,10 @@ export async function saveConta(formData: FormData) {
   const parsed = contaSchema.safeParse(entries(formData)); 
   if (!parsed.success) throw new Error(parsed.error.errors[0].message);
 
-  const logoFile = formData.get("logo") as File | null;
-  const logo_url = await uploadLogo(logoFile, "contas");
-  const data: any = { ...parsed.data };
-  if (logo_url) data.logo_url = logo_url;
-
   const s = await createServerSupabaseClient(); 
   const result = id 
-    ? await (s.from("contas") as any).update(data).eq("id", id) 
-    : await (s.from("contas") as any).insert(data); 
+    ? await (s.from("contas") as any).update(parsed.data).eq("id", id) 
+    : await (s.from("contas") as any).insert(parsed.data); 
   
   if (result.error) throw new Error(result.error.message); 
   revalidatePath("/contas"); 
@@ -109,19 +103,14 @@ export async function saveCartao(formData: FormData) {
   const parsed = cartaoSchema.safeParse(entries(formData)); 
   if (!parsed.success) throw new Error(parsed.error.errors[0].message);
 
-  const logoFile = formData.get("logo") as File | null;
-  const logo_url = await uploadLogo(logoFile, "cartoes");
-  const data: any = { ...parsed.data };
-  if (logo_url) data.logo_url = logo_url;
-
   const s = await createServerSupabaseClient(); 
   const result = id 
-    ? await (s.from("cartoes") as any).update(data).eq("id", id) 
-    : await (s.from("cartoes") as any).insert(data); 
+    ? await (s.from("cartoes") as any).update(parsed.data).eq("id", id) 
+    : await (s.from("cartoes") as any).insert(parsed.data); 
   
   if (result.error) throw new Error(result.error.message); 
-  revalidatePath("/contas/cartoes"); 
-  redirect("/contas/cartoes"); 
+  revalidatePath("/cartoes"); 
+  redirect("/cartoes"); 
 }
 
 // --- Faturas ---
@@ -237,7 +226,7 @@ export async function pagarFatura(formData: FormData) {
   if (fatError) throw new Error(fatError.message);
 
   revalidatePath("/faturas");
-  revalidatePath("/contas/cartoes");
+  revalidatePath("/cartoes");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
   redirect("/faturas");
@@ -274,8 +263,61 @@ export async function cancelarPagamentoFatura(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/faturas");
-  revalidatePath("/contas/cartoes");
+  revalidatePath("/cartoes");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
   redirect("/faturas");
+}
+
+// --- Transferência entre Contas ---
+export async function realizarTransferencia(formData: FormData) {
+  const conta_origem_id  = String(formData.get("conta_origem_id"));
+  const conta_destino_id = String(formData.get("conta_destino_id"));
+  const valor            = Number(formData.get("valor"));
+  const data             = String(formData.get("data"));
+  const descricao        = String(formData.get("descricao") || "Transferência entre contas");
+
+  if (!conta_origem_id || !conta_destino_id || !valor || !data)
+    throw new Error("Preencha todos os campos obrigatórios.");
+
+  if (conta_origem_id === conta_destino_id)
+    throw new Error("Conta de origem e destino não podem ser iguais.");
+
+  const s = await createServerSupabaseClient();
+
+  // Busca ou cria categoria "Transferência"
+  let catId: string | null = null;
+  const { data: existing } = await (s.from("categorias") as any)
+    .select("id").eq("nome", "Transferência").limit(1).single();
+  if (existing) {
+    catId = existing.id;
+  } else {
+    const { data: nova } = await (s.from("categorias") as any)
+      .insert({ nome: "Transferência", tipo: "despesa" }).select("id").single();
+    catId = nova?.id || null;
+  }
+
+  // Saída da conta origem
+  const { error: e1 } = await (s.from("movimentacoes") as any).insert({
+    tipo: "despesa", valor, data,
+    categoria_id: catId,
+    conta_id: conta_origem_id,
+    status: "realizado",
+    descricao: `${descricao} (saída)`,
+  });
+  if (e1) throw new Error(e1.message);
+
+  // Entrada na conta destino
+  const { error: e2 } = await (s.from("movimentacoes") as any).insert({
+    tipo: "receita", valor, data,
+    categoria_id: catId,
+    conta_id: conta_destino_id,
+    status: "realizado",
+    descricao: `${descricao} (entrada)`,
+  });
+  if (e2) throw new Error(e2.message);
+
+  revalidatePath("/movimentacoes");
+  revalidatePath("/dashboard");
+  redirect("/movimentacoes");
 }
