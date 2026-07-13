@@ -6,6 +6,7 @@ import { Trash2, Plus, Filter, Inbox } from "lucide-react";
 import { getCategoryIcon } from "@/lib/categoryIcons";
 import { clsx } from "clsx";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
+import TransferenciaBtn from "./TransferenciaBtn";
 
 const MESES_RAPIDOS = [
   { label: "Este mês", offset: 0 },
