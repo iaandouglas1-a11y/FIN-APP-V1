@@ -42,7 +42,7 @@ export default async function DividasPage() {
       {/* Resumo */}
       <div className="grid grid-cols-3 gap-3">
         <Card className="border-rose-500/20 bg-rose-500/5 p-4 flex flex-col justify-between min-h-[80px]">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-rose-400/70 leading-tight">Total em Aberto</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-rose-400/70 leading-tight">Dívidas Totais</p>
           <p className="text-base sm:text-lg font-bold text-rose-400 mt-2 tabular-nums">{currency(totalDevido)}</p>
         </Card>
         <Card className="border-[#5DA832]/20 bg-[#5DA832]/5 p-4 flex flex-col justify-between min-h-[80px]">
