@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Pencil, Copy, X, Check } from "lucide-react";
-import { saveMovimentacao, duplicarMovimentacao } from "@/app/(app)/actions";
+import { saveMovimentacao } from "@/app/(app)/actions";
+import { duplicarMovimentacao } from "@/app/(app)/actions_movimentacoes";
 import { FormGroup, Input, Select } from "@/components/ui";
 
 interface Props {
