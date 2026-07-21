@@ -20,13 +20,13 @@ export default async function DividasPage() {
   const categoriasDespesa = categorias; // todas as categorias disponíveis
 
   // Resumo
-  const totalDevido  = dividas.filter(d => d.situacao === "pendente").reduce((s, d) => s + Number(d.valor), 0);
+  const totalDevido  = dividas.reduce((s, d) => s + Number(d.valor), 0); // total de TODAS as dívidas
   const totalPago    = pagamentos.filter(p => p.tipo === "realizado").reduce((s, p) => s + Number(p.valor), 0);
-  const saldoAtual   = totalDevido - totalPago;
+  const saldoAtual   = totalDevido - totalPago; // diferença entre total e pago
 
   // Fluxo de pagamentos com saldo decremental
   const pagamentosOrdenados = [...pagamentos].sort((a, b) => a.data.localeCompare(b.data));
-  let saldoCorrido = totalDevido;
+  let saldoCorrido = totalDevido;  // parte do total geral
   const fluxo = pagamentosOrdenados.map((p) => {
     if (p.tipo === "realizado") saldoCorrido -= Number(p.valor);
     return { ...p, saldoApos: saldoCorrido };
