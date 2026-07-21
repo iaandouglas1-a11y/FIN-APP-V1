@@ -7,6 +7,7 @@ import { getCategoryIcon } from "@/lib/categoryIcons";
 import { clsx } from "clsx";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
 import TransferenciaBtn from "./TransferenciaBtn";
+import EditarMovimentacaoBtn from "./EditarMovimentacaoBtn";
 
 const MESES_RAPIDOS = [
   { label: "Este mês", offset: 0 },
@@ -206,47 +207,58 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                     return (
                     <div
                       key={m.id}
-                      className="grid grid-cols-[28px_1fr_1fr_auto_auto] sm:grid-cols-[28px_1fr_1fr_88px_96px_auto] items-center gap-3 px-4 py-2.5 border-b border-slate-800/30 last:border-0 hover:bg-slate-800/20 transition-colors duration-150 group"
+                      className="border-b border-slate-800/30 last:border-0"
                     >
-                      {/* Ícone */}
-                      <div className={clsx(
-                        "h-7 w-7 rounded-md flex items-center justify-center shrink-0",
-                        m.tipo === "receita" ? "bg-emerald-500/15 text-emerald-400" : "bg-rose-500/15 text-rose-400"
-                      )}>
-                        <CatIcon className="h-4 w-4" />
+                      <div className="grid grid-cols-[28px_1fr_1fr_auto_auto_auto] sm:grid-cols-[28px_1fr_1fr_88px_96px_auto_auto] items-center gap-3 px-4 py-2.5 hover:bg-slate-800/20 transition-colors duration-150 group">
+                        {/* Ícone */}
+                        <div className={clsx(
+                          "h-7 w-7 rounded-md flex items-center justify-center shrink-0",
+                          m.tipo === "receita" ? "bg-emerald-500/15 text-emerald-400" : "bg-rose-500/15 text-rose-400"
+                        )}>
+                          <CatIcon className="h-4 w-4" />
+                        </div>
+
+                        {/* Categoria */}
+                        <span className="text-sm font-medium text-slate-200 truncate">
+                          {m.categorias?.nome || "Sem categoria"}
+                        </span>
+
+                        {/* Descrição */}
+                        <span className="text-sm text-slate-500 truncate hidden sm:block">
+                          {m.descricao || "—"}
+                        </span>
+
+                        {/* Banco */}
+                        <span className="text-sm text-slate-500 text-right truncate hidden sm:block">
+                          {m.contas?.nome ?? m.cartoes?.nome ?? "—"}
+                        </span>
+
+                        {/* Valor */}
+                        <span className={clsx(
+                          "text-sm font-semibold text-right tabular-nums",
+                          m.tipo === "receita" ? "text-emerald-400" : "text-rose-400"
+                        )}>
+                          {m.tipo === "receita" ? "+" : "-"}{currency(Number(m.valor))}
+                        </span>
+
+                        {/* Editar + Duplicar */}
+                        <EditarMovimentacaoBtn
+                          mov={m}
+                          categorias={categorias}
+                          contas={contasData.contas}
+                          cartoes={cardsData.cartoes}
+                          faturas={cardsData.faturas}
+                        />
+
+                        {/* Deletar */}
+                        <form action={deleteMovimentacao} className="shrink-0">
+                          <input type="hidden" name="id" value={m.id} />
+                          <button className="p-1 text-slate-700 hover:text-rose-400 rounded transition-colors opacity-0 group-hover:opacity-100">
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </form>
                       </div>
-
-                      {/* Categoria */}
-                      <span className="text-sm font-medium text-slate-200 truncate">
-                        {m.categorias?.nome || "Sem categoria"}
-                      </span>
-
-                      {/* Descrição */}
-                      <span className="text-sm text-slate-500 truncate hidden sm:block">
-                        {m.descricao || "—"}
-                      </span>
-
-                      {/* Mobile: descrição abaixo da categoria — via subgrid trick: ocupa col 2 na linha 2 */}
-                      {/* Banco — oculto no mobile */}
-                      <span className="text-sm text-slate-500 text-right truncate hidden sm:block">
-                        {m.contas?.nome ?? m.cartoes?.nome ?? "—"}
-                      </span>
-
-                      {/* Valor */}
-                      <span className={clsx(
-                        "text-sm font-semibold text-right tabular-nums",
-                        m.tipo === "receita" ? "text-emerald-400" : "text-rose-400"
-                      )}>
-                        {m.tipo === "receita" ? "+" : "-"}{currency(Number(m.valor))}
-                      </span>
-
-                      {/* Deletar */}
-                      <form action={deleteMovimentacao} className="shrink-0">
-                        <input type="hidden" name="id" value={m.id} />
-                        <button className="p-1 text-slate-700 hover:text-rose-400 rounded transition-colors opacity-0 group-hover:opacity-100">
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </form>
+                      {/* Formulário de edição inline — renderizado pelo componente */}
                     </div>
                     );
                   })}
