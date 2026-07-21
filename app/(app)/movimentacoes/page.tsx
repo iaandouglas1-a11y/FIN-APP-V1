@@ -188,6 +188,15 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
             return acc;
           }, {} as Record<string, any[]>);
           const datas = Object.keys(grupos).sort((a, b) => b.localeCompare(a));
+          // Ordenar cada dia: 1º receitas, 2º despesas; dentro de cada tipo: alfabético por categoria
+          datas.forEach(data => {
+            grupos[data].sort((a: any, b: any) => {
+              if (a.tipo !== b.tipo) return a.tipo === "receita" ? -1 : 1;
+              const catA = a.categorias?.nome ?? "";
+              const catB = b.categorias?.nome ?? "";
+              return catA.localeCompare(catB, "pt-BR");
+            });
+          });
 
           return (
             <div>
