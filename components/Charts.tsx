@@ -6,6 +6,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  LabelList,
   Legend,
   Line,
   LineChart,
@@ -367,6 +368,12 @@ export function WaterfallChart({
           {data.map((entry, i) => (
             <Cell key={i} fill={entry.color} />
           ))}
+          <LabelList
+            dataKey="bar"
+            position="top"
+            formatter={(v: number) => formatCurrency(v)}
+            style={{ fill: "#e2e8f0", fontSize: 12, fontWeight: 600 }}
+          />
         </Bar>
       </BarChart>
     </ResponsiveContainer>
