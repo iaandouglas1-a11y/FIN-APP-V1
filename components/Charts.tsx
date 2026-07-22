@@ -370,9 +370,10 @@ export function WaterfallChart({
           ))}
           <LabelList
             dataKey="bar"
-            position="top"
+            position="insideBottom"
+            offset={8}
             formatter={(v: number) => formatCurrency(v)}
-            style={{ fill: "#e2e8f0", fontSize: 12, fontWeight: 600 }}
+            style={{ fill: "#ffffff", fontSize: 11, fontWeight: 600 }}
           />
         </Bar>
       </BarChart>
