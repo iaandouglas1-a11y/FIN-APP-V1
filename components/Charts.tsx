@@ -370,10 +370,25 @@ export function WaterfallChart({
           ))}
           <LabelList
             dataKey="bar"
-            position="insideBottom"
-            offset={8}
-            formatter={(v: number) => formatCurrency(v)}
-            style={{ fill: "#ffffff", fontSize: 11, fontWeight: 600 }}
+            content={(props: any) => {
+              const { x, y, width, height, value } = props;
+              if (value === undefined || value === null) return null;
+              const isNeg = height < 0;
+              const labelY = isNeg ? y + height - 8 : y + Math.abs(height) - 8;
+              return (
+                <text
+                  x={x + width / 2}
+                  y={labelY}
+                  fill="#ffffff"
+                  fontSize={11}
+                  fontWeight={600}
+                  textAnchor="middle"
+                  dominantBaseline="auto"
+                >
+                  {formatCurrency(Math.abs(value))}
+                </text>
+              );
+            }}
           />
         </Bar>
       </BarChart>
