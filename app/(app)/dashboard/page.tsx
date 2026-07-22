@@ -128,7 +128,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <p className="text-xs text-slate-500 mt-1">Distribuição do período selecionado</p>
           </div>
           <div className="flex-1 min-h-[300px] flex items-center justify-center">
-            <CategoryPie data={[...cat.entries()].map(([name, value]) => ({ name, value }))} />
+            <CategoryPie data={
+              [...cat.entries()]
+                .map(([name, value]) => ({ name, value }))
+                .sort((a, b) => b.value - a.value)
+                .slice(0, 10)
+            } />
           </div>
         </Card>
 
