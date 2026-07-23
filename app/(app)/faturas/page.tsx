@@ -1,14 +1,15 @@
 import { saveFatura } from "@/app/(app)/actions";
 import { Button, Card, Input, Select, PageHeader, FormGroup } from "@/components/ui";
 import { invoiceTotal } from "@/lib/finance";
-import { getCartoesEFaturas, getContasWithMovs } from "@/lib/queries";
+import { getCartoesEFaturas, getContasWithMovs, getCategorias } from "@/lib/queries";
 import { Receipt, Plus } from "lucide-react";
 import FaturaAccordion from "./FaturaAccordion";
 
 export default async function FaturasPage() {
-  const [{ cartoes, faturas, movimentacoes }, contasData] = await Promise.all([
+  const [{ cartoes, faturas, movimentacoes }, contasData, categorias] = await Promise.all([
     getCartoesEFaturas(),
     getContasWithMovs(),
+    getCategorias(),
   ]);
 
   const contas = contasData.contas.map((c) => ({
@@ -120,6 +121,9 @@ export default async function FaturasPage() {
                 isDue={isDue}
                 expenses={expenses}
                 contas={contas}
+                categorias={categorias}
+                cartoes={cartoes.map((c: any) => ({ id: c.id, nome: c.nome }))}
+                faturas={faturas.map((f: any) => ({ id: f.id, data_vencimento: f.data_vencimento }))}
               />
             );
           })
