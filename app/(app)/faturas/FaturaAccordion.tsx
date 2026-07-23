@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Receipt, ChevronDown, ChevronUp } from "lucide-react";
 import { currency, dateBR } from "@/lib/format";
 import PagarFaturaBtn from "./PagarFaturaBtn";
+import EditarExpenseBtn from "./EditarExpenseBtn";
 
 type Props = {
   faturaId: string;
@@ -19,7 +20,10 @@ type Props = {
   isOverdue: boolean;
   isDue: boolean;
   expenses: any[];
-  contas: { id: string; nome: string }[];
+  contas:     { id: string; nome: string }[];
+  categorias: { id: string; nome: string }[];
+  cartoes:    { id: string; nome: string }[];
+  faturas:    { id: string; data_vencimento: string }[];
 };
 
 export default function FaturaAccordion({
@@ -37,6 +41,9 @@ export default function FaturaAccordion({
   isDue,
   expenses,
   contas,
+  categorias,
+  cartoes,
+  faturas,
 }: Props) {
   const [open, setOpen] = useState(false);
 
@@ -122,12 +129,21 @@ export default function FaturaAccordion({
                 <span className="text-right">Valor</span>
               </div>
               {expenses.map((exp) => (
-                <div key={exp.id} className="grid grid-cols-[1fr_auto] items-center text-sm bg-slate-800/30 px-3 py-2 rounded-md gap-4">
-                  <div className="min-w-0">
-                    <p className="text-slate-300 truncate">{exp.categorias?.nome ?? "Despesa"}</p>
-                    {exp.descricao && <p className="text-xs text-slate-500 truncate">{exp.descricao}</p>}
+                <div key={exp.id} className="group/exp">
+                  <div className="grid grid-cols-[1fr_auto_auto] items-center text-sm bg-slate-800/30 px-3 py-2 rounded-md gap-3">
+                    <div className="min-w-0">
+                      <p className="text-slate-300 truncate">{exp.categorias?.nome ?? "Despesa"}</p>
+                      {exp.descricao && <p className="text-xs text-slate-500 truncate">{exp.descricao}</p>}
+                    </div>
+                    <span className="text-slate-200 font-semibold whitespace-nowrap">{currency(Number(exp.valor))}</span>
+                    <EditarExpenseBtn
+                      exp={exp}
+                      categorias={categorias}
+                      contas={contas}
+                      cartoes={cartoes}
+                      faturas={faturas}
+                    />
                   </div>
-                  <span className="text-slate-200 font-semibold whitespace-nowrap">{currency(Number(exp.valor))}</span>
                 </div>
               ))}
               <div className="flex justify-between text-sm font-bold pt-2 border-t border-slate-800/40 px-1 mt-1">
