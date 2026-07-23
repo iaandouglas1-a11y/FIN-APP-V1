@@ -1,9 +1,9 @@
 import { CategoryPie, EvolutionChart, WaterfallChart } from "@/components/Charts";
 import { Card, MetricCard, PageHeader, Button, Input, FormGroup } from "@/components/ui";
 import { currency } from "@/lib/format";
-import { totalBalance } from "@/lib/finance";
-import { getDashboardData, monthlyDre } from "@/lib/queries";
-import { TrendingUp, TrendingDown, Wallet, Filter, CalendarRange } from "lucide-react";
+import { totalBalance, invoiceTotal } from "@/lib/finance";
+import { getDashboardData, monthlyDre, getCartoesEFaturas } from "@/lib/queries";
+import { TrendingUp, TrendingDown, Wallet, Filter, CalendarRange, CreditCard } from "lucide-react";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
 
 const MESES_RAPIDOS = [
@@ -26,9 +26,15 @@ function monthRange(offset: number) {
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
-  const { allMovs, monthMovs, filtro } = await getDashboardData({ inicio: sp.inicio, fim: sp.fim });
+  const [{ allMovs, monthMovs, filtro }, { faturas, movimentacoes: faturaMovs }] = await Promise.all([
+    getDashboardData({ inicio: sp.inicio, fim: sp.fim }),
+    getCartoesEFaturas(),
+  ]);
 
   const receitas = monthMovs.filter((m) => m.tipo === "receita").reduce((s, m) => s + Number(m.valor), 0);
+  const totalFaturasAberto = (faturas as any[])
+    .filter(f => !f.pago)
+    .reduce((sum, f) => sum + invoiceTotal(f.id, faturaMovs), 0);
   const despesas = monthMovs.filter((m) => m.tipo === "despesa").reduce((s, m) => s + Number(m.valor), 0);
   const saldo    = totalBalance(allMovs);
   
@@ -103,6 +109,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           tone="default"
           icon={<Wallet className="h-12 w-12" />}
           trend={saldo > 0 ? "up" : "down"}
+        />
+        <MetricCard 
+          title="Faturas em Aberto"
+          value={currency(totalFaturasAberto)} 
+          tone="bad"
+          icon={<CreditCard className="h-12 w-12" />}
         />
         <MetricCard 
           title={`Receitas — ${periodoLabel}`}
