@@ -46,7 +46,7 @@ export function MoreMenuDrawer({ open, onClose }: MoreMenuDrawerProps) {
       />
 
       {/* Drawer painel */}
-      <div className="absolute bottom-[calc(4rem+env(safe-area-inset-bottom))] left-0 right-0 animate-in slide-in-from-bottom duration-300">
+      <div className="absolute bottom-[calc(4.5rem+env(safe-area-inset-bottom))] left-0 right-0 animate-in slide-in-from-bottom duration-300">
         <div className="mx-3 mb-3 bg-[#0D2340] border border-[#142d52]/80 rounded-2xl shadow-2xl overflow-hidden">
           {/* Header do drawer */}
           <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-[#142d52]/60">
