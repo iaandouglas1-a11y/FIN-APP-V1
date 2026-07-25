@@ -19,57 +19,82 @@ interface BottomNavProps {
   onMoreClick: () => void;
 }
 
+// Itens principais exibidos na barra inferior
 const primaryItems: BottomNavItem[] = [
-  { href: "/dashboard",     label: "Início",     icon: LayoutDashboard },
+  { href: "/dashboard", label: "Início", icon: LayoutDashboard },
   { href: "/movimentacoes", label: "Movimentos", icon: ArrowUpRight },
-  { href: "/contas",        label: "Contas",     icon: Wallet },
-  { href: "/faturas",       label: "Faturas",    icon: Receipt },
+  { href: "/contas", label: "Contas", icon: Wallet },
+  { href: "/faturas", label: "Faturas", icon: Receipt },
 ];
 
 export function BottomNav({ onMoreClick }: BottomNavProps) {
   const pathname = usePathname();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0D2340]/98 backdrop-blur-xl border-t border-[#142d52]/60"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    /*
+     * A barra inteira (nav) é posicionada com bottom: safe-area-inset-bottom,
+     * assim ela fica ACIMA da barra de gestos do iOS e nunca é cortada.
+     * O padding-bottom interno da nav já inclui o safe area adicional.
+     */
+    <nav
+      className="md:hidden fixed left-0 right-0 z-50"
+      style={{ bottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="flex items-center justify-around px-2 pt-2 pb-2">
-        {primaryItems.map((item) => {
-          const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex flex-col items-center justify-center flex-1 gap-1 py-1 active:opacity-70 transition-opacity duration-150"
-            >
-              <Icon
-                className={clsx(
-                  "w-6 h-6 transition-all duration-200",
-                  isActive ? "text-[#5DA832]" : "text-slate-500"
-                )}
-                strokeWidth={isActive ? 2.25 : 1.75}
-              />
-              {isActive && (
-                <span className="w-5 h-[2px] rounded-full bg-[#5DA832]" />
-              )}
-              <span className={clsx(
-                "text-[10px] font-semibold leading-none",
-                isActive ? "text-[#5DA832]" : "text-slate-500"
-              )}>
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
+      <div className="mx-2 bg-[#0D2340]/98 backdrop-blur-xl border-t border-l border-r border-[#142d52]/60 rounded-t-2xl">
+        <div className="flex items-center justify-between px-5 pt-3 pb-4">
+          {primaryItems.map((item) => {
+            const isActive =
+              pathname === item.href || pathname?.startsWith(`${item.href}/`);
+            const Icon = item.icon;
 
-        <button
-          onClick={onMoreClick}
-          className="flex flex-col items-center justify-center flex-1 gap-1 py-1 active:opacity-70 transition-opacity duration-150"
-        >
-          <MoreHorizontal className="w-6 h-6 text-slate-500" strokeWidth={1.75} />
-          <span className="text-[10px] font-semibold leading-none text-slate-500">Mais</span>
-        </button>
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex flex-col items-center justify-center flex-1 max-w-[72px] active:opacity-70 transition-opacity duration-150"
+              >
+                <div className="relative mb-1.5">
+                  <Icon
+                    className={clsx(
+                      "w-6 h-6 transition-all duration-200",
+                      isActive
+                        ? "text-[#5DA832]"
+                        : "text-slate-500"
+                    )}
+                    strokeWidth={isActive ? 2.25 : 1.75}
+                  />
+                  {isActive && (
+                    <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-5 h-[2px] rounded-full bg-[#5DA832]" />
+                  )}
+                </div>
+                <span
+                  className={clsx(
+                    "text-[10px] font-semibold leading-none",
+                    isActive ? "text-[#5DA832]" : "text-slate-500"
+                  )}
+                >
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+
+          {/* Botão "Mais" — abre o drawer com módulos restantes */}
+          <button
+            onClick={onMoreClick}
+            className="flex flex-col items-center justify-center flex-1 max-w-[72px] active:opacity-70 transition-opacity duration-150"
+          >
+            <div className="relative mb-1.5">
+              <MoreHorizontal
+                className="w-6 h-6 text-slate-500"
+                strokeWidth={1.75}
+              />
+            </div>
+            <span className="text-[10px] font-semibold leading-none text-slate-500">
+              Mais
+            </span>
+          </button>
+        </div>
       </div>
     </nav>
   );
