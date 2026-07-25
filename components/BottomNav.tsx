@@ -37,7 +37,7 @@ export function BottomNav({ onMoreClick }: BottomNavProps) {
      * O padding-bottom interno da nav já inclui o safe area adicional.
      */
     <nav
-      className="md:hidden fixed left-0 right-0 z-50"
+      className="md:hidden fixed bottom-0 w-full z-50 px-2"
       style={{ bottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="mx-2 bg-[#0D2340]/98 backdrop-blur-xl border-t border-l border-r border-[#142d52]/60 rounded-t-2xl">
