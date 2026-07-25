@@ -31,10 +31,17 @@ export function BottomNav({ onMoreClick }: BottomNavProps) {
   const pathname = usePathname();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50">
-      {/* Barra principal com margem lateral e cantos arredondados no topo */}
+    /*
+     * A barra inteira (nav) é posicionada com bottom: safe-area-inset-bottom,
+     * assim ela fica ACIMA da barra de gestos do iOS e nunca é cortada.
+     * O padding-bottom interno da nav já inclui o safe area adicional.
+     */
+    <nav
+      className="md:hidden fixed left-0 right-0 z-50"
+      style={{ bottom: "env(safe-area-inset-bottom)" }}
+    >
       <div className="mx-2 bg-[#0D2340]/98 backdrop-blur-xl border-t border-l border-r border-[#142d52]/60 rounded-t-2xl">
-        <div className="flex items-center justify-between px-5 py-3.5">
+        <div className="flex items-center justify-between px-5 pt-3 pb-4">
           {primaryItems.map((item) => {
             const isActive =
               pathname === item.href || pathname?.startsWith(`${item.href}/`);
@@ -46,7 +53,7 @@ export function BottomNav({ onMoreClick }: BottomNavProps) {
                 href={item.href}
                 className="flex flex-col items-center justify-center flex-1 max-w-[72px] active:opacity-70 transition-opacity duration-150"
               >
-                <div className="relative mb-1">
+                <div className="relative mb-1.5">
                   <Icon
                     className={clsx(
                       "w-6 h-6 transition-all duration-200",
@@ -77,7 +84,7 @@ export function BottomNav({ onMoreClick }: BottomNavProps) {
             onClick={onMoreClick}
             className="flex flex-col items-center justify-center flex-1 max-w-[72px] active:opacity-70 transition-opacity duration-150"
           >
-            <div className="relative mb-1">
+            <div className="relative mb-1.5">
               <MoreHorizontal
                 className="w-6 h-6 text-slate-500"
                 strokeWidth={1.75}
@@ -89,9 +96,6 @@ export function BottomNav({ onMoreClick }: BottomNavProps) {
           </button>
         </div>
       </div>
-
-      {/* Safe area do iOS — barra de gestos */}
-      <div className="h-[calc(env(safe-area-inset-bottom)+12px)] bg-[#0D2340]/60" />
     </nav>
   );
 }
