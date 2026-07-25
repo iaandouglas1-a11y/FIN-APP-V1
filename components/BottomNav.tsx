@@ -34,20 +34,25 @@ export function BottomNav({ onMoreClick }: BottomNavProps) {
   const pathname = usePathname();
 
   return (
-    <nav className="md:hidden fixed bottom-0 w-full z-50 px-2">
+    <nav
+      className="
+        md:hidden fixed z-50 w-full px-4
+        bottom-[max(8px,env(safe-area-inset-bottom))]
+      "
+    >
       <div
         className="
+          max-w-md mx-auto
           bg-[#0D2340]/98 backdrop-blur-xl
           border border-[#142d52]/60
-          rounded-t-2xl
-          shadow-lg
+          rounded-2xl
+          shadow-[0_-8px_30px_rgba(0,0,0,0.35)]
         "
       >
         <div
           className="
             grid grid-cols-5 items-center
-            px-4 pt-3
-            pb-[max(16px,env(safe-area-inset-bottom))]
+            px-4 pt-3 pb-3
           "
         >
           {primaryItems.map((item) => {
