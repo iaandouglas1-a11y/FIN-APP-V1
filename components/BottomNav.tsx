@@ -40,8 +40,17 @@ export function BottomNav({ onMoreClick }: BottomNavProps) {
       className="md:hidden fixed bottom-0 w-full z-50 px-2"
       style={{ bottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="mx-2 bg-[#0D2340]/98 backdrop-blur-xl border-t border-l border-r border-[#142d52]/60 rounded-t-2xl">
-        <div className="flex items-center justify-between px-5 pt-3 pb-4">
+    <div className="bg-[#0D2340]/98 backdrop-blur-xl 
+
+border border-[#142d52]/60 
+
+rounded-t-2xl">
+
+  <div className="grid grid-cols-5 items-center 
+
+  px-5 pt-3 
+
+  pb-[max(16px,env(safe-area-inset-bottom))]">
           {primaryItems.map((item) => {
             const isActive =
               pathname === item.href || pathname?.startsWith(`${item.href}/`);
