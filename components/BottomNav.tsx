@@ -1,5 +1,6 @@
 "use client";
 
+import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard, ArrowUpRight, Wallet, Receipt,
   MoreHorizontal
@@ -11,7 +12,7 @@ import Link from "next/link";
 export interface BottomNavItem {
   href: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: LucideIcon;
 }
 
 interface BottomNavProps {
