@@ -19,23 +19,25 @@ export function MetricCard({
 }: { 
   title: string; 
   value: string; 
-  tone?: "default" | "good" | "bad";
+  tone?: "default" | "good" | "bad" | "white" | "amber";
   icon?: React.ReactNode;
   change?: string;
   trend?: "up" | "down";
 }) {
   const tones = {
-    good: "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/20 hover:border-emerald-500/40",
-    bad: "from-rose-500/20 to-rose-500/5 text-rose-400 border-rose-500/20 hover:border-rose-500/40",
+    good:    "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/20 hover:border-emerald-500/40",
+    bad:     "from-rose-500/20 to-rose-500/5 text-rose-400 border-rose-500/20 hover:border-rose-500/40",
     default: "from-[#5DA832]/20 to-[#5DA832]/5 text-[#5DA832] border-[#5DA832]/20 hover:border-[#5DA832]/40",
+    white:   "from-slate-100/10 to-slate-100/5 text-white border-slate-100/20 hover:border-slate-100/40",
+    amber:   "from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/20 hover:border-amber-500/40",
   };
 
   return (
     <div className={clsx("metric-card border bg-gradient-to-br p-6 transition-all duration-300", tones[tone])}>
       <div className="flex items-start justify-between mb-4">
-        <div>
-          <p className="text-sm font-medium opacity-70">{title}</p>
-          <p className="mt-3 text-4xl font-bold tracking-tight">{value}</p>
+        <div className="min-w-0">
+          <p className="text-sm font-medium opacity-70 truncate">{title}</p>
+          <p className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight truncate">{value}</p>
           {change && (
             <p className={clsx("text-xs font-semibold mt-2", trend === "up" ? "text-emerald-400" : "text-rose-400")}>
               {trend === "up" ? "↑" : "↓"} {change}
@@ -43,7 +45,7 @@ export function MetricCard({
           )}
         </div>
         {Icon && (
-          <div className="opacity-20">
+          <div className="opacity-20 shrink-0 ml-3">
             {Icon}
           </div>
         )}
@@ -188,12 +190,12 @@ export function PageHeader({
   action?: React.ReactNode 
 }) {
   return (
-    <div className="flex items-start justify-between mb-8">
-      <div>
-        <h1 className="text-4xl font-bold tracking-tight text-white">{title}</h1>
-        {description && <p className="text-slate-400 mt-2">{description}</p>}
+    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
+      <div className="min-w-0">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">{title}</h1>
+        {description && <p className="text-slate-400 mt-2 text-sm sm:text-base">{description}</p>}
       </div>
-      {action && <div>{action}</div>}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }
