@@ -133,10 +133,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* ── Conteúdo principal ── */}
       <main className="flex-1 flex flex-col min-w-0 bg-[#091829]">
         {/*
-          Padding inferior no mobile: compensa a bottom nav fixa (~4.5rem).
+          Padding inferior no mobile: compensa a bottom nav fixa (~4rem) + safe area.
           No desktop permanece sem padding inferior adicional.
         */}
-        <div className="flex-1 p-4 md:p-8 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-8 overflow-y-auto">
+        <div className="flex-1 p-4 md:p-8 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-8 overflow-y-auto">
           <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}
           </div>
