@@ -33,8 +33,8 @@ export function BottomNav({ onMoreClick }: BottomNavProps) {
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50">
       {/* Barra principal com margem lateral e cantos arredondados no topo */}
-      <div className="mx-2 mb-0 bg-[#0D2340]/98 backdrop-blur-xl border-t border-l border-r border-[#142d52]/60 rounded-t-2xl">
-        <div className="flex items-end justify-between px-6 pt-3 pb-3">
+      <div className="mx-2 bg-[#0D2340]/98 backdrop-blur-xl border-t border-l border-r border-[#142d52]/60 rounded-t-2xl">
+        <div className="flex items-center justify-between px-5 py-3.5">
           {primaryItems.map((item) => {
             const isActive =
               pathname === item.href || pathname?.startsWith(`${item.href}/`);
@@ -44,25 +44,25 @@ export function BottomNav({ onMoreClick }: BottomNavProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center justify-center flex-1 max-w-[72px] py-1 active:opacity-70 transition-opacity duration-150"
+                className="flex flex-col items-center justify-center flex-1 max-w-[72px] active:opacity-70 transition-opacity duration-150"
               >
-                <div className="relative">
+                <div className="relative mb-1">
                   <Icon
                     className={clsx(
-                      "w-7 h-7 transition-all duration-200",
+                      "w-6 h-6 transition-all duration-200",
                       isActive
-                        ? "text-[#5DA832] drop-shadow-[0_0_8px_rgba(93,168,50,0.4)]"
+                        ? "text-[#5DA832]"
                         : "text-slate-500"
                     )}
                     strokeWidth={isActive ? 2.25 : 1.75}
                   />
                   {isActive && (
-                    <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full bg-[#5DA832]" />
+                    <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-5 h-[2px] rounded-full bg-[#5DA832]" />
                   )}
                 </div>
                 <span
                   className={clsx(
-                    "text-[11px] font-semibold mt-2.5 leading-none",
+                    "text-[10px] font-semibold leading-none",
                     isActive ? "text-[#5DA832]" : "text-slate-500"
                   )}
                 >
@@ -75,13 +75,15 @@ export function BottomNav({ onMoreClick }: BottomNavProps) {
           {/* Botão "Mais" — abre o drawer com módulos restantes */}
           <button
             onClick={onMoreClick}
-            className="flex flex-col items-center justify-center flex-1 max-w-[72px] py-1 active:opacity-70 transition-opacity duration-150"
+            className="flex flex-col items-center justify-center flex-1 max-w-[72px] active:opacity-70 transition-opacity duration-150"
           >
-            <MoreHorizontal
-              className="w-7 h-7 text-slate-500"
-              strokeWidth={1.75}
-            />
-            <span className="text-[11px] font-semibold mt-2.5 leading-none text-slate-500">
+            <div className="relative mb-1">
+              <MoreHorizontal
+                className="w-6 h-6 text-slate-500"
+                strokeWidth={1.75}
+              />
+            </div>
+            <span className="text-[10px] font-semibold leading-none text-slate-500">
               Mais
             </span>
           </button>
@@ -89,7 +91,7 @@ export function BottomNav({ onMoreClick }: BottomNavProps) {
       </div>
 
       {/* Safe area do iOS — barra de gestos */}
-      <div className="h-[calc(env(safe-area-inset-bottom)+10px)] bg-[#0D2340]/80" />
+      <div className="h-[calc(env(safe-area-inset-bottom)+12px)] bg-[#0D2340]/60" />
     </nav>
   );
 }
