@@ -106,14 +106,14 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <MetricCard 
           title="Saldo em Contas" 
           value={currency(saldo)} 
-          tone="default"
+          tone="white"
           icon={<Wallet className="h-12 w-12" />}
           trend={saldo > 0 ? "up" : "down"}
         />
         <MetricCard 
           title="Faturas em Aberto"
           value={currency(totalFaturasAberto)} 
-          tone="bad"
+          tone="amber"
           icon={<CreditCard className="h-12 w-12" />}
         />
         <MetricCard 
@@ -128,7 +128,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           value={currency(despesas)} 
           tone="bad"
           icon={<TrendingDown className="h-12 w-12" />}
-          trend="up"
+          trend="down"
         />
       </section>
 
