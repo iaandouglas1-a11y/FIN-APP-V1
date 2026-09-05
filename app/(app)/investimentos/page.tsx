@@ -2,7 +2,7 @@ import { getInvestimentos, getContasWithMovs, getCategorias, getInvestimentoSald
 import { saveInvestimento, deleteInvestimento, saveMovimento, saveSaldoMensal } from "@/app/(app)/actions_investimentos";
 import { Card, Button, Input, Select, FormGroup, StatPill } from "@/components/ui";
 import { currency } from "@/lib/format";
-import { TrendingUp, Plus, Trash2, BarChart3, LineChart as LineChartIcon } from "lucide-react";
+import { TrendingUp, Plus, Trash2, BarChart3, LineChart as LineChartIcon, Repeat, Wallet } from "lucide-react";
 import InvestimentoAccordion from "./InvestimentoAccordion";
 import { InvestimentoEvolutionChart } from "@/components/Charts";
 
@@ -61,19 +61,19 @@ export default async function InvestimentosPage() {
       <div className="flex gap-3">
         <StatPill label="Total investido" value={currency(totalInvestido)} />
         <StatPill label="Total aportado" value={currency(totalAportado)} tone="green" />
-        <StatPill label="Total resgatado" value={currency(totalResgatado)} tone="amber" />
       </div>
+      <StatPill label="Total resgatado" value={currency(totalResgatado)} tone="amber" />
 
-      {/* Gráfico de evolução do patrimônio */}
+      {/* Gráfico de evolução do patrimônio — exige ao menos 2 meses registrados */}
       <Card className="border-surface-border/60 p-4">
         <div className="flex items-center gap-2 mb-4 text-slate-400 font-bold uppercase text-xs tracking-widest">
           <LineChartIcon className="h-4 w-4" />
           <span>Evolução do Patrimônio</span>
         </div>
-        {evolutionData.length === 0 ? (
-          <div className="text-center py-10">
-            <p className="text-slate-500 text-sm">
-              Registre o saldo mensal dos investimentos abaixo para acompanhar a evolução aqui.
+        {evolutionData.length < 2 ? (
+          <div className="text-center py-8 px-2 border border-dashed border-surface-border/70 rounded-xl">
+            <p className="text-slate-500 text-[13px] leading-relaxed">
+              Registre o saldo de pelo menos 2 meses<br />para visualizar o gráfico de evolução.
             </p>
           </div>
         ) : (
@@ -81,160 +81,198 @@ export default async function InvestimentosPage() {
         )}
       </Card>
 
-      {/* Formulário de atualização mensal de saldos */}
-      <Card className="border-surface-border/60 p-4">
-        <div className="flex items-center gap-2 mb-4 text-slate-400 font-bold uppercase text-xs tracking-widest">
-          <TrendingUp className="h-4 w-4" />
-          <span>Atualizar Saldo Mensal</span>
+      {/* Carteira — promovida pra cima, é o que mais importa ver primeiro */}
+      <div>
+        <h3 className="text-[15px] font-bold text-ink-primary mb-2.5 px-1">Carteira</h3>
+        <div className="space-y-3">
+          {investimentos.length === 0 ? (
+            <Card className="text-center py-16 border-surface-border/60">
+              <TrendingUp className="h-12 w-12 text-slate-600 mx-auto mb-4" />
+              <h3 className="text-base font-semibold text-slate-300 mb-2">Nenhum investimento cadastrado</h3>
+              <p className="text-slate-500 text-sm">Adicione seu primeiro investimento abaixo</p>
+            </Card>
+          ) : (
+            investimentos.map(inv => {
+              const movInv = movimentos.filter(m => m.investimento_id === inv.id);
+              return (
+                <div key={inv.id} className="relative group/inv">
+                  <InvestimentoAccordion
+                    id={inv.id}
+                    nome={inv.nome}
+                    tipo={inv.tipo}
+                    ticker={inv.ticker}
+                    contaNome={inv.contas?.nome ?? null}
+                    valorAtual={Number(inv.valor_atual)}
+                    movimentos={movInv}
+                  />
+                  <form action={deleteInvestimento} className="absolute top-4 right-14 opacity-0 group-hover/inv:opacity-100 transition-opacity">
+                    <input type="hidden" name="id" value={inv.id} />
+                    <button type="submit" className="p-1.5 text-slate-600 hover:text-rose-400 rounded transition-colors">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </form>
+                </div>
+              );
+            })
+          )}
         </div>
-        <form action={saveSaldoMensal} className="space-y-2">
-          <FormGroup label="Investimento">
-            <Select name="investimento_id" required className="h-9 text-sm w-full">
-              <option value="">Selecione...</option>
-              {investimentos.map(i => <option key={i.id} value={i.id}>{i.nome}</option>)}
-            </Select>
-          </FormGroup>
-          <div className="grid grid-cols-2 gap-2">
-            <FormGroup label="Mês">
-              <Select name="mes" required className="h-9 text-sm w-full" defaultValue={mesAtual}>
-                {Array.from({ length: 12 }, (_, i) => {
-                  const d = new Date(); d.setMonth(i);
-                  const val = `${new Date().getFullYear()}-${String(i+1).padStart(2,"0")}`;
-                  return <option key={val} value={val}>{d.toLocaleDateString("pt-BR",{month:"long"})} {new Date().getFullYear()}</option>;
-                })}
-              </Select>
-            </FormGroup>
-            <FormGroup label="Saldo">
-              <Input name="saldo" type="number" step="0.01" min="0" placeholder="0,00" required className="h-9 text-sm w-full" />
-            </FormGroup>
-          </div>
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full">
-            <Plus className="h-4 w-4 mr-1.5" />
-            Salvar
-          </Button>
-        </form>
-        <p className="text-[11px] text-slate-500 mt-3">
-          Registrar o saldo do mês atualiza automaticamente o "Valor Atual" do investimento e alimenta o gráfico de evolução acima. Se já existir um registro para o mesmo mês, ele será substituído.
-        </p>
-      </Card>
+      </div>
 
-      {/* Formulário novo investimento */}
-      <Card className="border-[#5DA832]/30 bg-gradient-to-br from-[#5DA832]/10 to-[#5DA832]/5 relative overflow-hidden">
-        <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#5DA832]/10 rounded-full blur-3xl" />
-        <div className="flex items-center gap-2 mb-4 text-[#5DA832] font-bold uppercase text-xs tracking-widest relative z-10">
-          <Plus className="h-4 w-4" />
-          <span>Novo Investimento</span>
-        </div>
-        <form action={saveInvestimento} className="relative z-10 space-y-2">
-          <FormGroup label="Nome">
-            <Input name="nome" placeholder="Ex: CDB Nubank, PETR4..." required className="h-9 text-sm w-full" />
-          </FormGroup>
-          <div className="grid grid-cols-2 gap-2">
-            <FormGroup label="Tipo">
-              <Select name="tipo" required className="h-9 text-sm w-full">
-                <option value="renda_fixa">Renda Fixa</option>
-                <option value="renda_variavel">Renda Variável</option>
-              </Select>
-            </FormGroup>
-            <FormGroup label="Ticker">
-              <Input name="ticker" placeholder="PETR4" className="h-9 text-sm font-mono w-full" />
-            </FormGroup>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <FormGroup label="Conta">
-              <Select name="conta_id" className="h-9 text-sm w-full">
-                <option value="">Nenhuma</option>
-                {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
-              </Select>
-            </FormGroup>
-            <FormGroup label="Valor Atual">
-              <Input name="valor_atual" type="number" step="0.01" min="0" placeholder="0,00" className="h-9 text-sm w-full" />
-            </FormGroup>
-          </div>
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full">
-            <Plus className="h-4 w-4 mr-1.5" />
-            Adicionar
-          </Button>
-        </form>
-      </Card>
-
-      {/* Formulário aporte/resgate */}
-      <Card className="border-surface-border/60 p-4">
-        <div className="flex items-center gap-2 mb-4 text-slate-400 font-bold uppercase text-xs tracking-widest">
-          <BarChart3 className="h-4 w-4" />
-          <span>Registrar Aporte / Resgate</span>
-        </div>
-        <form action={saveMovimento} className="space-y-2">
-          <FormGroup label="Investimento">
-            <Select name="investimento_id" required className="h-9 text-sm w-full">
-              <option value="">Selecione...</option>
-              {investimentos.map(i => <option key={i.id} value={i.id}>{i.nome}</option>)}
-            </Select>
-          </FormGroup>
-          <div className="grid grid-cols-2 gap-2">
-            <FormGroup label="Tipo">
-              <Select name="tipo" required className="h-9 text-sm w-full">
-                <option value="aporte">Aporte</option>
-                <option value="resgate">Resgate</option>
-              </Select>
-            </FormGroup>
-            <FormGroup label="Valor">
-              <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="h-9 text-sm w-full" />
-            </FormGroup>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <FormGroup label="Data">
-              <Input name="data" type="date" required className="h-9 w-full text-sm" />
-            </FormGroup>
-            <FormGroup label="Conta">
-              <Select name="conta_id" className="h-9 text-sm w-full">
-                <option value="">Nenhuma</option>
-                {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
-              </Select>
-            </FormGroup>
-          </div>
-          <FormGroup label="Descrição">
-            <Input name="descricao" placeholder="Opcional..." className="h-9 text-sm w-full" />
-          </FormGroup>
-          <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full">
-            <Plus className="h-4 w-4 mr-1.5" />
-            Registrar
-          </Button>
-        </form>
-      </Card>
-
-      {/* Lista de investimentos */}
-      <div className="space-y-3">
-        {investimentos.length === 0 ? (
-          <Card className="text-center py-16 border-surface-border/60">
-            <TrendingUp className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-            <h3 className="text-base font-semibold text-slate-300 mb-2">Nenhum investimento cadastrado</h3>
-            <p className="text-slate-500 text-sm">Adicione seu primeiro investimento acima</p>
-          </Card>
-        ) : (
-          investimentos.map(inv => {
-            const movInv = movimentos.filter(m => m.investimento_id === inv.id);
-            return (
-              <div key={inv.id} className="relative group/inv">
-                <InvestimentoAccordion
-                  id={inv.id}
-                  nome={inv.nome}
-                  tipo={inv.tipo}
-                  ticker={inv.ticker}
-                  contaNome={inv.contas?.nome ?? null}
-                  valorAtual={Number(inv.valor_atual)}
-                  movimentos={movInv}
-                />
-                <form action={deleteInvestimento} className="absolute top-4 right-14 opacity-0 group-hover/inv:opacity-100 transition-opacity">
-                  <input type="hidden" name="id" value={inv.id} />
-                  <button type="submit" className="p-1.5 text-slate-600 hover:text-rose-400 rounded transition-colors">
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </form>
+      {/* Formulários — colapsados em cards tracejados, mesmo padrão de Contas/Cartões */}
+      <div className="space-y-2.5">
+        <details className="group">
+          <summary className="list-none cursor-pointer">
+            <div className="flex items-center justify-between p-4 rounded-2xl border border-dashed border-surface-border text-ink-secondary group-open:hidden">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-[#5DA832]/[0.14] text-[#6fc23b] flex items-center justify-center">
+                  <Plus className="h-4 w-4" />
+                </div>
+                <span className="text-[13.5px] font-semibold">Novo investimento</span>
               </div>
-            );
-          })
-        )}
+            </div>
+          </summary>
+          <Card className="mt-2">
+            <div className="flex items-center gap-2 mb-4 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+              <Plus className="h-4 w-4" />
+              <span>Novo Investimento</span>
+            </div>
+            <form action={saveInvestimento} className="space-y-2">
+              <FormGroup label="Nome">
+                <Input name="nome" placeholder="Ex: CDB Nubank, PETR4..." required className="h-9 text-sm w-full" />
+              </FormGroup>
+              <div className="grid grid-cols-2 gap-2">
+                <FormGroup label="Tipo">
+                  <Select name="tipo" required className="h-9 text-sm w-full">
+                    <option value="renda_fixa">Renda Fixa</option>
+                    <option value="renda_variavel">Renda Variável</option>
+                  </Select>
+                </FormGroup>
+                <FormGroup label="Ticker">
+                  <Input name="ticker" placeholder="PETR4" className="h-9 text-sm font-mono w-full" />
+                </FormGroup>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <FormGroup label="Conta">
+                  <Select name="conta_id" className="h-9 text-sm w-full">
+                    <option value="">Nenhuma</option>
+                    {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+                  </Select>
+                </FormGroup>
+                <FormGroup label="Valor Atual">
+                  <Input name="valor_atual" type="number" step="0.01" min="0" placeholder="0,00" className="h-9 text-sm w-full" />
+                </FormGroup>
+              </div>
+              <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full">
+                <Plus className="h-4 w-4 mr-1.5" />
+                Adicionar
+              </Button>
+            </form>
+          </Card>
+        </details>
+
+        <details className="group">
+          <summary className="list-none cursor-pointer">
+            <div className="flex items-center justify-between p-4 rounded-2xl border border-dashed border-surface-border text-ink-secondary group-open:hidden">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-info/[0.14] text-[#60a5fa] flex items-center justify-center">
+                  <Repeat className="h-4 w-4" />
+                </div>
+                <span className="text-[13.5px] font-semibold">Registrar aporte / resgate</span>
+              </div>
+            </div>
+          </summary>
+          <Card className="mt-2 border-surface-border/60">
+            <div className="flex items-center gap-2 mb-4 text-slate-400 font-bold uppercase text-xs tracking-widest">
+              <BarChart3 className="h-4 w-4" />
+              <span>Registrar Aporte / Resgate</span>
+            </div>
+            <form action={saveMovimento} className="space-y-2">
+              <FormGroup label="Investimento">
+                <Select name="investimento_id" required className="h-9 text-sm w-full">
+                  <option value="">Selecione...</option>
+                  {investimentos.map(i => <option key={i.id} value={i.id}>{i.nome}</option>)}
+                </Select>
+              </FormGroup>
+              <div className="grid grid-cols-2 gap-2">
+                <FormGroup label="Tipo">
+                  <Select name="tipo" required className="h-9 text-sm w-full">
+                    <option value="aporte">Aporte</option>
+                    <option value="resgate">Resgate</option>
+                  </Select>
+                </FormGroup>
+                <FormGroup label="Valor">
+                  <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="h-9 text-sm w-full" />
+                </FormGroup>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <FormGroup label="Data">
+                  <Input name="data" type="date" required className="h-9 w-full text-sm" />
+                </FormGroup>
+                <FormGroup label="Conta">
+                  <Select name="conta_id" className="h-9 text-sm w-full">
+                    <option value="">Nenhuma</option>
+                    {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+                  </Select>
+                </FormGroup>
+              </div>
+              <FormGroup label="Descrição">
+                <Input name="descricao" placeholder="Opcional..." className="h-9 text-sm w-full" />
+              </FormGroup>
+              <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full">
+                <Plus className="h-4 w-4 mr-1.5" />
+                Registrar
+              </Button>
+            </form>
+          </Card>
+        </details>
+
+        <details className="group">
+          <summary className="list-none cursor-pointer">
+            <div className="flex items-center justify-between p-4 rounded-2xl border border-dashed border-surface-border text-ink-secondary group-open:hidden">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-warning/[0.14] text-[#f5a524] flex items-center justify-center">
+                  <TrendingUp className="h-4 w-4" />
+                </div>
+                <span className="text-[13.5px] font-semibold">Atualizar saldo mensal</span>
+              </div>
+            </div>
+          </summary>
+          <Card className="mt-2 border-surface-border/60">
+            <div className="flex items-center gap-2 mb-4 text-slate-400 font-bold uppercase text-xs tracking-widest">
+              <TrendingUp className="h-4 w-4" />
+              <span>Atualizar Saldo Mensal</span>
+            </div>
+            <form action={saveSaldoMensal} className="space-y-2">
+              <FormGroup label="Investimento">
+                <Select name="investimento_id" required className="h-9 text-sm w-full">
+                  <option value="">Selecione...</option>
+                  {investimentos.map(i => <option key={i.id} value={i.id}>{i.nome}</option>)}
+                </Select>
+              </FormGroup>
+              <div className="grid grid-cols-2 gap-2">
+                <FormGroup label="Mês">
+                  <Select name="mes" required className="h-9 text-sm w-full" defaultValue={mesAtual}>
+                    {Array.from({ length: 12 }, (_, i) => {
+                      const d = new Date(); d.setMonth(i);
+                      const val = `${new Date().getFullYear()}-${String(i+1).padStart(2,"0")}`;
+                      return <option key={val} value={val}>{d.toLocaleDateString("pt-BR",{month:"long"})} {new Date().getFullYear()}</option>;
+                    })}
+                  </Select>
+                </FormGroup>
+                <FormGroup label="Saldo">
+                  <Input name="saldo" type="number" step="0.01" min="0" placeholder="0,00" required className="h-9 text-sm w-full" />
+                </FormGroup>
+              </div>
+              <Button type="submit" className="h-9 px-4 text-sm font-semibold inline-flex items-center justify-center w-full">
+                <Plus className="h-4 w-4 mr-1.5" />
+                Salvar
+              </Button>
+            </form>
+            <p className="text-[11px] text-slate-500 mt-3">
+              Registrar o saldo do mês atualiza automaticamente o "Valor Atual" do investimento e alimenta o gráfico de evolução acima. Se já existir um registro para o mesmo mês, ele será substituído.
+            </p>
+          </Card>
+        </details>
       </div>
     </div>
   );
