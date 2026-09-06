@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 
@@ -35,7 +34,6 @@ export async function saveCliente(formData: FormData) {
 
   if (result.error) throw new Error(result.error.message);
   revalidatePath("/clientes");
-  redirect("/clientes");
 }
 
 export async function deleteCliente(formData: FormData) {

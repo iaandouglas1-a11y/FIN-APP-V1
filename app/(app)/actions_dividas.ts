@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 
@@ -39,7 +38,6 @@ export async function saveDivida(formData: FormData) {
     : await (s.from("dividas") as any).insert(parsed.data);
   if (result.error) throw new Error(result.error.message);
   revalidatePath("/dividas");
-  redirect("/dividas");
 }
 
 export async function deleteDivida(formData: FormData) {
@@ -111,7 +109,6 @@ export async function savePagamento(formData: FormData) {
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
-  redirect("/dividas");
 }
 
 export async function realizarPagamento(formData: FormData) {
@@ -143,7 +140,6 @@ export async function realizarPagamento(formData: FormData) {
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
-  redirect("/dividas");
 }
 
 export async function deletePagamento(formData: FormData) {

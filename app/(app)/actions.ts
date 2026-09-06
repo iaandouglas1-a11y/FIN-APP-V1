@@ -69,7 +69,6 @@ export async function saveMovimentacao(formData: FormData) {
   if (result.error) throw new Error(result.error.message); 
   revalidatePath("/movimentacoes"); 
   revalidatePath("/dashboard"); 
-  redirect("/movimentacoes"); 
 }
 
 export async function duplicarMovimentacao(formData: FormData) {
@@ -96,7 +95,6 @@ export async function duplicarMovimentacao(formData: FormData) {
 
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
-  redirect("/movimentacoes");
 }
 
 export async function deleteMovimentacao(formData: FormData) { 
@@ -121,7 +119,6 @@ export async function saveConta(formData: FormData) {
   
   if (result.error) throw new Error(result.error.message); 
   revalidatePath("/contas"); 
-  redirect("/contas"); 
 }
 
 // --- Cartões ---
@@ -136,8 +133,8 @@ export async function saveCartao(formData: FormData) {
     : await (s.from("cartoes") as any).insert(parsed.data); 
   
   if (result.error) throw new Error(result.error.message); 
-  revalidatePath("/cartoes"); 
-  redirect("/cartoes"); 
+  revalidatePath("/contas/cartoes"); 
+  revalidatePath("/contas"); 
 }
 
 // --- Faturas ---
@@ -149,7 +146,6 @@ export async function saveFatura(formData: FormData) {
   const { error } = await (s.from("faturas") as any).insert(parsed.data); 
   if (error) throw new Error(error.message); 
   revalidatePath("/faturas"); 
-  redirect("/faturas"); 
 }
 
 // --- Categorias ---
@@ -167,7 +163,7 @@ export async function saveCategoria(formData: FormData) {
 
     if (error) {
       console.error("Erro Supabase:", error);
-      throw new Error(`Erro no Banco de Dados: <LaTex>${error.message}`);
+      throw new Error(`Erro no Banco de Dados: ${error.message}`);
     }
 
     revalidatePath("/categorias");
@@ -175,10 +171,8 @@ export async function saveCategoria(formData: FormData) {
   } catch (e: any) {
     console.error("Erro completo:", e);
 
-    redirect(`/categorias?error=$</LaTex>{encodeURIComponent(e.message)}`);
+    redirect(`/categorias?error=${encodeURIComponent(e.message)}`);
   }
-
-  redirect("/categorias");
 }
 
 export async function deleteCategoria(formData: FormData) {
@@ -253,10 +247,9 @@ export async function pagarFatura(formData: FormData) {
   if (fatError) throw new Error(fatError.message);
 
   revalidatePath("/faturas");
-  revalidatePath("/cartoes");
+  revalidatePath("/contas/cartoes");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
-  redirect("/faturas");
 }
 
 // --- Cancelar Pagamento de Fatura ---
@@ -290,10 +283,9 @@ export async function cancelarPagamentoFatura(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/faturas");
-  revalidatePath("/cartoes");
+  revalidatePath("/contas/cartoes");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
-  redirect("/faturas");
 }
 
 // --- Transferência entre Contas ---
@@ -346,5 +338,4 @@ export async function realizarTransferencia(formData: FormData) {
 
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
-  redirect("/movimentacoes");
 }

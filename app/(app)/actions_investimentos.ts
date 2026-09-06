@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 
@@ -36,7 +35,6 @@ export async function saveInvestimento(formData: FormData) {
     : await (s.from("investimentos") as any).insert(parsed.data);
   if (result.error) throw new Error(result.error.message);
   revalidatePath("/investimentos");
-  redirect("/investimentos");
 }
 
 export async function deleteInvestimento(formData: FormData) {
@@ -78,7 +76,6 @@ export async function saveSaldoMensal(formData: FormData) {
     .eq("id", parsed.data.investimento_id);
 
   revalidatePath("/investimentos");
-  redirect("/investimentos");
 }
 
 export async function deleteSaldoMensal(formData: FormData) {
@@ -150,7 +147,6 @@ export async function saveMovimento(formData: FormData) {
   revalidatePath("/investimentos");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
-  redirect("/investimentos");
 }
 
 export async function deleteMovimento(formData: FormData) {

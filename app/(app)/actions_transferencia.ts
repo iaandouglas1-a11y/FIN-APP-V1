@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 
 export async function realizarTransferencia(formData: FormData) {
@@ -50,5 +49,4 @@ export async function realizarTransferencia(formData: FormData) {
 
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
-  redirect("/movimentacoes");
 }

@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 
@@ -36,7 +35,6 @@ export async function saveHonorario(formData: FormData) {
   if (result.error) throw new Error(result.error.message);
 
   revalidatePath("/honorarios");
-  redirect("/honorarios");
 }
 
 export async function deleteHonorario(formData: FormData) {
