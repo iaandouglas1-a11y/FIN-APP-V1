@@ -2,7 +2,7 @@ import { deleteMovimentacao } from "@/app/(app)/actions";
 import { Card, Input, Select, Button, EmptyState, IconChip, AmountText, Surface } from "@/components/ui";
 import { dateBR } from "@/lib/format";
 import { getCartoesEFaturas, getCategorias, getContasWithMovs, getMovimentacoes } from "@/lib/queries";
-import { Trash2, Filter, Inbox, Search } from "lucide-react";
+import { Trash2, Filter, Inbox, Search, X } from "lucide-react";
 import { getCategoryIcon } from "@/lib/categoryIcons";
 import { clsx } from "clsx";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
@@ -126,18 +126,19 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
       </div>
 
       {/* Filtros */}
-      <Card id="filtros" className="p-3 scroll-mt-6">
-        <div className="flex gap-2 mb-3">
+      {/* Filtros — discreto: chips + ícone p/ período customizado e categoria ── */}
+      <div id="filtros" className="flex items-center gap-2 scroll-mt-6">
+        <div className="flex gap-1.5 overflow-x-auto flex-1 no-scrollbar">
           {MESES_RAPIDOS.map(({ label, offset }) => {
             const r = monthRange(offset);
             const isActive = sp.inicio === r.inicio && sp.fim === r.fim;
             return (
               <a key={offset} href={`/movimentacoes?inicio=${r.inicio}&fim=${r.fim}`}
                 className={clsx(
-                  "flex-1 text-center px-2 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 border whitespace-nowrap",
+                  "shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap",
                   isActive
-                    ? "bg-[#5DA832]/20 border-[#5DA832]/40 text-[#6fc23b]"
-                    : "bg-surface-2/40 border-surface-border/40 text-slate-400 hover:text-slate-200 hover:bg-surface-2/60"
+                    ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                    : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
                 )}
               >
                 {label}
@@ -146,32 +147,36 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
           })}
         </div>
 
-        <form className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
-            <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-9 flex-1 min-w-0 block text-xs w-full" />
-            <span className="text-slate-600 text-xs shrink-0 hidden sm:inline">até</span>
-            <Input type="date" name="fim" defaultValue={sp.fim} className="h-9 flex-1 min-w-0 block text-xs w-full" />
-          </div>
-          <div className="flex gap-2">
+        {(sp.inicio || sp.fim || sp.tipo || sp.categoria) && (
+          <a
+            href="/movimentacoes"
+            title="Limpar filtros"
+            className="shrink-0 w-8 h-8 rounded-full bg-surface border border-surface-border/50 flex items-center justify-center text-ink-tertiary hover:text-[#f87171] transition-colors"
+          >
+            <X className="h-3.5 w-3.5" />
+          </a>
+        )}
+
+        <details className="relative shrink-0">
+          <summary className="list-none cursor-pointer w-8 h-8 rounded-full bg-surface border border-surface-border/50 flex items-center justify-center text-ink-tertiary hover:text-ink-primary transition-colors">
+            <Filter className="h-3.5 w-3.5" />
+          </summary>
+          <form className="absolute right-0 top-10 z-20 w-72 p-3.5 rounded-xl bg-surface border border-surface-border shadow-navy space-y-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-ink-tertiary">Período personalizado</p>
+            <div className="flex items-center gap-1.5">
+              <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-9 flex-1 min-w-0 text-xs" />
+              <span className="text-slate-600 text-[10px] shrink-0">até</span>
+              <Input type="date" name="fim" defaultValue={sp.fim} className="h-9 flex-1 min-w-0 text-xs" />
+            </div>
             <input type="hidden" name="tipo" value={sp.tipo ?? ""} />
-            <Select name="categoria" defaultValue={sp.categoria ?? ""} className="h-9 text-xs flex-1 sm:w-36 sm:flex-none">
-              <option value="">Todas categ.</option>
+            <Select name="categoria" defaultValue={sp.categoria ?? ""} className="h-9 text-xs w-full">
+              <option value="">Todas categorias</option>
               {categorias.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </Select>
-          </div>
-          <div className="flex gap-2">
-            <Button type="submit" variant="secondary" className="h-9 px-4 text-xs flex-1 sm:flex-none inline-flex items-center justify-center">
-              <Filter className="h-3.5 w-3.5 mr-1.5" />
-              Filtrar
-            </Button>
-            {(sp.inicio || sp.fim || sp.tipo || sp.categoria) && (
-              <a href="/movimentacoes" className="h-9 px-3 flex items-center justify-center text-xs text-slate-500 hover:text-slate-300 border border-surface-border/40 rounded-lg transition-colors">
-                Limpar
-              </a>
-            )}
-          </div>
-        </form>
-      </Card>
+            <Button type="submit" variant="secondary" className="w-full h-8 text-xs">Aplicar</Button>
+          </form>
+        </details>
+      </div>
 
       {/* Listagem agrupada por dia */}
       {movs.length === 0 ? (
