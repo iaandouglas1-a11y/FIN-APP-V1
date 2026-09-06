@@ -79,9 +79,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <StatPill label="Transações no período" value={String(monthMovs.length)} />
       </div>
 
-      {/* ── Filtro de período ─────────────────────────────────────── */}
-      <Card className="p-4">
-        <div className="flex gap-2 mb-3">
+      {/* ── Filtro de período — discreto: chips + ícone de calendário p/ período customizado ── */}
+      <div className="flex items-center gap-2">
+        <div className="flex gap-1.5 overflow-x-auto flex-1 no-scrollbar">
           {MESES_RAPIDOS.map(({ label, offset }) => {
             const r = monthRange(offset);
             const isActive = sp.inicio === r.inicio && sp.fim === r.fim;
@@ -89,10 +89,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
               <a
                 key={offset}
                 href={`/dashboard?inicio=${r.inicio}&fim=${r.fim}`}
-                className={`flex-1 text-center px-2 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 border ${
+                className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
                   isActive
-                    ? "bg-[#5DA832]/20 border-[#5DA832]/40 text-[#6fc23b]"
-                    : "bg-surface-2/40 border-surface-border/40 text-slate-400 hover:text-slate-200 hover:bg-surface-2/60"
+                    ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                    : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
                 }`}
               >
                 {label}
@@ -100,16 +100,22 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             );
           })}
         </div>
-        <form className="flex items-center gap-2">
-          <Input type="date" name="inicio" defaultValue={sp.inicio ?? filtro.start} className="h-9 flex-1 min-w-0 block text-xs" />
-          <span className="text-slate-600 text-xs shrink-0">até</span>
-          <Input type="date" name="fim" defaultValue={sp.fim ?? filtro.end} className="h-9 flex-1 min-w-0 block text-xs" />
-          <Button type="submit" variant="secondary" className="h-9 px-3 text-xs shrink-0 inline-flex items-center justify-center gap-1.5">
+
+        <details className="relative shrink-0">
+          <summary className="list-none cursor-pointer w-8 h-8 rounded-full bg-surface border border-surface-border/50 flex items-center justify-center text-ink-tertiary hover:text-ink-primary transition-colors">
             <Filter className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Filtrar</span>
-          </Button>
-        </form>
-      </Card>
+          </summary>
+          <form className="absolute right-0 top-10 z-20 w-64 p-3.5 rounded-xl bg-surface border border-surface-border shadow-navy space-y-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-ink-tertiary">Período personalizado</p>
+            <div className="flex items-center gap-1.5">
+              <Input type="date" name="inicio" defaultValue={sp.inicio ?? filtro.start} className="h-9 flex-1 min-w-0 text-xs" />
+              <span className="text-slate-600 text-[10px] shrink-0">até</span>
+              <Input type="date" name="fim" defaultValue={sp.fim ?? filtro.end} className="h-9 flex-1 min-w-0 text-xs" />
+            </div>
+            <Button type="submit" variant="secondary" className="w-full h-8 text-xs">Aplicar</Button>
+          </form>
+        </details>
+      </div>
 
       {/* ── Últimas movimentações ─────────────────────────────────── */}
       <div>
