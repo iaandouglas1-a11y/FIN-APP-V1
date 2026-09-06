@@ -310,9 +310,13 @@ export function AmountText({
     hero: "text-[38px] leading-tight font-extrabold tracking-tight",
   }[size];
   const prefix = signed ? (value >= 0 ? "+ " : "- ") : "";
+  // Math.abs só se aplica quando `signed`, pois aí o sinal já é comunicado pelo
+  // prefixo "+ "/"- " manual. Sem `signed`, o valor precisa manter o sinal real
+  // (ex.: saldo de conta negativo) — Intl.NumberFormat já formata isso com "-".
+  const displayValue = signed ? Math.abs(value) : value;
   return (
     <span className={clsx("num", sizeClass, toneClass, className)}>
-      {prefix}{currency(Math.abs(value))}
+      {prefix}{currency(displayValue)}
     </span>
   );
 }
@@ -402,7 +406,7 @@ export function StatPill({
   return (
     <div className="surface-2 bg-surface px-3.5 py-3 flex-1 min-w-0">
       <div className="text-[10px] font-bold uppercase tracking-wide text-ink-secondary truncate">{label}</div>
-      <div className={clsx("num text-lg font-extrabold mt-1 truncate", toneClass)}>{value}</div>
+      <div className={clsx("num text-[15px] sm:text-lg font-extrabold mt-1 leading-tight break-words", toneClass)}>{value}</div>
     </div>
   );
 }
@@ -458,6 +462,34 @@ export function QuickAction({ icon: Icon, label, href, onClick }: { icon: Lucide
   );
   if (href) return <Link href={href}>{inner}</Link>;
   return <button type="button" onClick={onClick} className="contents">{inner}</button>;
+}
+
+/** Logo de uma instituição (banco/cartão) via URL salva no banco — com fallback
+ * para o IconChip genérico quando não há logo_url cadastrada. */
+export function EntityLogo({
+  src,
+  icon,
+  tone = "gray",
+  size = 40,
+  iconSize = 18,
+  rounded = "rounded-xl",
+}: {
+  src?: string | null;
+  icon: LucideIcon;
+  tone?: IconTone;
+  size?: number;
+  iconSize?: number;
+  rounded?: string;
+}) {
+  if (src) {
+    return (
+      <div className={clsx("overflow-hidden shrink-0 bg-surface-2 border border-surface-border/50", rounded)} style={{ width: size, height: size }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt="" className="w-full h-full object-cover" />
+      </div>
+    );
+  }
+  return <IconChip icon={icon} tone={tone} size={size} iconSize={iconSize} rounded={rounded} />;
 }
 
 /** Wrapper de bottom sheet simples (overlay controlado externamente). */

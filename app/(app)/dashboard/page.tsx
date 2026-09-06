@@ -1,9 +1,9 @@
 import { CategoryPie, EvolutionChart, WaterfallChart } from "@/components/Charts";
-import { Card, Input, Button, AmountText, StatPill, QuickAction, Surface } from "@/components/ui";
+import { Card, Input, Button, AmountText, StatPill, Surface } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { totalBalance, invoiceTotal } from "@/lib/finance";
 import { getDashboardData, monthlyDre, getCartoesEFaturas } from "@/lib/queries";
-import { ArrowUpRight, ArrowDownLeft, Repeat, Receipt, TrendingUp, Filter } from "lucide-react";
+import { TrendingUp, Filter } from "lucide-react";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
 
 const MESES_RAPIDOS = [
@@ -67,14 +67,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           <TrendingUp className="h-3.5 w-3.5" />
           Taxa de poupança de {poupanca}% em {periodoLabel}
         </div>
-      </div>
-
-      {/* ── Ações rápidas ─────────────────────────────────────────── */}
-      <div className="flex justify-between gap-2 px-1">
-        <QuickAction icon={ArrowUpRight} label="Receita" href="/movimentacoes?tipo=receita#lancamento" />
-        <QuickAction icon={ArrowDownLeft} label="Despesa" href="/movimentacoes?tipo=despesa#lancamento" />
-        <QuickAction icon={Repeat} label="Transferir" href="/movimentacoes#transferencia" />
-        <QuickAction icon={Receipt} label="Faturas" href="/faturas" />
       </div>
 
       {/* ── Stat pills ────────────────────────────────────────────── */}

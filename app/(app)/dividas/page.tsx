@@ -265,78 +265,71 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
           </div>
         </details>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-surface-border/40 bg-surface-2/30">
-                <th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Data</th>
-                <th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Descrição</th>
-                <th className="px-4 py-2 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500">Valor</th>
-                <th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden md:table-cell">Categoria</th>
-                <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">Tipo</th>
-                <th className="px-4 py-2 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden md:table-cell">Saldo Após</th>
-                <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-surface-border/40">
-              {fluxo.length === 0 ? (
-                <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-600 italic text-xs">Nenhum pagamento lançado.</td></tr>
-              ) : fluxo.map((p: any) => (
-                <tr key={p.id} className={clsx("hover:bg-surface-2/30 transition-colors", p.tipo === "realizado" && "bg-[#5DA832]/5")}>
-                  <td className="px-4 py-2.5 text-slate-400 text-xs whitespace-nowrap">{dateBR(p.data)}</td>
-                  <td className="px-4 py-2.5 text-slate-200 font-medium">{p.descricao}</td>
-                  <td className="px-4 py-2.5 text-right font-semibold text-white whitespace-nowrap">{currency(Number(p.valor))}</td>
-                  <td className="px-4 py-2.5 text-slate-400 text-xs hidden md:table-cell">{(p as any).categoria_id ? categorias.find(cat => cat.id === (p as any).categoria_id)?.nome || "—" : "—"}</td>
-                  <td className="px-4 py-2.5 text-center">
-                    {p.tipo === "realizado" ? (
-                      <Badge variant="success" className="text-[10px]">✓ Realizado</Badge>
-                    ) : (
-                      <Badge variant="warning" className="text-[10px]">Orçado</Badge>
-                    )}
-                  </td>
-                  <td className="px-4 py-2.5 text-right text-slate-300 font-semibold hidden md:table-cell whitespace-nowrap">
-                    {p.tipo === "realizado" ? currency(p.saldoApos) : "—"}
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <div className="flex items-center justify-end gap-1">
-                      {p.tipo === "orcado" ? (
-                        <RealizarPagamentoBtn
-                          pagamentoId={p.id}
-                          descricao={p.descricao}
-                          valor={Number(p.valor)}
-                          data={p.data}
-                          contas={contasList}
-                          categorias={categoriasDespesa}
-                          categoriaId={(p as any).categoria_id}
-                        />
-                      ) : (
-                        <DesfazerPagamentoBtn pagamentoId={p.id} tipo={p.tipo} />
-                      )}
-                      <EditarPagamentoBtn
-                        pagamento={{
-                          id: p.id,
-                          data: p.data,
-                          descricao: p.descricao,
-                          valor: Number(p.valor),
-                          tipo: p.tipo,
-                          conta_id: (p as any).conta_id,
-                          categoria_id: (p as any).categoria_id
-                        }}
-                        contas={contasList}
-                        categorias={categoriasDespesa}
-                      />
-                      <form action={deletePagamento}>
-                        <input type="hidden" name="id" value={p.id} />
-                        <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors" title="Excluir">
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </form>
+        {/* Lista de pagamentos — cards, sem scroll horizontal (mobile-first) */}
+        <div className="divide-y divide-surface-border/40">
+          {fluxo.length === 0 ? (
+            <p className="px-4 py-8 text-center text-slate-600 italic text-xs">Nenhum pagamento lançado.</p>
+          ) : fluxo.map((p: any) => {
+            const categoriaNome = (p as any).categoria_id
+              ? categorias.find(cat => cat.id === (p as any).categoria_id)?.nome
+              : null;
+            return (
+              <div key={p.id} className={clsx("p-3.5", p.tipo === "realizado" && "bg-[#5DA832]/[0.03]")}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13.5px] font-semibold text-ink-primary truncate">{p.descricao}</p>
+                    <div className="flex items-center gap-1.5 flex-wrap mt-1 text-[11px] text-ink-tertiary">
+                      <span>{dateBR(p.data)}</span>
+                      {categoriaNome && <span>· {categoriaNome}</span>}
+                      {p.tipo === "realizado" && <span>· saldo após {currency(p.saldoApos)}</span>}
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="num text-[14.5px] font-bold text-ink-primary whitespace-nowrap">{currency(Number(p.valor))}</p>
+                    {p.tipo === "realizado" ? (
+                      <Badge variant="success" className="text-[10px] mt-1">✓ Realizado</Badge>
+                    ) : (
+                      <Badge variant="warning" className="text-[10px] mt-1">Orçado</Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center justify-end gap-1 mt-2.5 pt-2.5 border-t border-surface-border/30">
+                  {p.tipo === "orcado" ? (
+                    <RealizarPagamentoBtn
+                      pagamentoId={p.id}
+                      descricao={p.descricao}
+                      valor={Number(p.valor)}
+                      data={p.data}
+                      contas={contasList}
+                      categorias={categoriasDespesa}
+                      categoriaId={(p as any).categoria_id}
+                    />
+                  ) : (
+                    <DesfazerPagamentoBtn pagamentoId={p.id} tipo={p.tipo} />
+                  )}
+                  <EditarPagamentoBtn
+                    pagamento={{
+                      id: p.id,
+                      data: p.data,
+                      descricao: p.descricao,
+                      valor: Number(p.valor),
+                      tipo: p.tipo,
+                      conta_id: (p as any).conta_id,
+                      categoria_id: (p as any).categoria_id
+                    }}
+                    contas={contasList}
+                    categorias={categoriasDespesa}
+                  />
+                  <form action={deletePagamento}>
+                    <input type="hidden" name="id" value={p.id} />
+                    <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors" title="Excluir">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </form>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </Card>
     </div>

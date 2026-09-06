@@ -1,12 +1,12 @@
-import { deleteMovimentacao, saveMovimentacao } from "@/app/(app)/actions";
-import { Card, Input, Select, Button, FormGroup, EmptyState, IconChip, AmountText, Surface } from "@/components/ui";
+import { deleteMovimentacao } from "@/app/(app)/actions";
+import { Card, Input, Select, Button, EmptyState, IconChip, AmountText, Surface } from "@/components/ui";
 import { dateBR } from "@/lib/format";
 import { getCartoesEFaturas, getCategorias, getContasWithMovs, getMovimentacoes } from "@/lib/queries";
-import { Trash2, Plus, Filter, Inbox, Search } from "lucide-react";
+import { Trash2, Filter, Inbox, Search } from "lucide-react";
 import { getCategoryIcon } from "@/lib/categoryIcons";
 import { clsx } from "clsx";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
-import TransferenciaBtn from "./TransferenciaBtn";
+import MovimentacaoQuickForms from "./MovimentacaoQuickForms";
 import EditarMovimentacaoBtn from "./EditarMovimentacaoBtn";
 
 const MESES_RAPIDOS = [
@@ -53,6 +53,9 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
 
   const receitasTotal = (movs as any[]).filter(m => m.tipo === "receita").reduce((s, m) => s + Number(m.valor), 0);
   const despesasTotal = (movs as any[]).filter(m => m.tipo === "despesa").reduce((s, m) => s + Number(m.valor), 0);
+
+  // Apenas faturas em aberto podem receber novos lançamentos — faturas já pagas ficam de fora
+  const faturasEmAberto = (cardsData.faturas as any[]).filter((f) => !f.pago);
 
   // Agrupar por data (mais recente primeiro); dentro do dia: receitas antes de despesas
   const grupos = (movs as any[]).reduce((acc, m) => {
@@ -111,70 +114,15 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
         </div>
       </div>
 
-      {/* Formulário de novo lançamento — ancorado pelas ações rápidas (FAB) */}
-      <Card id="lancamento" className="scroll-mt-6">
-        <div className="flex items-center gap-2 mb-4 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
-          <Plus className="h-4 w-4" />
-          <span>Novo lançamento</span>
-        </div>
-        <form action={saveMovimentacao} className="space-y-2">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 items-end">
-            <FormGroup label="Tipo">
-              <Select name="tipo" required defaultValue={sp.tipo || "despesa"} className="text-sm">
-                <option value="despesa">Despesa</option>
-                <option value="receita">Receita</option>
-              </Select>
-            </FormGroup>
-            <FormGroup label="Categoria">
-              <Select name="categoria_id" required className="text-sm">
-                <option value="">Selecione...</option>
-                {categorias.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
-              </Select>
-            </FormGroup>
-            <FormGroup label="Valor">
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">R$</span>
-                <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="pl-8 text-sm font-bold" />
-              </div>
-            </FormGroup>
-            <FormGroup label="Data">
-              <Input name="data" type="date" required className="text-sm" />
-            </FormGroup>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 items-end">
-            <FormGroup label="Conta / Origem">
-              <Select name="conta_id" className="text-sm">
-                <option value="">Nenhuma</option>
-                {contasData.contas.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
-              </Select>
-            </FormGroup>
-            <FormGroup label="Cartão">
-              <Select name="cartao_id" className="text-sm">
-                <option value="">Nenhum</option>
-                {cardsData.cartoes.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
-              </Select>
-            </FormGroup>
-            <FormGroup label="Fatura">
-              <Select name="fatura_id" className="text-sm">
-                <option value="">Nenhuma</option>
-                {cardsData.faturas.map((f) => <option key={f.id} value={f.id}>{f.data_vencimento}</option>)}
-              </Select>
-            </FormGroup>
-            <input type="hidden" name="status" value="realizado" />
-            <Button className="text-sm font-semibold inline-flex items-center justify-center">
-              <Plus className="h-4 w-4 mr-1.5" />
-              Confirmar
-            </Button>
-          </div>
-          <FormGroup label="Descrição (opcional)">
-            <Input name="descricao" placeholder="Ex: Almoço com cliente, parcela 1/12..." className="h-9 text-sm w-full block" />
-          </FormGroup>
-        </form>
-      </Card>
-
-      {/* Transferência entre contas — ancorada pelas ações rápidas (FAB) */}
-      <div id="transferencia" className="scroll-mt-6">
-        <TransferenciaBtn contas={contasData.contas} categorias={categorias} />
+      {/* Nova transação / Transferência — botões lado a lado, formulário só aparece ao clicar */}
+      <div id="lancamento" className="scroll-mt-6">
+        <MovimentacaoQuickForms
+          categorias={categorias}
+          contas={contasData.contas}
+          cartoes={cardsData.cartoes}
+          faturas={faturasEmAberto}
+          defaultTipo={sp.tipo}
+        />
       </div>
 
       {/* Filtros */}
@@ -265,7 +213,13 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                           categorias={categorias}
                           contas={contasData.contas}
                           cartoes={cardsData.cartoes}
-                          faturas={cardsData.faturas}
+                          faturas={
+                            // Faturas em aberto + a fatura atual do lançamento (mesmo que já paga),
+                            // pra não perder a referência ao editar um lançamento antigo.
+                            faturasEmAberto.some((f) => f.id === m.fatura_id)
+                              ? faturasEmAberto
+                              : [...faturasEmAberto, ...cardsData.faturas.filter((f: any) => f.id === m.fatura_id)]
+                          }
                         />
                         <form action={deleteMovimentacao}>
                           <input type="hidden" name="id" value={m.id} />

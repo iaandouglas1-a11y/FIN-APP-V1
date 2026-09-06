@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CheckCircle, CreditCard, X, RotateCcw } from "lucide-react";
 import { pagarFatura, cancelarPagamentoFatura } from "@/app/(app)/actions";
-import { currency } from "@/lib/format";
+import { currency, dateBR } from "@/lib/format";
 
 interface Props {
   faturaId:  string;
@@ -28,7 +28,7 @@ export default function PagarFaturaBtn({ faturaId, cartaoId, total, pago, pagoEm
           <span>Fatura paga</span>
           {pagoEm && (
             <span className="text-[#5DA832]/60 font-normal text-xs">
-              em {new Date(pagoEm).toLocaleDateString("pt-BR")}
+              em {dateBR(pagoEm.slice(0, 10))}
             </span>
           )}
         </div>

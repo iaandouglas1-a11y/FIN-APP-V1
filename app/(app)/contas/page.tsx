@@ -1,5 +1,5 @@
 import { saveConta } from "@/app/(app)/actions";
-import { Card, Button, Input, Select, FormGroup, IconChip, Surface, AmountText } from "@/components/ui";
+import { Card, Button, Input, Select, FormGroup, EntityLogo, Surface, AmountText } from "@/components/ui";
 import { accountBalance } from "@/lib/finance";
 import { getContasWithMovs } from "@/lib/queries";
 import { Wallet, Landmark, PiggyBank, Banknote, Plus } from "lucide-react";
@@ -29,8 +29,13 @@ export default async function ContasPage() {
                 key={conta.id}
                 className={`min-w-[210px] snap-start rounded-2xl p-4 bg-gradient-to-br ${meta.gradient} border border-surface-border/60 shrink-0`}
               >
-                <div className="text-[10px] font-bold uppercase tracking-wide text-white/65">{meta.label}</div>
-                <AmountText value={conta.balance} size="lg" className="block mt-3 text-white" />
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <div className="text-[10px] font-bold uppercase tracking-wide text-white/65">{meta.label}</div>
+                  {conta.logo_url && (
+                    <EntityLogo src={conta.logo_url} icon={meta.icon} tone={meta.tone} size={26} iconSize={13} rounded="rounded-md" />
+                  )}
+                </div>
+                <AmountText value={conta.balance} size="lg" className="block mt-2 text-white" />
                 <div className="text-[12px] text-white/70 mt-1 truncate">{conta.nome}</div>
               </div>
             );
@@ -54,7 +59,7 @@ export default async function ContasPage() {
               const Icon = meta.icon;
               return (
                 <div key={conta.id} className="list-row">
-                  <IconChip icon={Icon} tone={meta.tone} />
+                  <EntityLogo src={conta.logo_url} icon={Icon} tone={meta.tone} />
                   <div className="min-w-0 flex-1">
                     <div className="text-[14px] font-semibold text-ink-primary truncate">{conta.nome}</div>
                     <div className="text-[11.5px] text-ink-tertiary mt-0.5">{meta.label}</div>

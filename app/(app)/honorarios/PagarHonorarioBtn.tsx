@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CheckCircle, X, RotateCcw, HandCoins } from "lucide-react";
 import { marcarHonorarioPago, cancelarPagamentoHonorario } from "@/app/(app)/actions_honorarios";
-import { currency } from "@/lib/format";
+import { currency, dateBR } from "@/lib/format";
 
 interface Props {
   honorarioId: string;
@@ -30,7 +30,7 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
           <span>Pago</span>
           {pagoEm && (
             <span className="text-[#5DA832]/60 font-normal">
-              em {new Date(pagoEm + "T00:00:00").toLocaleDateString("pt-BR")}
+              em {dateBR(pagoEm)}
             </span>
           )}
         </div>

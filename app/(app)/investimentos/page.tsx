@@ -1,8 +1,8 @@
 import { getInvestimentos, getContasWithMovs, getCategorias, getInvestimentoSaldos } from "@/lib/queries";
-import { saveInvestimento, deleteInvestimento, saveMovimento, saveSaldoMensal } from "@/app/(app)/actions_investimentos";
+import { saveInvestimento, saveMovimento, saveSaldoMensal } from "@/app/(app)/actions_investimentos";
 import { Card, Button, Input, Select, FormGroup, StatPill } from "@/components/ui";
 import { currency } from "@/lib/format";
-import { TrendingUp, Plus, Trash2, BarChart3, LineChart as LineChartIcon, Repeat, Wallet } from "lucide-react";
+import { TrendingUp, Plus, BarChart3, LineChart as LineChartIcon, Repeat } from "lucide-react";
 import InvestimentoAccordion from "./InvestimentoAccordion";
 import { InvestimentoEvolutionChart } from "@/components/Charts";
 
@@ -95,23 +95,16 @@ export default async function InvestimentosPage() {
             investimentos.map(inv => {
               const movInv = movimentos.filter(m => m.investimento_id === inv.id);
               return (
-                <div key={inv.id} className="relative group/inv">
-                  <InvestimentoAccordion
-                    id={inv.id}
-                    nome={inv.nome}
-                    tipo={inv.tipo}
-                    ticker={inv.ticker}
-                    contaNome={inv.contas?.nome ?? null}
-                    valorAtual={Number(inv.valor_atual)}
-                    movimentos={movInv}
-                  />
-                  <form action={deleteInvestimento} className="absolute top-4 right-14 opacity-0 group-hover/inv:opacity-100 transition-opacity">
-                    <input type="hidden" name="id" value={inv.id} />
-                    <button type="submit" className="p-1.5 text-slate-600 hover:text-rose-400 rounded transition-colors">
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </form>
-                </div>
+                <InvestimentoAccordion
+                  key={inv.id}
+                  id={inv.id}
+                  nome={inv.nome}
+                  tipo={inv.tipo}
+                  ticker={inv.ticker}
+                  contaNome={inv.contas?.nome ?? null}
+                  valorAtual={Number(inv.valor_atual)}
+                  movimentos={movInv}
+                />
               );
             })
           )}

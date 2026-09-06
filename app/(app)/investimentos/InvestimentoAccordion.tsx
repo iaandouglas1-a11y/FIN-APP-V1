@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, TrendingUp, TrendingDown, Trash2, Pencil } from "lucide-react";
 import { currency, dateBR } from "@/lib/format";
-import { deleteMovimento, atualizarValorAtual } from "@/app/(app)/actions_investimentos";
+import { deleteMovimento, deleteInvestimento, atualizarValorAtual } from "@/app/(app)/actions_investimentos";
+import { IconChip, Badge } from "@/components/ui";
 import type { InvestimentoMovimento } from "@/types/database";
 
 interface Props {
@@ -32,49 +33,50 @@ export default function InvestimentoAccordion({ id, nome, tipo, ticker, contaNom
   const positivo       = rentabilidade >= 0;
 
   return (
-    <div className="rounded-xl border border-surface-border/60 bg-[#0D2340]/50 overflow-hidden">
+    <div className="rounded-xl border border-surface-border/60 bg-surface/60 overflow-hidden">
 
-      {/* HEADER */}
-      <button
-        type="button"
+      {/* HEADER — div (não button) pra poder aninhar o botão de excluir sem <button> dentro de <button> */}
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-surface-2/30 transition text-left"
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setOpen(v => !v); }}
+        className="w-full flex items-start gap-3 px-4 py-3.5 hover:bg-surface-2/30 transition text-left cursor-pointer"
       >
-        <div className="flex items-center gap-3">
-          <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 ${
-            tipo === "renda_fixa" ? "bg-blue-500/15 text-blue-400" : "bg-[#5DA832]/15 text-[#5DA832]"
-          }`}>
-            {tipo === "renda_fixa"
-              ? <TrendingUp className="h-4 w-4" />
-              : <TrendingUp className="h-4 w-4" />
-            }
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-bold text-slate-200">{nome}</p>
-              {ticker && <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-2 text-slate-400 font-mono">{ticker}</span>}
-              <span className={`text-[10px] px-1.5 py-0.5 rounded border font-semibold ${
-                tipo === "renda_fixa"
-                  ? "bg-blue-500/10 border-blue-500/30 text-blue-400"
-                  : "bg-[#5DA832]/10 border-[#5DA832]/30 text-[#5DA832]"
-              }`}>
-                {tipo === "renda_fixa" ? "Renda Fixa" : "Renda Variável"}
-              </span>
-            </div>
-            {contaNome && <p className="text-xs text-slate-500 mt-0.5">{contaNome}</p>}
+        <IconChip
+          icon={tipo === "renda_fixa" ? TrendingUp : TrendingUp}
+          tone={tipo === "renda_fixa" ? "blue" : "green"}
+          size={38}
+          iconSize={17}
+        />
+
+        <div className="min-w-0 flex-1">
+          <p className="text-[14px] font-bold text-ink-primary truncate">{nome}</p>
+          <div className="flex items-center gap-1.5 flex-wrap mt-1">
+            <Badge variant={tipo === "renda_fixa" ? "info" : "success"} className="text-[10px]">
+              {tipo === "renda_fixa" ? "Renda Fixa" : "Renda Variável"}
+            </Badge>
+            {ticker && <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-2 text-slate-400 font-mono">{ticker}</span>}
+            {contaNome && <span className="text-[11px] text-ink-tertiary">{contaNome}</span>}
           </div>
         </div>
 
-        <div className="flex items-center gap-4 shrink-0">
-          <div className="text-right">
-            <p className="text-sm font-bold text-white">{currency(valorAtual)}</p>
-            <p className={`text-xs font-semibold ${positivo ? "text-[#5DA832]" : "text-rose-400"}`}>
+        <div className="flex items-center gap-1 shrink-0">
+          <div className="text-right mr-1">
+            <p className="num text-[14px] font-bold text-ink-primary whitespace-nowrap">{currency(valorAtual)}</p>
+            <p className={`text-[11.5px] font-semibold whitespace-nowrap ${positivo ? "text-[#6fc23b]" : "text-[#f87171]"}`}>
               {positivo ? "+" : ""}{rentabilidade.toFixed(2)}%
             </p>
           </div>
+          <form action={deleteInvestimento} onClick={(e) => e.stopPropagation()}>
+            <input type="hidden" name="id" value={id} />
+            <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors" title="Excluir investimento">
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          </form>
           {open ? <ChevronUp className="h-4 w-4 text-slate-500" /> : <ChevronDown className="h-4 w-4 text-slate-500" />}
         </div>
-      </button>
+      </div>
 
       {/* BODY */}
       {open && (

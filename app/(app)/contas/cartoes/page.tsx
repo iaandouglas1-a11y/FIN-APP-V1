@@ -1,5 +1,5 @@
 import { saveCartao } from "@/app/(app)/actions";
-import { Card, Button, Input, Select, FormGroup, AmountText, ProgressBar } from "@/components/ui";
+import { Card, Button, Input, Select, FormGroup, AmountText, ProgressBar, EntityLogo } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { invoiceTotal } from "@/lib/finance";
 import { getCartoesEFaturas, getContasWithMovs } from "@/lib/queries";
@@ -40,7 +40,7 @@ export default async function CartoesPage() {
           <div key={card.id} className={`rounded-2xl p-5 bg-gradient-to-br ${gradient} border border-surface-border/60`}>
             <div className="flex items-center justify-between">
               <div className="text-[13px] font-bold text-white">{card.nome}</div>
-              <CreditCard className="h-4 w-4 text-white/50" />
+              <EntityLogo src={(card as any).logo_url} icon={CreditCard} size={26} iconSize={13} rounded="rounded-md" />
             </div>
             <AmountText value={totalUsed} size="lg" className="block mt-2.5 text-white" />
             <div className="text-[11.5px] text-white/60 mt-0.5">de limite {currency(Number(card.limite))}</div>

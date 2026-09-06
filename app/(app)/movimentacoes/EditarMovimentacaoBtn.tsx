@@ -5,6 +5,7 @@ import { Pencil, Copy, X, Check } from "lucide-react";
 import { saveMovimentacao } from "@/app/(app)/actions";
 import { duplicarMovimentacao } from "@/app/(app)/actions_movimentacoes";
 import { FormGroup, Input, Select } from "@/components/ui";
+import { dateBR } from "@/lib/format";
 
 interface Props {
   mov: any;
@@ -88,7 +89,7 @@ export default function EditarMovimentacaoBtn({ mov, categorias, contas, cartoes
           <FormGroup label="Fatura">
             <Select name="fatura_id" defaultValue={mov.fatura_id ?? ""} className="text-sm">
               <option value="">Nenhuma</option>
-              {faturas.map(f => <option key={f.id} value={f.id}>{f.data_vencimento}</option>)}
+              {faturas.map(f => <option key={f.id} value={f.id}>{dateBR(f.data_vencimento)}</option>)}
             </Select>
           </FormGroup>
           <input type="hidden" name="status" value={mov.status ?? "realizado"} />
