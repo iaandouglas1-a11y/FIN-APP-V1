@@ -28,8 +28,8 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
   const totalPago    = pagamentos.filter(p => p.tipo === "realizado").reduce((s, p) => s + Number(p.valor), 0);
   const saldoAtual   = totalDevido - totalPago; // diferença entre total e pago
 
-  // Fluxo de pagamentos, mais recentes primeiro
-  const fluxo = [...pagamentos].sort((a, b) => b.data.localeCompare(a.data));
+  // Fluxo de pagamentos, mais recentes primeiro (blindado contra data nula/vazia)
+  const fluxo = [...pagamentos].sort((a, b) => (b.data || "").localeCompare(a.data || ""));
 
   // Separação em abas: dívidas em aberto vs. liquidadas
   const abertas = dividas.filter(d => d.situacao !== "liquidado");
