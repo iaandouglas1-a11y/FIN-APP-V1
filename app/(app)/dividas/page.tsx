@@ -1,16 +1,13 @@
 import { getDividas, getCategorias, getContasWithMovs } from "@/lib/queries";
-import { saveDivida, deleteDivida, alterarSituacaoDivida, savePagamento, deletePagamento } from "@/app/(app)/actions_dividas";
-import { Card, Button, Input, Select, Badge, FormGroup, StatPill, IconChip, AmountText, ProgressBar } from "@/components/ui";
+import { saveDivida, savePagamento } from "@/app/(app)/actions_dividas";
+import { Card, Button, Input, Select, FormGroup, StatPill } from "@/components/ui";
 import type { IconTone } from "@/components/ui";
-import { currency, dateBR } from "@/lib/format";
+import { currency } from "@/lib/format";
 import { getCategoryIcon } from "@/lib/categoryIcons";
-import { TrendingDown, Plus, Trash2, CheckCircle, Circle, AlertCircle, CircleDollarSign } from "lucide-react";
-import RealizarPagamentoBtn from "./RealizarPagamentoBtn";
-import DesfazerPagamentoBtn from "./DesfazerPagamentoBtn";
-import EditarDividaBtn from "./EditarDividaBtn";
-import RegistrarPagamentoDividaBtn from "./RegistrarPagamentoDividaBtn";
+import { TrendingDown, Plus, AlertCircle, CircleDollarSign } from "lucide-react";
+import DividaAccordion from "./DividaAccordion";
+import PagamentoAccordion from "./PagamentoAccordion";
 import CloseDetailsButton from "@/components/CloseDetailsButton";
-import EditarPagamentoBtn from "./EditarPagamentoBtn";
 import { clsx } from "clsx";
 
 export default async function DividasPage({ searchParams }: { searchParams: Promise<{ aba?: string }> }) {
@@ -31,13 +28,8 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
   const totalPago    = pagamentos.filter(p => p.tipo === "realizado").reduce((s, p) => s + Number(p.valor), 0);
   const saldoAtual   = totalDevido - totalPago; // diferença entre total e pago
 
-  // Fluxo de pagamentos com saldo decremental
-  const pagamentosOrdenados = [...pagamentos].sort((a, b) => a.data.localeCompare(b.data));
-  let saldoCorrido = totalDevido;  // parte do total geral
-  const fluxo = pagamentosOrdenados.map((p) => {
-    if (p.tipo === "realizado") saldoCorrido -= Number(p.valor);
-    return { ...p, saldoApos: saldoCorrido };
-  });
+  // Fluxo de pagamentos, mais recentes primeiro
+  const fluxo = [...pagamentos].sort((a, b) => b.data.localeCompare(a.data));
 
   // Separação em abas: dívidas em aberto vs. liquidadas
   const abertas = dividas.filter(d => d.situacao !== "liquidado");
@@ -86,7 +78,7 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
         </a>
       </div>
 
-      {/* Lista de dívidas — cards com progresso (em vez de tabela) */}
+      {/* Lista de dívidas — accordion: colapsada mostra só o essencial */}
       <div className="space-y-2.5">
         {listaAtual.length === 0 ? (
           <Card className="text-center py-10">
@@ -104,78 +96,15 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
             const tone: IconTone = liquidada ? "green" : pct > 0 ? "amber" : "red";
 
             return (
-              <div key={d.id} className={clsx("surface-2 bg-surface p-3.5", liquidada && "opacity-60")}>
-                <div className="flex items-start gap-3">
-                  <IconChip icon={CatIcon} tone={tone} size={38} iconSize={17} />
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[14px] font-semibold text-ink-primary truncate">{d.descricao}</div>
-                    <div className="flex items-center gap-1.5 flex-wrap mt-1">
-                      {liquidada ? (
-                        <Badge variant="success" className="text-[10px]">✓ Liquidado</Badge>
-                      ) : (
-                        <>
-                          <span className="text-[11px] text-ink-tertiary">{dateBR(d.data)}</span>
-                          <Badge variant={pct > 0 ? "warning" : "error"} className="text-[10px]">
-                            {pct > 0 ? `Parcial · ${Math.round(pct)}% pago` : "Pendente"}
-                          </Badge>
-                        </>
-                      )}
-                      {d.observacao && <span className="text-[11px] text-ink-tertiary">· {d.observacao}</span>}
-                    </div>
-                  </div>
-                  <AmountText value={Number(d.valor)} tone={liquidada ? "neutral" : "red"} className="shrink-0" />
-                </div>
-
-                {!liquidada && (
-                  <>
-                    <ProgressBar pct={pct} color={pct > 60 ? "#5DA832" : pct > 0 ? "#F5A524" : "#1E3A66"} />
-                    {pagos > 0 && (
-                      <p className="text-[10.5px] text-ink-tertiary mt-1.5">
-                        {currency(pagos)} pagos de {currency(Number(d.valor))}
-                      </p>
-                    )}
-                  </>
-                )}
-
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-surface-border/40 gap-2">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    {!liquidada && (
-                      <RegistrarPagamentoDividaBtn
-                        dividaId={d.id}
-                        dividaNome={d.descricao}
-                        restante={Math.max(0, Number(d.valor) - pagos)}
-                        contas={contasList}
-                        categorias={categoriasDespesa}
-                      />
-                    )}
-                    <form action={alterarSituacaoDivida}>
-                      <input type="hidden" name="id" value={d.id} />
-                      <input type="hidden" name="situacao" value={d.situacao} />
-                      <button
-                        type="submit"
-                        title={liquidada ? "Reabrir dívida" : "Marcar como liquidada manualmente"}
-                        className={clsx(
-                          "inline-flex items-center justify-center w-7 h-7 rounded-md transition-all duration-200 border shrink-0",
-                          liquidada
-                            ? "bg-[#5DA832]/10 text-[#5DA832] border-[#5DA832]/30"
-                            : "bg-surface-2/40 text-slate-500 border-surface-border/40 hover:text-slate-300"
-                        )}
-                      >
-                        {liquidada ? <CheckCircle className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
-                      </button>
-                    </form>
-                  </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <EditarDividaBtn divida={d} categorias={categorias} />
-                    <form action={deleteDivida}>
-                      <input type="hidden" name="id" value={d.id} />
-                      <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors">
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              </div>
+              <DividaAccordion
+                key={d.id}
+                divida={d as any}
+                categorias={categorias}
+                icon={CatIcon}
+                tone={tone}
+                pct={pct}
+                pagos={pagos}
+              />
             );
           })
         )}
@@ -234,121 +163,92 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
 
       {/* Fluxo de Pagamentos */}
       <Card className="p-0 overflow-hidden border-surface-border/60">
-        <div className="px-4 py-3 border-b border-surface-border/40 flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-2">
-            <TrendingDown className="h-4 w-4 text-[#5DA832]" />
-            <h3 className="font-semibold text-white text-sm">Fluxo de Pagamentos</h3>
-          </div>
+        <div className="px-4 py-3 border-b border-surface-border/40 flex items-center gap-2">
+          <TrendingDown className="h-4 w-4 text-[#5DA832]" />
+          <h3 className="font-semibold text-white text-sm">Fluxo de Pagamentos</h3>
         </div>
 
-        {/* Form novo pagamento — colapsável */}
-        <details className="border-b border-surface-border/40">
-          <summary className="list-none cursor-pointer px-4 py-3 flex items-center gap-2 text-[#5DA832] text-xs font-bold uppercase tracking-widest hover:bg-surface-2/30">
-            <Plus className="h-3.5 w-3.5" />
-            Novo pagamento
-          </summary>
-          <div className="px-4 pb-4">
-            <form action={savePagamento} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 items-end">
-              <FormGroup label="Data">
-                <Input name="data" type="date" required className="text-sm" />
-              </FormGroup>
-              <FormGroup label="Descrição">
-                <Input name="descricao" placeholder="Ex: Gasolina, Cerveja..." required className="text-sm" />
-              </FormGroup>
-              <FormGroup label="Valor">
-                <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="text-sm" />
-              </FormGroup>
-              <FormGroup label="Tipo">
-                <Select name="tipo" required className="text-sm">
-                  <option value="orcado">Orçado</option>
-                  <option value="realizado">Realizado</option>
-                </Select>
-              </FormGroup>
-              <FormGroup label="Dívida vinculada">
-                <Select name="divida_id" className="text-sm">
-                  <option value="">Nenhuma (avulso)</option>
-                  {abertas.map((d) => <option key={d.id} value={d.id}>{d.descricao}</option>)}
-                </Select>
-              </FormGroup>
-              <FormGroup label="Conta">
-                <Select name="conta_id" className="text-sm">
-                  <option value="">Nenhuma</option>
-                  {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
-                </Select>
-              </FormGroup>
-              <FormGroup label="Categoria">
-                <Select name="categoria_id" className="text-sm">
-                  <option value="">Sem categoria</option>
-                  {categoriasDespesa.map((cat) => <option key={cat.id} value={cat.id}>{cat.nome}</option>)}
-                </Select>
-              </FormGroup>
-              <Button type="submit" className="text-sm font-semibold inline-flex items-center justify-center">
-                <Plus className="h-4 w-4 mr-1.5" />
-                Adicionar
-              </Button>
-            </form>
-          </div>
-        </details>
+        {/* Novo pagamento — mesmo padrão visual de "Nova dívida" (card tracejado colapsável) */}
+        <div className="p-4 border-b border-surface-border/40">
+          <details className="group">
+            <summary className="list-none cursor-pointer">
+              <div className="flex items-center justify-between p-4 rounded-2xl border border-dashed border-surface-border text-ink-secondary group-open:hidden">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#5DA832]/[0.14] text-[#6fc23b] flex items-center justify-center">
+                    <Plus className="h-4 w-4" />
+                  </div>
+                  <span className="text-[13.5px] font-semibold">Novo pagamento</span>
+                </div>
+              </div>
+            </summary>
 
-        {/* Lista de pagamentos — cards, sem scroll horizontal (mobile-first) */}
+            <div className="mt-2">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+                  <Plus className="h-4 w-4" />
+                  <span>Novo pagamento</span>
+                </div>
+                <CloseDetailsButton label="novo pagamento" />
+              </div>
+              <form action={savePagamento} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 items-end">
+                <FormGroup label="Data">
+                  <Input name="data" type="date" required className="text-sm" />
+                </FormGroup>
+                <FormGroup label="Descrição">
+                  <Input name="descricao" placeholder="Ex: Gasolina, Cerveja..." required className="text-sm" />
+                </FormGroup>
+                <FormGroup label="Valor">
+                  <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="text-sm" />
+                </FormGroup>
+                <FormGroup label="Tipo">
+                  <Select name="tipo" required className="text-sm">
+                    <option value="orcado">Orçado</option>
+                    <option value="realizado">Realizado</option>
+                  </Select>
+                </FormGroup>
+                <FormGroup label="Dívida vinculada">
+                  <Select name="divida_id" className="text-sm">
+                    <option value="">Nenhuma (avulso)</option>
+                    {abertas.map((d) => <option key={d.id} value={d.id}>{d.descricao}</option>)}
+                  </Select>
+                </FormGroup>
+                <FormGroup label="Conta">
+                  <Select name="conta_id" className="text-sm">
+                    <option value="">Nenhuma</option>
+                    {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+                  </Select>
+                </FormGroup>
+                <FormGroup label="Categoria">
+                  <Select name="categoria_id" className="text-sm">
+                    <option value="">Sem categoria</option>
+                    {categoriasDespesa.map((cat) => <option key={cat.id} value={cat.id}>{cat.nome}</option>)}
+                  </Select>
+                </FormGroup>
+                <Button type="submit" className="text-sm font-semibold inline-flex items-center justify-center">
+                  <Plus className="h-4 w-4 mr-1.5" />
+                  Adicionar
+                </Button>
+              </form>
+            </div>
+          </details>
+        </div>
+
+        {/* Lista de pagamentos — accordion: colapsada mostra só descrição/valor/status */}
         <div className="divide-y divide-surface-border/40">
           {fluxo.length === 0 ? (
             <p className="px-4 py-8 text-center text-slate-600 italic text-xs">Nenhum pagamento lançado.</p>
           ) : fluxo.map((p: any) => {
-            const categoriaNome = (p as any).categoria_id
-              ? categorias.find(cat => cat.id === (p as any).categoria_id)?.nome
+            const categoriaNome = p.categoria_id
+              ? categorias.find(cat => cat.id === p.categoria_id)?.nome ?? null
               : null;
             return (
-              <div key={p.id} className={clsx("px-3.5 py-2.5", p.tipo === "realizado" && "bg-[#5DA832]/[0.03]")}>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[13px] font-semibold text-ink-primary truncate">{p.descricao}</p>
-                    <p className="text-[10.5px] text-ink-tertiary truncate mt-0.5">
-                      {dateBR(p.data)}{categoriaNome ? ` · ${categoriaNome}` : ""}
-                    </p>
-                  </div>
-                  <p className="num text-[13.5px] font-bold text-ink-primary whitespace-nowrap shrink-0">{currency(Number(p.valor))}</p>
-                  {p.tipo === "realizado" ? (
-                    <Badge variant="success" className="text-[9.5px] shrink-0">✓</Badge>
-                  ) : (
-                    <Badge variant="warning" className="text-[9.5px] shrink-0">Orçado</Badge>
-                  )}
-                  <div className="flex items-center gap-0.5 shrink-0">
-                    {p.tipo === "orcado" ? (
-                      <RealizarPagamentoBtn
-                        pagamentoId={p.id}
-                        descricao={p.descricao}
-                        valor={Number(p.valor)}
-                        data={p.data}
-                        contas={contasList}
-                        categorias={categoriasDespesa}
-                        categoriaId={(p as any).categoria_id}
-                      />
-                    ) : (
-                      <DesfazerPagamentoBtn pagamentoId={p.id} tipo={p.tipo} />
-                    )}
-                    <EditarPagamentoBtn
-                      pagamento={{
-                        id: p.id,
-                        data: p.data,
-                        descricao: p.descricao,
-                        valor: Number(p.valor),
-                        tipo: p.tipo,
-                        conta_id: (p as any).conta_id,
-                        categoria_id: (p as any).categoria_id
-                      }}
-                      contas={contasList}
-                      categorias={categoriasDespesa}
-                    />
-                    <form action={deletePagamento}>
-                      <input type="hidden" name="id" value={p.id} />
-                      <button type="submit" className="p-1 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors" title="Excluir">
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              </div>
+              <PagamentoAccordion
+                key={p.id}
+                pagamento={p}
+                categoriaNome={categoriaNome}
+                contas={contasList}
+                categorias={categoriasDespesa}
+              />
             );
           })}
         </div>
