@@ -1,4 +1,5 @@
 import { saveCartao } from "@/app/(app)/actions";
+import CloseDetailsButton from "@/components/CloseDetailsButton";
 import { Card, Button, Input, Select, FormGroup, AmountText, ProgressBar, EntityLogo } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { invoiceTotal } from "@/lib/finance";
@@ -70,9 +71,12 @@ export default async function CartoesPage() {
           </div>
         </summary>
         <Card className="mt-2">
-          <div className="flex items-center gap-2 mb-4 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
-            <Plus className="h-4 w-4" />
-            <span>Novo cartão</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+              <Plus className="h-4 w-4" />
+              <span>Novo cartão</span>
+            </div>
+            <CloseDetailsButton label="novo cartão" />
           </div>
           <form action={saveCartao} className="grid gap-3 md:grid-cols-[1fr_160px_1fr_auto]">
             <FormGroup>
