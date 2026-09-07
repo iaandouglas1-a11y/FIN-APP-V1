@@ -4,6 +4,7 @@ import { Card, Button, Input, Select, FormGroup, StatPill } from "@/components/u
 import { currency } from "@/lib/format";
 import { TrendingUp, Plus, BarChart3, LineChart as LineChartIcon, Repeat } from "lucide-react";
 import InvestimentoAccordion from "./InvestimentoAccordion";
+import CloseDetailsButton from "@/components/CloseDetailsButton";
 import { InvestimentoEvolutionChart } from "@/components/Charts";
 
 function formatMesLabel(mes: string) {
@@ -125,9 +126,12 @@ export default async function InvestimentosPage() {
             </div>
           </summary>
           <Card className="mt-2">
-            <div className="flex items-center gap-2 mb-4 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
-              <Plus className="h-4 w-4" />
-              <span>Novo Investimento</span>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+                <Plus className="h-4 w-4" />
+                <span>Novo Investimento</span>
+              </div>
+              <CloseDetailsButton label="novo investimento" />
             </div>
             <form action={saveInvestimento} className="space-y-2">
               <FormGroup label="Nome">
@@ -175,9 +179,12 @@ export default async function InvestimentosPage() {
             </div>
           </summary>
           <Card className="mt-2 border-surface-border/60">
-            <div className="flex items-center gap-2 mb-4 text-slate-400 font-bold uppercase text-xs tracking-widest">
-              <BarChart3 className="h-4 w-4" />
-              <span>Registrar Aporte / Resgate</span>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2 text-slate-400 font-bold uppercase text-xs tracking-widest">
+                <BarChart3 className="h-4 w-4" />
+                <span>Registrar Aporte / Resgate</span>
+              </div>
+              <CloseDetailsButton label="registro de aporte/resgate" />
             </div>
             <form action={saveMovimento} className="space-y-2">
               <FormGroup label="Investimento">
@@ -231,9 +238,12 @@ export default async function InvestimentosPage() {
             </div>
           </summary>
           <Card className="mt-2 border-surface-border/60">
-            <div className="flex items-center gap-2 mb-4 text-slate-400 font-bold uppercase text-xs tracking-widest">
-              <TrendingUp className="h-4 w-4" />
-              <span>Atualizar Saldo Mensal</span>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2 text-slate-400 font-bold uppercase text-xs tracking-widest">
+                <TrendingUp className="h-4 w-4" />
+                <span>Atualizar Saldo Mensal</span>
+              </div>
+              <CloseDetailsButton label="atualização de saldo mensal" />
             </div>
             <form action={saveSaldoMensal} className="space-y-2">
               <FormGroup label="Investimento">
