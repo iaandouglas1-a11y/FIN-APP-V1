@@ -27,8 +27,8 @@ export function QuickActionSheet({ open, onClose }: QuickActionSheetProps) {
           <button
             key={a.label}
             onClick={() => {
-              onClose();
               router.push(a.href);
+              onClose();
             }}
             className="flex flex-col items-start gap-3 p-4 rounded-xl bg-surface-2/60 border border-surface-border/50 active:scale-[0.97] transition-all text-left"
           >
