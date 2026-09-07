@@ -8,6 +8,7 @@ import { TrendingDown, Plus, Trash2, CheckCircle, Circle, AlertCircle, CircleDol
 import RealizarPagamentoBtn from "./RealizarPagamentoBtn";
 import DesfazerPagamentoBtn from "./DesfazerPagamentoBtn";
 import EditarDividaBtn from "./EditarDividaBtn";
+import CloseDetailsButton from "@/components/CloseDetailsButton";
 import EditarPagamentoBtn from "./EditarPagamentoBtn";
 import { clsx } from "clsx";
 
@@ -173,9 +174,12 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
         </summary>
 
         <Card className="mt-2">
-          <div className="flex items-center gap-2 mb-4 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
-            <Plus className="h-4 w-4" />
-            <span>Nova dívida</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+              <Plus className="h-4 w-4" />
+              <span>Nova dívida</span>
+            </div>
+            <CloseDetailsButton label="nova dívida" />
           </div>
           <form action={saveDivida} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormGroup label="Data">
@@ -274,58 +278,54 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
               ? categorias.find(cat => cat.id === (p as any).categoria_id)?.nome
               : null;
             return (
-              <div key={p.id} className={clsx("p-3.5", p.tipo === "realizado" && "bg-[#5DA832]/[0.03]")}>
-                <div className="flex items-start justify-between gap-3">
+              <div key={p.id} className={clsx("px-3.5 py-2.5", p.tipo === "realizado" && "bg-[#5DA832]/[0.03]")}>
+                <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="text-[13.5px] font-semibold text-ink-primary truncate">{p.descricao}</p>
-                    <div className="flex items-center gap-1.5 flex-wrap mt-1 text-[11px] text-ink-tertiary">
-                      <span>{dateBR(p.data)}</span>
-                      {categoriaNome && <span>· {categoriaNome}</span>}
-                      {p.tipo === "realizado" && <span>· saldo após {currency(p.saldoApos)}</span>}
-                    </div>
+                    <p className="text-[13px] font-semibold text-ink-primary truncate">{p.descricao}</p>
+                    <p className="text-[10.5px] text-ink-tertiary truncate mt-0.5">
+                      {dateBR(p.data)}{categoriaNome ? ` · ${categoriaNome}` : ""}
+                    </p>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="num text-[14.5px] font-bold text-ink-primary whitespace-nowrap">{currency(Number(p.valor))}</p>
-                    {p.tipo === "realizado" ? (
-                      <Badge variant="success" className="text-[10px] mt-1">✓ Realizado</Badge>
+                  <p className="num text-[13.5px] font-bold text-ink-primary whitespace-nowrap shrink-0">{currency(Number(p.valor))}</p>
+                  {p.tipo === "realizado" ? (
+                    <Badge variant="success" className="text-[9.5px] shrink-0">✓</Badge>
+                  ) : (
+                    <Badge variant="warning" className="text-[9.5px] shrink-0">Orçado</Badge>
+                  )}
+                  <div className="flex items-center gap-0.5 shrink-0">
+                    {p.tipo === "orcado" ? (
+                      <RealizarPagamentoBtn
+                        pagamentoId={p.id}
+                        descricao={p.descricao}
+                        valor={Number(p.valor)}
+                        data={p.data}
+                        contas={contasList}
+                        categorias={categoriasDespesa}
+                        categoriaId={(p as any).categoria_id}
+                      />
                     ) : (
-                      <Badge variant="warning" className="text-[10px] mt-1">Orçado</Badge>
+                      <DesfazerPagamentoBtn pagamentoId={p.id} tipo={p.tipo} />
                     )}
-                  </div>
-                </div>
-                <div className="flex items-center justify-end gap-1 mt-2.5 pt-2.5 border-t border-surface-border/30">
-                  {p.tipo === "orcado" ? (
-                    <RealizarPagamentoBtn
-                      pagamentoId={p.id}
-                      descricao={p.descricao}
-                      valor={Number(p.valor)}
-                      data={p.data}
+                    <EditarPagamentoBtn
+                      pagamento={{
+                        id: p.id,
+                        data: p.data,
+                        descricao: p.descricao,
+                        valor: Number(p.valor),
+                        tipo: p.tipo,
+                        conta_id: (p as any).conta_id,
+                        categoria_id: (p as any).categoria_id
+                      }}
                       contas={contasList}
                       categorias={categoriasDespesa}
-                      categoriaId={(p as any).categoria_id}
                     />
-                  ) : (
-                    <DesfazerPagamentoBtn pagamentoId={p.id} tipo={p.tipo} />
-                  )}
-                  <EditarPagamentoBtn
-                    pagamento={{
-                      id: p.id,
-                      data: p.data,
-                      descricao: p.descricao,
-                      valor: Number(p.valor),
-                      tipo: p.tipo,
-                      conta_id: (p as any).conta_id,
-                      categoria_id: (p as any).categoria_id
-                    }}
-                    contas={contasList}
-                    categorias={categoriasDespesa}
-                  />
-                  <form action={deletePagamento}>
-                    <input type="hidden" name="id" value={p.id} />
-                    <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors" title="Excluir">
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </form>
+                    <form action={deletePagamento}>
+                      <input type="hidden" name="id" value={p.id} />
+                      <button type="submit" className="p-1 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors" title="Excluir">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
             );
