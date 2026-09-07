@@ -8,6 +8,7 @@ import { TrendingDown, Plus, Trash2, CheckCircle, Circle, AlertCircle, CircleDol
 import RealizarPagamentoBtn from "./RealizarPagamentoBtn";
 import DesfazerPagamentoBtn from "./DesfazerPagamentoBtn";
 import EditarDividaBtn from "./EditarDividaBtn";
+import RegistrarPagamentoDividaBtn from "./RegistrarPagamentoDividaBtn";
 import CloseDetailsButton from "@/components/CloseDetailsButton";
 import EditarPagamentoBtn from "./EditarPagamentoBtn";
 import { clsx } from "clsx";
@@ -99,7 +100,7 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
             const categoriaNome = d.categoria_id ? categorias.find(c => c.id === d.categoria_id)?.nome : undefined;
             const CatIcon = categoriaNome ? getCategoryIcon(categoriaNome) : CircleDollarSign;
             const liquidada = d.situacao === "liquidado";
-            const { pct } = progressoDivida(d.id, Number(d.valor));
+            const { pct, pagos } = progressoDivida(d.id, Number(d.valor));
             const tone: IconTone = liquidada ? "green" : pct > 0 ? "amber" : "red";
 
             return (
@@ -115,7 +116,7 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
                         <>
                           <span className="text-[11px] text-ink-tertiary">{dateBR(d.data)}</span>
                           <Badge variant={pct > 0 ? "warning" : "error"} className="text-[10px]">
-                            {pct > 0 ? `${Math.round(pct)}% pago` : "Pendente"}
+                            {pct > 0 ? `Parcial · ${Math.round(pct)}% pago` : "Pendente"}
                           </Badge>
                         </>
                       )}
@@ -125,26 +126,46 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
                   <AmountText value={Number(d.valor)} tone={liquidada ? "neutral" : "red"} className="shrink-0" />
                 </div>
 
-                {!liquidada && <ProgressBar pct={pct} color={pct > 60 ? "#5DA832" : pct > 0 ? "#F5A524" : "#1E3A66"} />}
+                {!liquidada && (
+                  <>
+                    <ProgressBar pct={pct} color={pct > 60 ? "#5DA832" : pct > 0 ? "#F5A524" : "#1E3A66"} />
+                    {pagos > 0 && (
+                      <p className="text-[10.5px] text-ink-tertiary mt-1.5">
+                        {currency(pagos)} pagos de {currency(Number(d.valor))}
+                      </p>
+                    )}
+                  </>
+                )}
 
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-surface-border/40">
-                  <form action={alterarSituacaoDivida}>
-                    <input type="hidden" name="id" value={d.id} />
-                    <input type="hidden" name="situacao" value={d.situacao} />
-                    <button
-                      type="submit"
-                      className={clsx(
-                        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all duration-200 border",
-                        liquidada
-                          ? "bg-[#5DA832]/10 text-[#5DA832] border-[#5DA832]/30"
-                          : "bg-danger/10 text-[#f87171] border-danger/20"
-                      )}
-                    >
-                      {liquidada ? <CheckCircle className="h-3 w-3" /> : <Circle className="h-3 w-3" />}
-                      {liquidada ? "Reabrir" : "Marcar como liquidada"}
-                    </button>
-                  </form>
-                  <div className="flex items-center gap-1">
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-surface-border/40 gap-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    {!liquidada && (
+                      <RegistrarPagamentoDividaBtn
+                        dividaId={d.id}
+                        dividaNome={d.descricao}
+                        restante={Math.max(0, Number(d.valor) - pagos)}
+                        contas={contasList}
+                        categorias={categoriasDespesa}
+                      />
+                    )}
+                    <form action={alterarSituacaoDivida}>
+                      <input type="hidden" name="id" value={d.id} />
+                      <input type="hidden" name="situacao" value={d.situacao} />
+                      <button
+                        type="submit"
+                        title={liquidada ? "Reabrir dívida" : "Marcar como liquidada manualmente"}
+                        className={clsx(
+                          "inline-flex items-center justify-center w-7 h-7 rounded-md transition-all duration-200 border shrink-0",
+                          liquidada
+                            ? "bg-[#5DA832]/10 text-[#5DA832] border-[#5DA832]/30"
+                            : "bg-surface-2/40 text-slate-500 border-surface-border/40 hover:text-slate-300"
+                        )}
+                      >
+                        {liquidada ? <CheckCircle className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
+                      </button>
+                    </form>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
                     <EditarDividaBtn divida={d} categorias={categorias} />
                     <form action={deleteDivida}>
                       <input type="hidden" name="id" value={d.id} />
