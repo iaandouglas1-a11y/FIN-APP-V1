@@ -1,4 +1,5 @@
 import { saveConta } from "@/app/(app)/actions";
+import CloseDetailsButton from "@/components/CloseDetailsButton";
 import { Card, Button, Input, Select, FormGroup, EntityLogo, Surface, AmountText } from "@/components/ui";
 import { accountBalance } from "@/lib/finance";
 import { getContasWithMovs } from "@/lib/queries";
@@ -85,9 +86,12 @@ export default async function ContasPage() {
         </summary>
 
         <Card className="mt-2">
-          <div className="flex items-center gap-2 mb-4 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
-            <Plus className="h-4 w-4" />
-            <span>Nova conta</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+              <Plus className="h-4 w-4" />
+              <span>Nova conta</span>
+            </div>
+            <CloseDetailsButton label="nova conta" />
           </div>
           <form action={saveConta} className="grid gap-3 sm:grid-cols-[1fr_180px_auto]">
             <FormGroup>
