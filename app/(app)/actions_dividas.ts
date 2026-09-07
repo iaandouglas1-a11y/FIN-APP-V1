@@ -26,6 +26,32 @@ const pagamentoSchema = z.object({
 
 function entries(f: FormData) { return Object.fromEntries(f.entries()); }
 
+// ── Sincronização automática de situação ────────────────────
+// Recalcula o total pago (pagamentos "realizado" vinculados) de uma dívida e
+// atualiza sua situação: pendente (nada pago) → parcial (pago > 0 e < total)
+// → liquidado (pago >= total). É chamada sempre que um pagamento vinculado a
+// uma dívida é criado, editado, desfeito ou excluído — assim o % e o status
+// na tela de Dívidas ficam sempre corretos, sem ação manual do usuário.
+async function syncDividaSituacao(s: any, dividaId: string | null) {
+  if (!dividaId) return;
+
+  const { data: divida } = await s.from("dividas").select("valor,situacao").eq("id", dividaId).single();
+  if (!divida) return;
+
+  const { data: pagamentos } = await s.from("divida_pagamentos").select("valor,tipo").eq("divida_id", dividaId);
+  const pago = (pagamentos || [])
+    .filter((p: any) => p.tipo === "realizado")
+    .reduce((sum: number, p: any) => sum + Number(p.valor), 0);
+
+  const valorTotal = Number(divida.valor);
+  const novaSituacao: "pendente" | "parcial" | "liquidado" =
+    valorTotal > 0 && pago >= valorTotal ? "liquidado" : pago > 0 ? "parcial" : "pendente";
+
+  if (novaSituacao !== divida.situacao) {
+    await s.from("dividas").update({ situacao: novaSituacao }).eq("id", dividaId);
+  }
+}
+
 // ── Dívidas ───────────────────────────────────────────────
 export async function saveDivida(formData: FormData) {
   const id     = String(formData.get("id") || "");
@@ -37,6 +63,10 @@ export async function saveDivida(formData: FormData) {
     ? await (s.from("dividas") as any).update(parsed.data).eq("id", id)
     : await (s.from("dividas") as any).insert(parsed.data);
   if (result.error) throw new Error(result.error.message);
+
+  // Se o valor total foi editado, o % e a situação podem ter mudado
+  if (id) await syncDividaSituacao(s, id);
+
   revalidatePath("/dividas");
 }
 
@@ -51,12 +81,11 @@ export async function deleteDivida(formData: FormData) {
 export async function alterarSituacaoDivida(formData: FormData) {
   const id = String(formData.get("id"));
   const atual = String(formData.get("situacao"));
-  
-  // Ciclo: pendente -> parcial -> liquidado -> pendente
-  let novaSituacao: "pendente" | "parcial" | "liquidado" = "pendente";
-  if (atual === "pendente") novaSituacao = "parcial";
-  else if (atual === "parcial") novaSituacao = "liquidado";
-  else novaSituacao = "pendente";
+
+  // Alternância manual: qualquer estado ↔ liquidado (override manual).
+  // O status "parcial" volta a ser calculado automaticamente a partir dos
+  // pagamentos assim que um novo pagamento for lançado/editado/desfeito.
+  const novaSituacao: "pendente" | "liquidado" = atual === "liquidado" ? "pendente" : "liquidado";
 
   const s = await createServerSupabaseClient();
   const { error } = await (s.from("dividas") as any).update({ situacao: novaSituacao }).eq("id", id);
@@ -72,6 +101,13 @@ export async function savePagamento(formData: FormData) {
   if (!parsed.success) throw new Error(parsed.error.errors[0].message);
 
   const s = await createServerSupabaseClient();
+
+  // Se estamos editando, guarda a dívida antiga (pode ter sido trocada)
+  let dividaAntigaId: string | null = null;
+  if (id) {
+    const { data: antigo } = await (s.from("divida_pagamentos") as any).select("divida_id").eq("id", id).single();
+    dividaAntigaId = antigo?.divida_id ?? null;
+  }
 
   // Se realizado → criar movimentação automaticamente
   let movimentacao_id: string | null = null;
@@ -106,6 +142,12 @@ export async function savePagamento(formData: FormData) {
     : await (s.from("divida_pagamentos") as any).insert(payload);
   if (result.error) throw new Error(result.error.message);
 
+  // Recalcula a(s) dívida(s) afetada(s) — a nova e, se mudou, a antiga também
+  await syncDividaSituacao(s, parsed.data.divida_id);
+  if (dividaAntigaId && dividaAntigaId !== parsed.data.divida_id) {
+    await syncDividaSituacao(s, dividaAntigaId);
+  }
+
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
@@ -131,11 +173,16 @@ export async function realizarPagamento(formData: FormData) {
     .select("id").single();
   if (movErr) throw new Error(movErr.message);
 
+  // Descobre a dívida vinculada antes de atualizar
+  const { data: pagAtual } = await (s.from("divida_pagamentos") as any).select("divida_id").eq("id", id).single();
+
   // Atualiza pagamento
   const { error } = await (s.from("divida_pagamentos") as any)
     .update({ tipo: "realizado", movimentacao_id: mov?.id })
     .eq("id", id);
   if (error) throw new Error(error.message);
+
+  await syncDividaSituacao(s, pagAtual?.divida_id ?? null);
 
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
@@ -146,15 +193,17 @@ export async function deletePagamento(formData: FormData) {
   const id = String(formData.get("id"));
   const s  = await createServerSupabaseClient();
 
-  // Deletar movimentação vinculada se existir
+  // Deletar movimentação vinculada se existir, e guardar a dívida pra resync
   const { data: pag } = await (s.from("divida_pagamentos") as any)
-    .select("movimentacao_id").eq("id", id).single();
+    .select("movimentacao_id, divida_id").eq("id", id).single();
   if (pag?.movimentacao_id) {
     await (s.from("movimentacoes") as any).delete().eq("id", pag.movimentacao_id);
   }
 
   const { error } = await (s.from("divida_pagamentos") as any).delete().eq("id", id);
   if (error) throw new Error(error.message);
+
+  await syncDividaSituacao(s, pag?.divida_id ?? null);
 
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
@@ -166,7 +215,7 @@ export async function desfazerPagamento(formData: FormData) {
 
   // Buscar o pagamento para saber se tem movimentação
   const { data: pag } = await (s.from("divida_pagamentos") as any)
-    .select("movimentacao_id, tipo").eq("id", id).single();
+    .select("movimentacao_id, tipo, divida_id").eq("id", id).single();
 
   if (!pag) throw new Error("Pagamento não encontrado");
 
@@ -185,6 +234,8 @@ export async function desfazerPagamento(formData: FormData) {
     const { error } = await (s.from("divida_pagamentos") as any).delete().eq("id", id);
     if (error) throw new Error(error.message);
   }
+
+  await syncDividaSituacao(s, pag.divida_id ?? null);
 
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
