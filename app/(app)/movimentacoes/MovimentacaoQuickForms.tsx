@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Plus, X, ArrowLeftRight, Receipt } from "lucide-react";
 import { saveMovimentacao } from "@/app/(app)/actions";
@@ -18,9 +18,22 @@ interface Props {
 
 export default function MovimentacaoQuickForms({ categorias, contas, cartoes, faturas, defaultTipo }: Props) {
   const searchParams = useSearchParams();
-  // Vindo do FAB (?tipo=... ou ?acao=transferencia): já abre o painel certo
-  const initial = searchParams.get("acao") === "transferencia" ? "transferencia" : defaultTipo ? "transacao" : null;
-  const [aberto, setAberto] = useState<null | "transacao" | "transferencia">(initial);
+  const [aberto, setAberto] = useState<null | "transacao" | "transferencia">(null);
+
+  // Reage a mudanças na URL (?tipo=... ou ?acao=transferencia) vindas do FAB de ação
+  // rápida. Um useState(valorInicial) só roda uma vez no primeiro mount — se o
+  // usuário já estava em /movimentacoes e clicava numa opção do FAB, a URL mudava
+  // mas o painel não abria, porque este componente não era remontado. O useEffect
+  // abaixo garante que o painel reaja toda vez que os parâmetros mudarem.
+  useEffect(() => {
+    if (searchParams.get("acao") === "transferencia") {
+      setAberto("transferencia");
+      document.getElementById("lancamento")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (searchParams.get("tipo")) {
+      setAberto("transacao");
+      document.getElementById("lancamento")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [searchParams]);
 
   return (
     <div className="space-y-2.5">
