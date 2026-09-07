@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, CheckCircle, Circle, Trash2, type LucideIcon } from "lucide-react";
+import { ChevronDown, ChevronUp, CheckCircle, Circle, Trash2, CircleDollarSign } from "lucide-react";
 import { clsx } from "clsx";
 import { currency, dateBR } from "@/lib/format";
 import { alterarSituacaoDivida, deleteDivida } from "@/app/(app)/actions_dividas";
+import { getCategoryIcon } from "@/lib/categoryIcons";
 import { IconChip, Badge, AmountText, ProgressBar } from "@/components/ui";
 import type { IconTone } from "@/components/ui";
 import EditarDividaBtn from "./EditarDividaBtn";
@@ -20,17 +21,24 @@ interface Props {
     categoria_id: string | null;
   };
   categorias: { id: string; nome: string }[];
-  icon: LucideIcon;
+  categoriaNome?: string | null;
   tone: IconTone;
   pct: number;
   pagos: number;
 }
 
 /** Card de dívida — colapsado mostra só o essencial (nome, status, valor);
- * clique expande com data, progresso e ações (liquidar/editar/excluir). */
-export default function DividaAccordion({ divida, categorias, icon, tone, pct, pagos }: Props) {
+ * clique expande com data, progresso e ações (liquidar/editar/excluir).
+ *
+ * Recebe `categoriaNome` (texto) em vez do ícone já resolvido: um componente
+ * de ícone (função/forwardRef) não pode ser passado como prop de um Server
+ * Component para um Client Component — só é serializável quando já vem
+ * renderizado como JSX. Por isso o ícone é resolvido aqui dentro, no cliente,
+ * usando o mesmo getCategoryIcon() usado no restante do app. */
+export default function DividaAccordion({ divida, categorias, categoriaNome, tone, pct, pagos }: Props) {
   const [open, setOpen] = useState(false);
   const liquidada = divida.situacao === "liquidado";
+  const CatIcon = categoriaNome ? getCategoryIcon(categoriaNome) : CircleDollarSign;
 
   return (
     <div className={clsx("surface-2 bg-surface overflow-hidden", liquidada && "opacity-60")}>
@@ -41,7 +49,7 @@ export default function DividaAccordion({ divida, categorias, icon, tone, pct, p
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setOpen((v) => !v); }}
         className="w-full flex items-center gap-3 p-3.5 cursor-pointer hover:bg-surface-2/40 transition-colors"
       >
-        <IconChip icon={icon} tone={tone} size={38} iconSize={17} />
+        <IconChip icon={CatIcon} tone={tone} size={38} iconSize={17} />
         <div className="min-w-0 flex-1">
           <div className="text-[14px] font-semibold text-ink-primary truncate">{divida.descricao}</div>
           <div className="flex items-center gap-1.5 flex-wrap mt-1">
