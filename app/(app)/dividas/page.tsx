@@ -1,12 +1,12 @@
+
 import { getDividas, getCategorias, getContasWithMovs } from "@/lib/queries";
-import { saveDivida, savePagamento } from "@/app/(app)/actions_dividas";
-import { Card, Button, Input, Select, FormGroup, StatPill } from "@/components/ui";
+import { Card, StatPill } from "@/components/ui";
 import type { IconTone } from "@/components/ui";
 import { currency } from "@/lib/format";
-import { TrendingDown, Plus, AlertCircle } from "lucide-react";
+import { TrendingDown, AlertCircle } from "lucide-react";
 import DividaAccordion from "./DividaAccordion";
 import PagamentoAccordion from "./PagamentoAccordion";
-import CloseDetailsButton from "@/components/CloseDetailsButton";
+import DividaQuickForms from "./DividaQuickForms";
 import { clsx } from "clsx";
 
 export default async function DividasPage({ searchParams }: { searchParams: Promise<{ aba?: string }> }) {
@@ -20,7 +20,6 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
   ]);
 
   const contasList = contas.map((c) => ({ id: c.id, nome: c.nome }));
-  const categoriasDespesa = categorias; // todas as categorias disponíveis
 
   // Resumo
   const totalDevido  = dividas.reduce((s, d) => s + Number(d.valor), 0); // total de TODAS as dívidas
@@ -54,6 +53,9 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
         <StatPill label="Total pago" value={currency(totalPago)} tone="green" />
       </div>
       <StatPill label="Saldo em aberto" value={currency(saldoAtual)} tone={saldoAtual > 0 ? "amber" : "green"} />
+
+      {/* Nova dívida / Novo pagamento — botões lado a lado, no topo (mesmo padrão de Movimentações) */}
+      <DividaQuickForms categorias={categorias} contas={contasList} dividasAbertas={abertas} />
 
       {/* Abas: Em aberto / Liquidadas */}
       <div className="flex bg-surface border border-surface-border/60 rounded-xl p-1 gap-0.5">
@@ -108,127 +110,11 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
         )}
       </div>
 
-      {/* Nova dívida — card tracejado colapsável */}
-      <details className="group">
-        <summary className="list-none cursor-pointer">
-          <div className="flex items-center justify-between p-4 rounded-2xl border border-dashed border-surface-border text-ink-secondary group-open:hidden">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-[#5DA832]/[0.14] text-[#6fc23b] flex items-center justify-center">
-                <Plus className="h-4 w-4" />
-              </div>
-              <span className="text-[13.5px] font-semibold">Nova dívida</span>
-            </div>
-          </div>
-        </summary>
-
-        <Card className="mt-2">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
-              <Plus className="h-4 w-4" />
-              <span>Nova dívida</span>
-            </div>
-            <CloseDetailsButton label="nova dívida" />
-          </div>
-          <form action={saveDivida} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <FormGroup label="Data">
-              <Input name="data" type="date" required className="text-sm" />
-            </FormGroup>
-            <FormGroup label="Valor total">
-              <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="text-sm" />
-            </FormGroup>
-            <FormGroup label="Descrição">
-              <Input name="descricao" placeholder="Ex: Celular, Empréstimo..." required className="text-sm" />
-            </FormGroup>
-            <FormGroup label="Observação">
-              <Input name="observacao" placeholder="Ex: 10x R$ 140,00" className="text-sm" />
-            </FormGroup>
-            <FormGroup label="Categoria">
-              <Select name="categoria_id" className="text-sm">
-                <option value="">Sem categoria</option>
-                {categoriasDespesa.map((cat) => <option key={cat.id} value={cat.id}>{cat.nome}</option>)}
-              </Select>
-            </FormGroup>
-            <input type="hidden" name="situacao" value="pendente" />
-            <div className="flex items-end">
-              <Button type="submit" className="text-sm font-semibold inline-flex items-center justify-center w-full">
-                <Plus className="h-4 w-4 mr-1.5" />
-                Adicionar
-              </Button>
-            </div>
-          </form>
-        </Card>
-      </details>
-
       {/* Fluxo de Pagamentos */}
       <Card className="p-0 overflow-hidden border-surface-border/60">
         <div className="px-4 py-3 border-b border-surface-border/40 flex items-center gap-2">
           <TrendingDown className="h-4 w-4 text-[#5DA832]" />
           <h3 className="font-semibold text-white text-sm">Fluxo de Pagamentos</h3>
-        </div>
-
-        {/* Novo pagamento — mesmo padrão visual de "Nova dívida" (card tracejado colapsável) */}
-        <div className="p-4 border-b border-surface-border/40">
-          <details className="group">
-            <summary className="list-none cursor-pointer">
-              <div className="flex items-center justify-between p-4 rounded-2xl border border-dashed border-surface-border text-ink-secondary group-open:hidden">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#5DA832]/[0.14] text-[#6fc23b] flex items-center justify-center">
-                    <Plus className="h-4 w-4" />
-                  </div>
-                  <span className="text-[13.5px] font-semibold">Novo pagamento</span>
-                </div>
-              </div>
-            </summary>
-
-            <div className="mt-2">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
-                  <Plus className="h-4 w-4" />
-                  <span>Novo pagamento</span>
-                </div>
-                <CloseDetailsButton label="novo pagamento" />
-              </div>
-              <form action={savePagamento} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 items-end">
-                <FormGroup label="Data">
-                  <Input name="data" type="date" required className="text-sm" />
-                </FormGroup>
-                <FormGroup label="Descrição">
-                  <Input name="descricao" placeholder="Ex: Gasolina, Cerveja..." required className="text-sm" />
-                </FormGroup>
-                <FormGroup label="Valor">
-                  <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="text-sm" />
-                </FormGroup>
-                <FormGroup label="Tipo">
-                  <Select name="tipo" required className="text-sm">
-                    <option value="orcado">Orçado</option>
-                    <option value="realizado">Realizado</option>
-                  </Select>
-                </FormGroup>
-                <FormGroup label="Dívida vinculada">
-                  <Select name="divida_id" className="text-sm">
-                    <option value="">Nenhuma (avulso)</option>
-                    {abertas.map((d) => <option key={d.id} value={d.id}>{d.descricao}</option>)}
-                  </Select>
-                </FormGroup>
-                <FormGroup label="Conta">
-                  <Select name="conta_id" className="text-sm">
-                    <option value="">Nenhuma</option>
-                    {contasList.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
-                  </Select>
-                </FormGroup>
-                <FormGroup label="Categoria">
-                  <Select name="categoria_id" className="text-sm">
-                    <option value="">Sem categoria</option>
-                    {categoriasDespesa.map((cat) => <option key={cat.id} value={cat.id}>{cat.nome}</option>)}
-                  </Select>
-                </FormGroup>
-                <Button type="submit" className="text-sm font-semibold inline-flex items-center justify-center">
-                  <Plus className="h-4 w-4 mr-1.5" />
-                  Adicionar
-                </Button>
-              </form>
-            </div>
-          </details>
         </div>
 
         {/* Lista de pagamentos — accordion: colapsada mostra só descrição/valor/status */}
@@ -245,7 +131,7 @@ export default async function DividasPage({ searchParams }: { searchParams: Prom
                 pagamento={p}
                 categoriaNome={categoriaNome}
                 contas={contasList}
-                categorias={categoriasDespesa}
+                categorias={categorias}
               />
             );
           })}
