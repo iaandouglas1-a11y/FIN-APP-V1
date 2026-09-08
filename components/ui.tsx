@@ -167,14 +167,16 @@ export function LoadingSpinner() {
 export function FormGroup({ 
   label, 
   error, 
-  children 
+  children,
+  className,
 }: { 
   label?: string; 
   error?: string; 
-  children: React.ReactNode 
+  children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="space-y-2">
+    <div className={clsx("space-y-2", className)}>
       {label && <label className="label-modern">{label}</label>}
       {children}
       {error && <p className="text-xs text-rose-400 mt-1">{error}</p>}
