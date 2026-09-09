@@ -13,12 +13,18 @@ interface Props {
 
 type Painel = null | "investimento" | "movimento" | "saldo";
 
+const SUBCATEGORIAS: Record<"renda_fixa" | "renda_variavel", string[]> = {
+  renda_fixa: ["Tesouro Direto", "CDB", "LCI/LCA", "Debênture", "Fundo de Renda Fixa", "Poupança", "Outro"],
+  renda_variavel: ["Ações", "FII", "ETF", "BDR", "Fundo Multimercado", "Criptomoeda", "Outro"],
+};
+
 /** Três botões lado a lado no topo — "Investimento", "Aporte/Resgate" e
  * "Saldo mensal" — mesmo padrão visual do MovimentacaoQuickForms /
  * DividaQuickForms: sempre visíveis, cada um revela seu formulário completo
  * (com botão de fechar) só quando clicado. */
 export default function InvestimentoQuickForms({ contas, investimentos, mesAtual }: Props) {
   const [aberto, setAberto] = useState<Painel>(null);
+  const [tipoInv, setTipoInv] = useState<"renda_fixa" | "renda_variavel">("renda_fixa");
 
   const toggle = (p: Painel) => setAberto((v) => (v === p ? null : p));
 
@@ -90,26 +96,38 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
             </FormGroup>
             <div className="grid grid-cols-2 gap-2">
               <FormGroup label="Tipo">
-                <Select name="tipo" required className="h-9 text-sm w-full">
+                <Select
+                  name="tipo"
+                  required
+                  className="h-9 text-sm w-full"
+                  value={tipoInv}
+                  onChange={(e) => setTipoInv(e.target.value as "renda_fixa" | "renda_variavel")}
+                >
                   <option value="renda_fixa">Renda Fixa</option>
                   <option value="renda_variavel">Renda Variável</option>
                 </Select>
               </FormGroup>
-              <FormGroup label="Ticker">
-                <Input name="ticker" placeholder="PETR4" className="h-9 text-sm font-mono w-full" />
+              <FormGroup label="Subcategoria">
+                <Select name="subcategoria" className="h-9 text-sm w-full" defaultValue="">
+                  <option value="">Sem subcategoria</option>
+                  {SUBCATEGORIAS[tipoInv].map((s) => <option key={s} value={s}>{s}</option>)}
+                </Select>
               </FormGroup>
             </div>
             <div className="grid grid-cols-2 gap-2">
+              <FormGroup label="Ticker">
+                <Input name="ticker" placeholder="PETR4" className="h-9 text-sm font-mono w-full" />
+              </FormGroup>
               <FormGroup label="Conta">
                 <Select name="conta_id" className="h-9 text-sm w-full">
                   <option value="">Nenhuma</option>
                   {contas.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
                 </Select>
               </FormGroup>
-              <FormGroup label="Valor Atual">
-                <Input name="valor_atual" type="number" step="0.01" min="0" placeholder="0,00" className="h-9 text-sm w-full" />
-              </FormGroup>
             </div>
+            <FormGroup label="Valor Atual">
+              <Input name="valor_atual" type="number" step="0.01" min="0" placeholder="0,00" className="h-9 text-sm w-full" />
+            </FormGroup>
             <button
               type="submit"
               onClick={() => setAberto(null)}
