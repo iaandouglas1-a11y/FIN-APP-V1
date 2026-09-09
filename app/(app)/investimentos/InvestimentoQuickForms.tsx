@@ -130,7 +130,6 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
             </FormGroup>
             <button
               type="submit"
-              onClick={() => setAberto(null)}
               className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-sm font-bold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
@@ -187,7 +186,6 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
             </FormGroup>
             <button
               type="submit"
-              onClick={() => setAberto(null)}
               className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-info hover:brightness-110 text-white text-sm font-semibold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
@@ -229,7 +227,6 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
             </div>
             <button
               type="submit"
-              onClick={() => setAberto(null)}
               className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-warning hover:brightness-110 text-[#06111F] text-sm font-bold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
