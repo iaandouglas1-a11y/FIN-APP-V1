@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
-import { createConta } from "@/app/(app)/contas/actions_contas";
-import { FormGroup, Input } from "@/components/ui";
+import { saveConta } from "@/app/(app)/actions";
+import { FormGroup, Input, Select } from "@/components/ui";
 
 export default function ContaQuickForm() {
   const [aberto, setAberto] = useState(false);
@@ -30,20 +30,31 @@ export default function ContaQuickForm() {
               <Plus className="h-4 w-4" />
               <span>Nova conta</span>
             </div>
-            <button onClick={() => setAberto(false)}>
+            <button type="button" onClick={() => setAberto(false)}>
               <X className="h-4 w-4 text-slate-500 hover:text-slate-300" />
             </button>
           </div>
 
-          <form action={createConta} className="space-y-2">
+          <form action={saveConta} className="space-y-2">
             <FormGroup label="Nome">
               <Input name="nome" required className="text-sm" />
             </FormGroup>
 
+            <FormGroup label="Tipo">
+              <Select name="tipo" required className="text-sm">
+                <option value="">Selecione...</option>
+                <option value="corrente">Corrente</option>
+                <option value="poupanca">Poupança</option>
+                <option value="investimento">Investimento</option>
+                <option value="dinheiro">Dinheiro</option>
+              </Select>
+            </FormGroup>
+
             <button
               type="submit"
-              className="w-full h-9 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-sm font-bold"
+              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-sm font-bold transition-all duration-200"
             >
+              <Plus className="h-4 w-4" />
               Criar conta
             </button>
           </form>
