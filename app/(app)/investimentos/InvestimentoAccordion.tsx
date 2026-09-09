@@ -11,13 +11,14 @@ interface Props {
   id:          string;
   nome:        string;
   tipo:        "renda_fixa" | "renda_variavel";
+  subcategoria: string | null;
   ticker:      string | null;
   contaNome:   string | null;
   valorAtual:  number;
   movimentos:  InvestimentoMovimento[];
 }
 
-export default function InvestimentoAccordion({ id, nome, tipo, ticker, contaNome, valorAtual, movimentos }: Props) {
+export default function InvestimentoAccordion({ id, nome, tipo, subcategoria, ticker, contaNome, valorAtual, movimentos }: Props) {
   const [open, setOpen]           = useState(false);
   const [editando, setEditando]   = useState(false);
   const [novoValor, setNovoValor] = useState(String(valorAtual));
@@ -54,7 +55,7 @@ export default function InvestimentoAccordion({ id, nome, tipo, ticker, contaNom
           <p className="text-[14px] font-bold text-ink-primary truncate">{nome}</p>
           <div className="flex items-center gap-1.5 flex-wrap mt-1">
             <Badge variant={tipo === "renda_fixa" ? "info" : "success"} className="text-[10px]">
-              {tipo === "renda_fixa" ? "Renda Fixa" : "Renda Variável"}
+              {subcategoria || (tipo === "renda_fixa" ? "Renda Fixa" : "Renda Variável")}
             </Badge>
             {ticker && <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-2 text-slate-400 font-mono">{ticker}</span>}
             {contaNome && <span className="text-[11px] text-ink-tertiary">{contaNome}</span>}
