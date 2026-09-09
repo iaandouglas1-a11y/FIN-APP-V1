@@ -119,6 +119,7 @@ export interface Investimento {
   id: string;
   nome: string;
   tipo: "renda_fixa" | "renda_variavel";
+  subcategoria: string | null; // Ex: "Ações", "FII", "Tesouro Direto", "CDB"...
   ticker: string | null;
   conta_id: string | null;
   valor_atual: number;
