@@ -82,7 +82,6 @@ export default function DividaQuickForms({ categorias, contas, dividasAbertas }:
             <input type="hidden" name="situacao" value="pendente" />
             <button
               type="submit"
-              onClick={() => setAberto(null)}
               className="sm:col-span-2 w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-sm font-bold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
@@ -141,7 +140,6 @@ export default function DividaQuickForms({ categorias, contas, dividasAbertas }:
             </FormGroup>
             <button
               type="submit"
-              onClick={() => setAberto(null)}
               className="sm:col-span-2 w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-info hover:brightness-110 text-white text-sm font-semibold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
