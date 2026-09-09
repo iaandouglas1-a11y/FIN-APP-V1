@@ -7,6 +7,7 @@ import { createServerSupabaseClient } from "@/lib/supabaseClient";
 const invSchema = z.object({
   nome:       z.string().min(2, "Nome muito curto"),
   tipo:       z.enum(["renda_fixa", "renda_variavel"]),
+  subcategoria: z.string().optional().or(z.literal("")).transform(v => v || null),
   ticker:     z.string().optional().or(z.literal("")).transform(v => v || null),
   conta_id:   z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
   valor_atual: z.coerce.number().nonnegative("Valor inválido").default(0),
