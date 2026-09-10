@@ -296,7 +296,7 @@ export function AmountText({
 }: {
   value: number;
   signed?: boolean;
-  tone?: "green" | "red" | "neutral";
+  tone?: "green" | "red" | "amber" | "neutral";
   className?: string;
   size?: "sm" | "md" | "lg" | "hero";
 }) {
@@ -304,6 +304,7 @@ export function AmountText({
   const toneClass =
     resolvedTone === "green" ? "text-[#6fc23b]" :
     resolvedTone === "red" ? "text-[#f87171]" :
+    resolvedTone === "amber" ? "text-[#f5a524]" :
     "text-ink-primary";
   const sizeClass = {
     sm: "text-sm font-semibold",
