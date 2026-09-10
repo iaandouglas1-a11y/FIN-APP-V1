@@ -31,18 +31,28 @@ function calcContaSaldo(contaId: string, movs: Movimentacao[]) {
     .reduce((sum, m) => sum + signedValue(m), 0);
 }
 
-function calcCartaoFatura(cartaoId: string, movs: Movimentacao[]) {
+function invoiceTotal(faturaId: string, movs: Movimentacao[]) {
   return movs
-    .filter((m) => m.cartao_id === cartaoId && m.tipo === "despesa")
+    .filter((m) => m.fatura_id === faturaId && m.tipo === "despesa")
     .reduce((sum, m) => sum + Number(m.valor), 0);
+}
+
+// "Usado" do cartão = soma das faturas ainda não pagas (mesmo critério do
+// card "Faturas em aberto" do Dashboard). Faturas já pagas não entram mais,
+// então o valor não fica crescendo pra sempre depois do pagamento.
+function calcCartaoUsado(cartaoId: string, faturas: any[], movs: Movimentacao[]) {
+  return faturas
+    .filter((f) => f.cartao_id === cartaoId && !f.pago)
+    .reduce((sum, f) => sum + invoiceTotal(f.id, movs), 0);
 }
 
 export async function getFinancialOverview(): Promise<
   EnrichedFinancialItem[]
 > {
-  const [items, movs] = await Promise.all([
+  const [items, movs, faturas] = await Promise.all([
     getFinancialItems(),
     getMovimentacoes(),
+    getFaturas(),
   ]);
 
   const enriched: EnrichedFinancialItem[] = items.map((item: any) => {
@@ -59,7 +69,7 @@ export async function getFinancialOverview(): Promise<
     }
 
     if (item.tipo === "cartao") {
-      const fatura = calcCartaoFatura(item.id, movs);
+      const usado = calcCartaoUsado(item.id, faturas, movs);
       const limite = Number(item.limite || 0);
 
       return {
@@ -68,10 +78,10 @@ export async function getFinancialOverview(): Promise<
         tipo: "cartao",
         logo_url: item.logo_url,
 
-        saldo: -fatura,
+        saldo: -usado,
         limite,
-        usado: fatura,
-        disponivel: limite - fatura,
+        usado,
+        disponivel: limite - usado,
       };
     }
 
