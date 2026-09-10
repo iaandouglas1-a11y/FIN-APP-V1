@@ -24,12 +24,6 @@ export default async function ContasPage() {
   return (
     <div className="space-y-6">
       
-      {/* Carrossel */}
-      {withBalance.length > 0 && (
-        <div className="flex gap-3 overflow-x-auto -mx-4 px-4 pb-1 snap-x">
-          {withBalance.map((conta) => {
-            const meta = TYPE_META[conta.tipo] ?? TYPE_META.corrente;
-
             return (
               <div
                 key={conta.id}
