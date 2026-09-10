@@ -40,15 +40,51 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
   const contasList = contas.map(c => ({ id: c.id, nome: c.nome }));
   const investimentosList = investimentos.map(i => ({ id: i.id, nome: i.nome }));
 
-  // Evolução do patrimônio: soma dos saldos registrados por mês
+  // Filtro de período ativo? (precisa vir cedo — usado pra recortar tudo abaixo)
+  const filtroAtivo = Boolean(sp.inicio || sp.fim);
+  const dataCorte = sp.fim ?? sp.inicio ?? null;
+  const mesLimite = filtroAtivo && dataCorte ? dataCorte.slice(0, 7) : null; // yyyy-MM
+
+  // Evolução do patrimônio: soma dos saldos registrados por mês (agregado)
   const saldosPorMes = new Map<string, number>();
+  // Saldo por investimento e por mês — permite reconstruir o valor "como estava"
+  // de cada investimento (e por tipo) numa data de corte, não só o total.
+  const saldosPorInvestimento = new Map<string, Map<string, number>>();
   for (const s of saldos) {
     const mesKey = s.mes.slice(0, 7); // yyyy-MM
     saldosPorMes.set(mesKey, (saldosPorMes.get(mesKey) || 0) + Number(s.saldo));
+
+    if (!saldosPorInvestimento.has(s.investimento_id)) {
+      saldosPorInvestimento.set(s.investimento_id, new Map());
+    }
+    saldosPorInvestimento.get(s.investimento_id)!.set(mesKey, Number(s.saldo));
   }
+
+  // Evolução truncada na data de corte — não faz sentido mostrar meses
+  // futuros em relação ao período selecionado.
   const evolutionData = Array.from(saldosPorMes.entries())
+    .filter(([mes]) => !mesLimite || mes <= mesLimite)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([mes, saldo]) => ({ mes: formatMesLabel(mes), saldo }));
+
+  // Saldo de um investimento específico "como estava" até o mês de corte —
+  // usa o registro mensal mais recente <= mesLimite; sem registro = ainda
+  // não existia patrimônio (0), nunca cai pro valor atual ao vivo.
+  function saldoInvestimentoAteMes(investimentoId: string, mesLimiteBusca: string) {
+    const historico = saldosPorInvestimento.get(investimentoId);
+    if (!historico) return null;
+    let melhor: string | null = null;
+    for (const mes of Array.from(historico.keys()).sort()) {
+      if (mes <= mesLimiteBusca) melhor = mes;
+      else break;
+    }
+    return melhor ? historico.get(melhor)! : null;
+  }
+
+  function valorExibidoInvestimento(inv: { id: string; valor_atual: number }) {
+    if (!filtroAtivo || !mesLimite) return Number(inv.valor_atual);
+    return saldoInvestimentoAteMes(inv.id, mesLimite) ?? 0;
+  }
 
   // Mês atual no formato yyyy-MM, para pré-preencher o formulário
   const mesAtual = new Date().toISOString().slice(0, 7);
@@ -59,9 +95,6 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
   const totalResgatadoGeral = movimentos.filter(m => m.tipo === "resgate").reduce((s, m) => s + Number(m.valor), 0);
   const totalInvestidoGeral = totalAportadoGeral - totalResgatadoGeral;
   const rentTotal      = totalInvestidoGeral > 0 ? ((totalAtual - totalInvestidoGeral) / totalInvestidoGeral) * 100 : 0;
-
-  // Filtro de período ativo?
-  const filtroAtivo = Boolean(sp.inicio || sp.fim);
 
   // Movimentos filtrados pelo período selecionado — alimentam os 3 stat pills
   // abaixo (sem filtro = todo o histórico, igual ao comportamento de Movimentações)
@@ -74,22 +107,17 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
   const totalResgatado = movimentosPeriodo.filter(m => m.tipo === "resgate").reduce((s, m) => s + Number(m.valor), 0);
   const totalInvestido = totalAportado - totalResgatado;
 
-  // Patrimônio no período: usa o saldo mensal registrado (mesma fonte do gráfico
-  // de evolução) mais próximo do fim do intervalo selecionado, em vez do valor
-  // atual "ao vivo" — assim o card reflete de fato a data filtrada.
-  function saldoAteData(fim?: string) {
-    if (!fim) return null;
-    const mesLimite = fim.slice(0, 7); // yyyy-MM
+  // Patrimônio no período: usa o saldo mensal agregado (mesma fonte do
+  // gráfico de evolução) mais próximo do fim do intervalo selecionado, em vez
+  // do valor atual "ao vivo" — assim o card reflete de fato a data filtrada.
+  const saldoPeriodo = filtroAtivo && mesLimite ? (() => {
     let melhor: string | null = null;
     for (const mes of Array.from(saldosPorMes.keys()).sort()) {
       if (mes <= mesLimite) melhor = mes;
       else break;
     }
     return melhor ? saldosPorMes.get(melhor)! : null;
-  }
-
-  const dataCorte = sp.fim ?? sp.inicio ?? null;
-  const saldoPeriodo = filtroAtivo ? saldoAteData(dataCorte ?? undefined) : null;
+  })() : null;
   // Com filtro: sem saldo registrado até a data de corte = ainda não havia
   // patrimônio (0), nunca cai pro valor atual "ao vivo". Sem filtro: posição atual.
   const patrimonio = filtroAtivo ? (saldoPeriodo ?? 0) : totalAtual;
@@ -106,10 +134,10 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
     : rentTotal;
   const positivo = rentabilidade >= 0;
 
-  // Distribuição da carteira: Renda Fixa x Renda Variável (por valor atual)
+  // Distribuição da carteira: Renda Fixa x Renda Variável (respeita o período)
   const distribuicao = [
-    { name: "Renda Fixa", value: investimentos.filter(i => i.tipo === "renda_fixa").reduce((s, i) => s + Number(i.valor_atual), 0) },
-    { name: "Renda Variável", value: investimentos.filter(i => i.tipo === "renda_variavel").reduce((s, i) => s + Number(i.valor_atual), 0) },
+    { name: "Renda Fixa", value: investimentos.filter(i => i.tipo === "renda_fixa").reduce((s, i) => s + valorExibidoInvestimento(i), 0) },
+    { name: "Renda Variável", value: investimentos.filter(i => i.tipo === "renda_variavel").reduce((s, i) => s + valorExibidoInvestimento(i), 0) },
   ].filter(d => d.value > 0);
 
   return (
@@ -236,6 +264,7 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
           ) : (
             investimentos.map(inv => {
               const movInv = movimentos.filter(m => m.investimento_id === inv.id);
+              const movInvExibidos = filtroAtivo && dataCorte ? movInv.filter(m => m.data <= dataCorte) : movInv;
               return (
                 <InvestimentoAccordion
                   key={inv.id}
@@ -245,8 +274,8 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
                   subcategoria={inv.subcategoria}
                   ticker={inv.ticker}
                   contaNome={inv.contas?.nome ?? null}
-                  valorAtual={Number(inv.valor_atual)}
-                  movimentos={movInv}
+                  valorAtual={valorExibidoInvestimento(inv)}
+                  movimentos={movInvExibidos}
                 />
               );
             })
