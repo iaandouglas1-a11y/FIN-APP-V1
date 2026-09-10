@@ -6,8 +6,8 @@ import { Plus, Pencil, X, Wallet, CreditCard } from "lucide-react";
 import { Card, EntityLogo, AmountText, EmptyState, ProgressBar } from "@/components/ui";
 import type { IconTone } from "@/components/ui";
 import { currency } from "@/lib/format";
-import { EditarFinancialBtn } from "./EditarFinancialBtn";
 import { FinancialQuickInline } from "./FinancialQuickInline";
+import { EditarFinancialForm } from "./EditarFinancialForm";
 
 type Item = {
   id: string;
@@ -40,8 +40,9 @@ function cartaoTone(usado: number, limite: number): { icon: IconTone; text: Tone
 
 export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[]; cartoes: Item[] }) {
   const router = useRouter();
-  const [modoEdicao, setModoEdicao] = useState(false);
-  const [mostrarForm, setMostrarForm] = useState(false);
+  const [painelAberto, setPainelAberto] = useState<null | "editar" | "adicionar">(null);
+
+  const todosItens = [...contas, ...cartoes];
 
   return (
     <>
@@ -49,9 +50,9 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
       <div className="grid grid-cols-2 gap-2">
         <button
           type="button"
-          onClick={() => setModoEdicao((v) => !v)}
+          onClick={() => setPainelAberto((v) => (v === "editar" ? null : "editar"))}
           className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-[13px] font-semibold border transition-all duration-200 ${
-            modoEdicao
+            painelAberto === "editar"
               ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]"
               : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
           }`}
@@ -61,9 +62,9 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
         </button>
         <button
           type="button"
-          onClick={() => setMostrarForm((v) => !v)}
+          onClick={() => setPainelAberto((v) => (v === "adicionar" ? null : "adicionar"))}
           className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-[13px] font-semibold border transition-all duration-200 ${
-            mostrarForm
+            painelAberto === "adicionar"
               ? "bg-info/15 border-info/40 text-[#60a5fa]"
               : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
           }`}
@@ -73,14 +74,29 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
         </button>
       </div>
 
+      {/* Painel: Editar conta ou cartão */}
+      {painelAberto === "editar" && (
+        <EditarFinancialForm
+          items={todosItens}
+          onClose={() => setPainelAberto(null)}
+          onSaved={() => {
+            setPainelAberto(null);
+            router.refresh();
+          }}
+        />
+      )}
+
       {/* Painel: Adicionar conta */}
-      {mostrarForm && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between px-1">
-            <span className="text-[#5DA832] font-bold uppercase text-xs tracking-widest">Nova conta ou cartão</span>
+      {painelAberto === "adicionar" && (
+        <div className="border border-[#5DA832]/30 rounded-xl p-4 bg-[#5DA832]/5 space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+              <Plus className="h-4 w-4" />
+              <span>Nova conta ou cartão</span>
+            </div>
             <button
               type="button"
-              onClick={() => setMostrarForm(false)}
+              onClick={() => setPainelAberto(null)}
               className="p-1 text-slate-500 hover:text-slate-300 rounded transition-colors"
             >
               <X className="h-4 w-4" />
@@ -88,7 +104,7 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
           </div>
           <FinancialQuickInline
             onCreated={() => {
-              setMostrarForm(false);
+              setPainelAberto(null);
               router.refresh();
             }}
           />
@@ -121,7 +137,6 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
                     <p className="text-xs text-slate-500">Conta</p>
                   </div>
                   <AmountText value={c.saldo} tone={tone.text} className="shrink-0" />
-                  {modoEdicao && <EditarFinancialBtn item={c} />}
                 </div>
               );
             })}
@@ -161,7 +176,6 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
                       </p>
                     </div>
                     <AmountText value={c.disponivel ?? 0} tone={tone.text} className="shrink-0" />
-                    {modoEdicao && <EditarFinancialBtn item={c} />}
                   </div>
                   <ProgressBar pct={pct} color={tone.barColor} />
                 </div>
