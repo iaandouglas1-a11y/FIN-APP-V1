@@ -4,7 +4,7 @@ import { getContasWithMovs } from "@/lib/queries";
 import { Wallet, Landmark, PiggyBank, Banknote } from "lucide-react";
 import type { IconTone } from "@/components/ui";
 import EditarContaBtn from "./EditarContaBtn";
-import ContaQuickInline from "@/components/contas/ContaQuickInline";
+import ContaQuickInline from "./ContaQuickInline";
 
 const TYPE_META: Record<string, { icon: any; label: string; tone: IconTone; gradient: string }> = {
   corrente:     { icon: Landmark,  label: "Conta corrente", tone: "blue",   gradient: "from-[#173764] to-surface" },
