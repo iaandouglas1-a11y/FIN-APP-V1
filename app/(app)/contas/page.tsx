@@ -1,9 +1,8 @@
-"use client";
-
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 import { saveConta } from "@/app/(app)/actions";
 import { FormGroup, Input, Select, Button, Card } from "@/components/ui";
+import ContaQuickInline from "@/components/contas/ContaQuickInline";
 
 function ContaQuickInline() {
   const [aberto, setAberto] = useState(false);
