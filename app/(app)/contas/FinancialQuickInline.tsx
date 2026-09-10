@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { createClient } from "@supabase/supabase-js"
+import { Plus } from "lucide-react"
+import { FormGroup, Input, Select } from "@/components/ui"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,111 +20,102 @@ export function FinancialQuickInline({ onCreated }: Props) {
   const [limite, setLimite] = useState<number>(0)
   const [loading, setLoading] = useState(false)
 
-async function handleCreate() {
-  if (!nome) return
+  async function handleCreate() {
+    if (!nome) return
 
-  setLoading(true)
+    setLoading(true)
 
-  const id = crypto.randomUUID()
+    const id = crypto.randomUUID()
+    const isCartao = tipo === "cartao"
 
-  const isCartao = tipo === "cartao"
-
-  // 1. NOVO MODELO (sempre)
-  const insertNovo = supabase
-    .from("financeiro_itens")
-    .insert({
-      id,
-      nome,
-      tipo,
-      logo_url: null,
-      limite: isCartao ? limite : null
-    })
-
-  // 2. LEGACY (compatibilidade)
-  const insertLegacy = isCartao
-    ? supabase.from("cartoes").insert({
-        id,
-        nome,
-        limite,
-        conta_id: null,
-        logo_url: null
-      })
-    : supabase.from("contas").insert({
+    // 1. NOVO MODELO (sempre)
+    const insertNovo = supabase
+      .from("financeiro_itens")
+      .insert({
         id,
         nome,
         tipo,
-        logo_url: null
+        logo_url: null,
+        limite: isCartao ? limite : null
       })
 
-  const [{ error: e1 }, { error: e2 }] = await Promise.all([
-    insertNovo,
-    insertLegacy
-  ])
+    // 2. LEGACY (compatibilidade)
+    const insertLegacy = isCartao
+      ? supabase.from("cartoes").insert({
+          id,
+          nome,
+          limite,
+          conta_id: null,
+          logo_url: null
+        })
+      : supabase.from("contas").insert({
+          id,
+          nome,
+          tipo,
+          logo_url: null
+        })
 
-  setLoading(false)
+    const [{ error: e1 }, { error: e2 }] = await Promise.all([
+      insertNovo,
+      insertLegacy
+    ])
 
-  if (!e1 && !e2) {
-    setNome("")
-    setLimite(0)
-    onCreated?.()
-  } else {
-    console.error("Erro dual write:", e1 || e2)
+    setLoading(false)
+
+    if (!e1 && !e2) {
+      setNome("")
+      setLimite(0)
+      setTipo("conta")
+      onCreated?.()
+    } else {
+      console.error("Erro dual write:", e1 || e2)
+    }
   }
-}
+
   return (
-    <div className="p-3 rounded-xl border border-white/10 bg-white/5 space-y-3">
-
-      {/* nome */}
-      <input
-        value={nome}
-        onChange={(e) => setNome(e.target.value)}
-        placeholder="Nome da conta ou cartão"
-        className="w-full bg-transparent text-white outline-none text-sm"
-      />
-
-      {/* tipo */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => setTipo("conta")}
-          className={`px-3 py-1 rounded text-xs ${
-            tipo === "conta"
-              ? "bg-green-500/30 text-white"
-              : "text-white/50"
-          }`}
-        >
-          Conta
-        </button>
-
-        <button
-          onClick={() => setTipo("cartao")}
-          className={`px-3 py-1 rounded text-xs ${
-            tipo === "cartao"
-              ? "bg-blue-500/30 text-white"
-              : "text-white/50"
-          }`}
-        >
-          Cartão
-        </button>
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-2">
+        <FormGroup label="Nome">
+          <Input
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            placeholder="Ex: Nubank, Carteira..."
+            className="text-sm"
+          />
+        </FormGroup>
+        <FormGroup label="Tipo">
+          <Select
+            value={tipo}
+            onChange={(e) => setTipo(e.target.value as "conta" | "cartao")}
+            className="text-sm"
+          >
+            <option value="conta">Conta</option>
+            <option value="cartao">Cartão</option>
+          </Select>
+        </FormGroup>
       </div>
 
-      {/* limite (somente cartão) */}
       {tipo === "cartao" && (
-        <input
-          type="number"
-          value={limite}
-          onChange={(e) => setLimite(Number(e.target.value))}
-          placeholder="Limite"
-          className="w-full bg-transparent text-white outline-none text-sm"
-        />
+        <FormGroup label="Limite">
+          <Input
+            type="number"
+            step="0.01"
+            value={limite}
+            onChange={(e) => setLimite(Number(e.target.value))}
+            placeholder="0,00"
+            className="text-sm"
+          />
+        </FormGroup>
       )}
 
-      {/* botão */}
       <button
+        type="button"
         onClick={handleCreate}
         disabled={loading}
-        className="w-full bg-green-500/20 text-green-300 text-sm py-2 rounded"
+        className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-sm font-bold transition-all duration-200 disabled:opacity-60"
       >
-        {loading ? "Salvando..." : "Criar"}
+        <Plus className="h-4 w-4" />
+        {loading ? "Criando..." : "Criar"}
       </button>
     </div>
   )
