@@ -23,20 +23,13 @@ export function FinancialQuickInline({ onCreated }: Props) {
 
     setLoading(true)
 
-const payload = {
-  id: crypto.randomUUID(),
-  nome,
-  tipo,
-  logo_url: null,
-  limite: tipo === "cartao" ? limite : null
-}
-         {
-            id: crypto.randomUUID(),
-            nome,
-            tipo: "cartao",
-            logo_url: null,
-            limite
-          }
+    const payload = {
+      id: crypto.randomUUID(),
+      nome,
+      tipo,
+      logo_url: null,
+      limite: tipo === "cartao" ? limite : null
+    }
 
     const { error } = await supabase
       .from("financeiro_itens")
@@ -49,7 +42,7 @@ const payload = {
       setLimite(0)
       onCreated?.()
     } else {
-      console.error(error)
+      console.error("Erro ao criar item:", error)
     }
   }
 
@@ -89,7 +82,7 @@ const payload = {
         </button>
       </div>
 
-      {/* limite (só cartão) */}
+      {/* limite (somente cartão) */}
       {tipo === "cartao" && (
         <input
           type="number"
