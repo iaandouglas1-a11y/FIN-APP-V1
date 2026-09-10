@@ -5,11 +5,6 @@ import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 import { Wallet, CreditCard } from "lucide-react";
 
-const subTabs = [
-  { href: "/contas", label: "Contas", icon: Wallet },
-  { href: "/contas/cartoes", label: "Cartões", icon: CreditCard },
-];
-
 export default function ContasLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
