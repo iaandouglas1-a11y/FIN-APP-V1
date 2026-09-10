@@ -2,7 +2,7 @@ import {
   getFinancialItems,
   getMovimentacoes,
   getFaturas,
-} from "@/lib/data/finance";
+} from "./financialengine.ts";
 
 import type { Movimentacao } from "@/types/database";
 
