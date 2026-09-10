@@ -1,16 +1,17 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { clsx } from "clsx";
-import { Wallet, CreditCard } from "lucide-react";
+import React from "react";
 
-export default function ContasLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
+export default function ContasLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-5">
-      <h1 className="text-[22px] font-bold text-ink-primary tracking-tight px-1">Contas</h
+      <h1 className="text-[22px] font-bold text-ink-primary tracking-tight px-1">
+        Contas
+      </h1>
 
       {children}
     </div>
