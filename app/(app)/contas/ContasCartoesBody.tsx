@@ -28,13 +28,11 @@ function contaTone(saldo: number): { icon: IconTone; text: Tone } {
   return saldo > 0 ? { icon: "green", text: "green" } : { icon: "red", text: "red" };
 }
 
-// Cartões: limite todo disponível → green · consumido até 50% → neutral
-// · consumido acima de 50% → amber · acima do limite total → red
+// Cartões: nada usado → green · consumido até 50% → neutral · acima de 50% → red
 function cartaoTone(usado: number, limite: number): { icon: IconTone; text: Tone; barColor: string } {
   if (usado <= 0) return { icon: "green", text: "green", barColor: "#5DA832" };
   const pct = limite > 0 ? (usado / limite) * 100 : 0;
-  if (pct > 100) return { icon: "red", text: "red", barColor: "#f87171" };
-  if (pct > 50) return { icon: "amber", text: "amber", barColor: "#f5a524" };
+  if (pct > 50) return { icon: "red", text: "red", barColor: "#f87171" };
   return { icon: "gray", text: "neutral", barColor: "#94A3B8" };
 }
 
@@ -113,14 +111,11 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
 
       {/* Contas */}
       <Card className="p-0 overflow-hidden border-surface-border/60">
-        <div className="px-4 py-3 border-b border-surface-border/40 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Wallet className="h-4 w-4 text-[#5DA832]" />
-            <h3 className="font-semibold text-white text-sm">Contas</h3>
-          </div>
-          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-[#5DA832]/10 text-[#5DA832] border border-[#5DA832]/30">
-            {contas.length}
-          </span>
+        <div className="px-4 pt-4 pb-3 mb-1 border-b border-surface-border/40">
+          <h2 className="text-[15px] font-bold text-white">Contas</h2>
+          <p className="text-xs text-ink-tertiary mt-1">
+            {contas.length} {contas.length === 1 ? "conta cadastrada" : "contas cadastradas"}
+          </p>
         </div>
 
         {contas.length === 0 ? (
@@ -146,14 +141,11 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
 
       {/* Cartões */}
       <Card className="p-0 overflow-hidden border-surface-border/60">
-        <div className="px-4 py-3 border-b border-surface-border/40 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4 text-[#5DA832]" />
-            <h3 className="font-semibold text-white text-sm">Cartões</h3>
-          </div>
-          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-[#5DA832]/10 text-[#5DA832] border border-[#5DA832]/30">
-            {cartoes.length}
-          </span>
+        <div className="px-4 pt-4 pb-3 mb-1 border-b border-surface-border/40">
+          <h2 className="text-[15px] font-bold text-white">Cartões</h2>
+          <p className="text-xs text-ink-tertiary mt-1">
+            {cartoes.length} {cartoes.length === 1 ? "cartão cadastrado" : "cartões cadastrados"}
+          </p>
         </div>
 
         {cartoes.length === 0 ? (
