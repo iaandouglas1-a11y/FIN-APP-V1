@@ -1,5 +1,5 @@
 import { Surface, Card, AmountText, EntityLogo } from "@/components/ui";
-import FinancialRow from "@/components/FinancialRow";
+import { FinancialRow } from "@/components/FinancialRow";
 
 import { getContasEFaturas } from "@/lib/finance";
 import { currency } from "@/lib/format";
