@@ -118,7 +118,7 @@ export default async function ContasPage() {
                     </div>
                   </div>
 
-                  <AmountText value={cartao.limite || 0} tone="blue" />
+                  <AmountText value={cartao.limite || 0} tone="green" />
 
                   <EditarContaBtn
                     id={cartao.id}
