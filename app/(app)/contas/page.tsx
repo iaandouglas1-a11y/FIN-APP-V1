@@ -1,4 +1,4 @@
-import { Card, Surface, AmountText, IconChip, EmptyState, ProgressBar } from "@/components/ui";
+import { Card, Surface, AmountText, EntityLogo, EmptyState, ProgressBar } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { getFinancialOverview } from "@/lib/financialengine";
 import { Wallet, CreditCard } from "lucide-react";
@@ -39,7 +39,7 @@ export default async function ContasECartoesPage() {
           <div className="divide-y divide-surface-border/40">
             {contas.map((c) => (
               <div key={c.id} className="p-4 flex items-center gap-3">
-                <IconChip icon={Wallet} tone={c.saldo >= 0 ? "green" : "red"} />
+                <EntityLogo src={c.logo_url} icon={Wallet} tone={c.saldo >= 0 ? "green" : "red"} />
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-white text-sm truncate">{c.nome}</p>
                   <p className="text-xs text-slate-500">Conta</p>
@@ -77,7 +77,7 @@ export default async function ContasECartoesPage() {
               return (
                 <div key={c.id} className="p-4">
                   <div className="flex items-center gap-3">
-                    <IconChip icon={CreditCard} tone={tone} />
+                    <EntityLogo src={c.logo_url} icon={CreditCard} tone={tone} />
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-white text-sm truncate">{c.nome}</p>
                       <p className="text-xs text-slate-500">
