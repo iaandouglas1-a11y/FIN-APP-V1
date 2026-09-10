@@ -90,7 +90,9 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
 
   const dataCorte = sp.fim ?? sp.inicio ?? null;
   const saldoPeriodo = filtroAtivo ? saldoAteData(dataCorte ?? undefined) : null;
-  const patrimonio = saldoPeriodo ?? totalAtual;
+  // Com filtro: sem saldo registrado até a data de corte = ainda não havia
+  // patrimônio (0), nunca cai pro valor atual "ao vivo". Sem filtro: posição atual.
+  const patrimonio = filtroAtivo ? (saldoPeriodo ?? 0) : totalAtual;
 
   // Investido acumulado até a data de corte (não só dentro da janela), pra a
   // rentabilidade do período continuar fazendo sentido.
@@ -119,7 +121,7 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
           <div className="num text-[32px] leading-tight font-extrabold tracking-tight text-ink-primary mt-1.5">{currency(patrimonio)}</div>
           {filtroAtivo && (
             <div className="text-[10px] text-ink-tertiary mt-1">
-              {saldoPeriodo !== null ? `Saldo registrado até ${dateBR(dataCorte!)}` : "Sem saldo registrado no período — mostrando posição atual"}
+              {saldoPeriodo !== null ? `Saldo registrado até ${dateBR(dataCorte!)}` : "Nenhum saldo registrado até este período"}
             </div>
           )}
         </div>
