@@ -1,163 +1,79 @@
-import { Card, EntityLogo, Surface, AmountText } from "@/components/ui";
-import {
-  Wallet,
-  Landmark,
-  PiggyBank,
-  Banknote,
-  CreditCard,
-} from "lucide-react";
-import type { IconTone } from "@/components/ui";
+import { Surface, Card, AmountText, EntityLogo } from "@/components/ui";
+import FinancialRow from "@/components/FinancialRow";
 
-import { EditarFinancialBtn } from "./EditarFinancialBtn";
-import { FinancialQuickInline } from "./FinancialQuickInline";
+import { getContasEFaturas } from "@/lib/finance";
+import { currency } from "@/lib/format";
 
-import { getFinancialItems } from "@/lib/financeiro";
-
-const TYPE_META: Record<
-  string,
-  { icon: any; label: string; tone: IconTone }
-> = {
-  corrente: {
-    icon: Landmark,
-    label: "Conta corrente",
-    tone: "neutral",
-  },
-  poupanca: {
-    icon: PiggyBank,
-    label: "Poupança",
-    tone: "neutral",
-  },
-  investimento: {
-    icon: Wallet,
-    label: "Investimento",
-    tone: "green",
-  },
-  dinheiro: {
-    icon: Banknote,
-    label: "Dinheiro",
-    tone: "neutral",
-  },
-
-  cartao: {
-    icon: CreditCard,
-    label: "Cartão",
-    tone: "red",
-  },
+type FinancialEntity = {
+  id: string;
+  name: string;
+  type: "conta" | "cartao";
+  balance: number;
+  limit?: number;
+  used?: number;
+  logo_url?: string;
 };
 
-export default async function ContasPage() {
-  const items = await getFinancialItems();
+function normalizeData(contas: any[], cartoes: any[]): FinancialEntity[] {
+  const contasNorm: FinancialEntity[] = contas.map((c) => ({
+    id: c.id,
+    name: c.nome,
+    type: "conta",
+    balance: c.saldo,
+    logo_url: c.logo_url,
+  }));
 
-  const contas = items.filter((i) => i.tipo === "conta");
-  const cartoes = items.filter((i) => i.tipo === "cartao");
+  const cartoesNorm: FinancialEntity[] = cartoes.map((c) => ({
+    id: c.id,
+    name: c.nome,
+    type: "cartao",
+    balance: -(c.fatura_atual ?? 0), // negativo visual padrão financeiro
+    limit: c.limite,
+    used: c.fatura_atual,
+    logo_url: c.logo_url,
+  }));
+
+  return [...contasNorm, ...cartoesNorm];
+}
+
+export default async function ContasECartoesPage() {
+  const { contas, cartoes } = await getContasEFaturas();
+
+  const items = normalizeData(contas, cartoes);
+
+  const totalContas = contas.reduce((acc: number, c: any) => acc + c.saldo, 0);
+  const totalCartoes = cartoes.reduce((acc: number, c: any) => acc + (c.fatura_atual ?? 0), 0);
+
+  const saldoFinal = totalContas - totalCartoes;
 
   return (
     <div className="space-y-6">
+      {/* HEADER FINANCEIRO PADRONIZADO */}
+      <Surface className="p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-white/60">Saldo consolidado</p>
+            <AmountText value={saldoFinal} size="lg" />
+          </div>
 
-      {/* ================= CONTAS ================= */}
-      <div>
-        <h3 className="text-[15px] font-bold text-ink-primary mb-2.5 px-1">
-          Contas
-        </h3>
+          <div className="text-right">
+            <p className="text-xs text-white/50">Contas</p>
+            <p className="text-sm">{currency(totalContas)}</p>
 
-        {contas.length === 0 ? (
-          <Card className="text-center py-14">
-            <Wallet className="h-10 w-10 text-slate-600 mx-auto mb-3" />
-            <h3 className="text-[15px] font-semibold text-slate-300 mb-1">
-              Nenhuma conta registrada
-            </h3>
-            <p className="text-ink-tertiary text-sm">
-              Adicione uma conta abaixo para começar.
-            </p>
-          </Card>
-        ) : (
-          <Surface padded={false} className="divide-y divide-surface-border/50">
-            {contas.map((conta) => {
-              const meta = TYPE_META[conta.tipo] ?? TYPE_META.corrente;
-              const Icon = meta.icon;
+            <p className="text-xs text-white/50 mt-2">Cartões</p>
+            <p className="text-sm text-red-400">-{currency(totalCartoes)}</p>
+          </div>
+        </div>
+      </Surface>
 
-              return (
-                <div key={conta.id} className="list-row">
-                  <EntityLogo
-                    src={conta.logo_url}
-                    icon={Icon}
-                    tone={meta.tone}
-                  />
-
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[14px] font-semibold text-ink-primary truncate">
-                      {conta.nome}
-                    </div>
-                    <div className="text-[11.5px] text-ink-tertiary mt-0.5">
-                      {meta.label}
-                    </div>
-                  </div>
-
-                  <AmountText value={0} tone="neutral" />
-
-                  <EditarFinancialBtn item={conta} />
-                </div>
-              );
-            })}
-          </Surface>
-        )}
-      </div>
-
-      {/* ================= CARTÕES ================= */}
-      <div>
-        <h3 className="text-[15px] font-bold text-ink-primary mb-2.5 px-1">
-          Cartões
-        </h3>
-
-        {cartoes.length === 0 ? (
-          <Card className="text-center py-14">
-            <CreditCard className="h-10 w-10 text-slate-600 mx-auto mb-3" />
-            <h3 className="text-[15px] font-semibold text-slate-300 mb-1">
-              Nenhum cartão registrado
-            </h3>
-            <p className="text-ink-tertiary text-sm">
-              Adicione um cartão abaixo para começar.
-            </p>
-          </Card>
-        ) : (
-          <Surface padded={false} className="divide-y divide-surface-border/50">
-            {cartoes.map((cartao) => {
-              const meta = TYPE_META.cartao;
-              const Icon = meta.icon;
-
-              return (
-                <div key={cartao.id} className="list-row">
-                  <EntityLogo
-                    src={cartao.logo_url}
-                    icon={Icon}
-                    tone={meta.tone}
-                  />
-
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[14px] font-semibold text-ink-primary truncate">
-                      {cartao.nome}
-                    </div>
-                    <div className="text-[11.5px] text-ink-tertiary mt-0.5">
-                      Limite disponível
-                    </div>
-                  </div>
-
-                  <AmountText
-                    value={cartao.limite || 0}
-                    tone="neutral"
-                  />
-
-                  <EditarFinancialBtn item={cartao} />
-                </div>
-              );
-            })}
-          </Surface>
-        )}
-      </div>
-
-      {/* ================= CRIAÇÃO ================= */}
-      <FinancialQuickInline />
-
+      {/* LISTA UNIFICADA */}
+      <Card className="p-3">
+        <div className="space-y-2">
+          {items.map((item) => (
+            <FinancialRow key={item.id} item={item} />
+          ))}
+        </div>
+      </Card>
     </div>
   );
 }
