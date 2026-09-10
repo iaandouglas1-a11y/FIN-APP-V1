@@ -8,13 +8,13 @@ import ContaQuickInline from "./ContaQuickInline";
 import { getFinancialItems } from "@/lib/financeiro";
 
 const TYPE_META: Record<string, { icon: any; label: string; tone: IconTone }> = {
-  corrente:     { icon: Landmark,    label: "Conta corrente", tone: "blue" },
-  poupanca:     { icon: PiggyBank,   label: "Poupança",       tone: "green" },
-  investimento: { icon: Wallet,      label: "Investimento",   tone: "purple" },
-  dinheiro:     { icon: Banknote,    label: "Dinheiro",       tone: "amber" },
+  corrente:     { icon: Landmark,    label: "Conta corrente", tone: "neutral" },
+  poupanca:     { icon: PiggyBank,   label: "Poupança",       tone: "neutral" },
+  investimento: { icon: Wallet,      label: "Investimento",   tone: "green" },
+  dinheiro:     { icon: Banknote,    label: "Dinheiro",       tone: "neutral" },
 
   // cartões (novo modelo)
-  cartao:       { icon: CreditCard,  label: "Cartão",         tone: "blue" },
+  cartao:       { icon: CreditCard,  label: "Cartão",         tone: "red" },
 };
 
 export default async function ContasPage() {
