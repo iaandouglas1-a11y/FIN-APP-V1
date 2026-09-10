@@ -25,25 +25,42 @@ export function EditarFinancialBtn({ item }: Props) {
   const [limite, setLimite] = useState(item.limite || 0)
   const [loading, setLoading] = useState(false)
 
-  async function handleSave() {
-    setLoading(true)
+async function handleSave() {
+  setLoading(true)
 
-    const updates =
-      item.tipo === "cartao"
-        ? { nome, limite }
-        : { nome }
+  const updatesNovo =
+    item.tipo === "cartao"
+      ? { nome, limite }
+      : { nome }
 
-    const { error } = await supabase
-      .from("financeiro_itens")
-      .update(updates)
-      .eq("id", item.id)
+  const updateNovo = supabase
+    .from("financeiro_itens")
+    .update(updatesNovo)
+    .eq("id", item.id)
 
-    setLoading(false)
+  const updateLegacy =
+    item.tipo === "cartao"
+      ? supabase.from("cartoes").update({
+          nome,
+          limite
+        }).eq("id", item.id)
+      : supabase.from("contas").update({
+          nome
+        }).eq("id", item.id)
 
-    if (!error) setOpen(false)
-    else console.error(error)
+  const [{ error: e1 }, { error: e2 }] = await Promise.all([
+    updateNovo,
+    updateLegacy
+  ])
+
+  setLoading(false)
+
+  if (!e1 && !e2) {
+    setOpen(false)
+  } else {
+    console.error("Erro update dual:", e1 || e2)
   }
-
+}
   if (!open) {
     return (
       <button
