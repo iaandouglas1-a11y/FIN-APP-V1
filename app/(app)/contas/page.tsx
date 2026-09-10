@@ -1,20 +1,48 @@
 import { Card, EntityLogo, Surface, AmountText } from "@/components/ui";
-import { Wallet, Landmark, PiggyBank, Banknote, CreditCard } from "lucide-react";
+import {
+  Wallet,
+  Landmark,
+  PiggyBank,
+  Banknote,
+  CreditCard,
+} from "lucide-react";
 import type { IconTone } from "@/components/ui";
 
-import EditarContaBtn from "./EditarContaBtn";
-import ContaQuickInline from "./ContaQuickInline";
+import { EditarFinancialBtn } from "./EditarFinancialBtn";
+import { FinancialQuickInline } from "./FinancialQuickInline";
 
 import { getFinancialItems } from "@/lib/financeiro";
 
-const TYPE_META: Record<string, { icon: any; label: string; tone: IconTone }> = {
-  corrente:     { icon: Landmark,    label: "Conta corrente", tone: "neutral" },
-  poupanca:     { icon: PiggyBank,   label: "Poupança",       tone: "neutral" },
-  investimento: { icon: Wallet,      label: "Investimento",   tone: "green" },
-  dinheiro:     { icon: Banknote,    label: "Dinheiro",       tone: "neutral" },
+const TYPE_META: Record<
+  string,
+  { icon: any; label: string; tone: IconTone }
+> = {
+  corrente: {
+    icon: Landmark,
+    label: "Conta corrente",
+    tone: "neutral",
+  },
+  poupanca: {
+    icon: PiggyBank,
+    label: "Poupança",
+    tone: "neutral",
+  },
+  investimento: {
+    icon: Wallet,
+    label: "Investimento",
+    tone: "green",
+  },
+  dinheiro: {
+    icon: Banknote,
+    label: "Dinheiro",
+    tone: "neutral",
+  },
 
-  // cartões (novo modelo)
-  cartao:       { icon: CreditCard,  label: "Cartão",         tone: "red" },
+  cartao: {
+    icon: CreditCard,
+    label: "Cartão",
+    tone: "red",
+  },
 };
 
 export default async function ContasPage() {
@@ -26,7 +54,7 @@ export default async function ContasPage() {
   return (
     <div className="space-y-6">
 
-      {/* CONTAS */}
+      {/* ================= CONTAS ================= */}
       <div>
         <h3 className="text-[15px] font-bold text-ink-primary mb-2.5 px-1">
           Contas
@@ -65,13 +93,9 @@ export default async function ContasPage() {
                     </div>
                   </div>
 
-                  <AmountText value={0} tone="green" />
+                  <AmountText value={0} tone="neutral" />
 
-                  <EditarContaBtn
-                    id={conta.id}
-                    nome={conta.nome}
-                    tipo={conta.tipo}
-                  />
+                  <EditarFinancialBtn item={conta} />
                 </div>
               );
             })}
@@ -79,7 +103,7 @@ export default async function ContasPage() {
         )}
       </div>
 
-      {/* CARTÕES */}
+      {/* ================= CARTÕES ================= */}
       <div>
         <h3 className="text-[15px] font-bold text-ink-primary mb-2.5 px-1">
           Cartões
@@ -118,13 +142,12 @@ export default async function ContasPage() {
                     </div>
                   </div>
 
-                  <AmountText value={cartao.limite || 0} tone="red" />
-
-                  <EditarContaBtn
-                    id={cartao.id}
-                    nome={cartao.nome}
-                    tipo="cartao"
+                  <AmountText
+                    value={cartao.limite || 0}
+                    tone="neutral"
                   />
+
+                  <EditarFinancialBtn item={cartao} />
                 </div>
               );
             })}
@@ -132,8 +155,8 @@ export default async function ContasPage() {
         )}
       </div>
 
-      {/* CRIAÇÃO (ainda legado-safe via inline antigo) */}
-      <ContaQuickInline />
+      {/* ================= CRIAÇÃO ================= */}
+      <FinancialQuickInline />
 
     </div>
   );
