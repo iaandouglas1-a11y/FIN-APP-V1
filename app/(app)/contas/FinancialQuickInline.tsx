@@ -18,34 +18,57 @@ export function FinancialQuickInline({ onCreated }: Props) {
   const [limite, setLimite] = useState<number>(0)
   const [loading, setLoading] = useState(false)
 
-  async function handleCreate() {
-    if (!nome) return
+async function handleCreate() {
+  if (!nome) return
 
-    setLoading(true)
+  setLoading(true)
 
-    const payload = {
-      id: crypto.randomUUID(),
+  const id = crypto.randomUUID()
+
+  const isCartao = tipo === "cartao"
+
+  // 1. NOVO MODELO (sempre)
+  const insertNovo = supabase
+    .from("financeiro_itens")
+    .insert({
+      id,
       nome,
       tipo,
       logo_url: null,
-      limite: tipo === "cartao" ? limite : null
-    }
+      limite: isCartao ? limite : null
+    })
 
-    const { error } = await supabase
-      .from("financeiro_itens")
-      .insert(payload)
+  // 2. LEGACY (compatibilidade)
+  const insertLegacy = isCartao
+    ? supabase.from("cartoes").insert({
+        id,
+        nome,
+        limite,
+        conta_id: null,
+        logo_url: null
+      })
+    : supabase.from("contas").insert({
+        id,
+        nome,
+        tipo,
+        logo_url: null
+      })
 
-    setLoading(false)
+  const [{ error: e1 }, { error: e2 }] = await Promise.all([
+    insertNovo,
+    insertLegacy
+  ])
 
-    if (!error) {
-      setNome("")
-      setLimite(0)
-      onCreated?.()
-    } else {
-      console.error("Erro ao criar item:", error)
-    }
+  setLoading(false)
+
+  if (!e1 && !e2) {
+    setNome("")
+    setLimite(0)
+    onCreated?.()
+  } else {
+    console.error("Erro dual write:", e1 || e2)
   }
-
+}
   return (
     <div className="p-3 rounded-xl border border-white/10 bg-white/5 space-y-3">
 
