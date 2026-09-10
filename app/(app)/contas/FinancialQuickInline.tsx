@@ -30,7 +30,7 @@ const payload = {
   logo_url: null,
   limite: tipo === "cartao" ? limite : null
 }
-        : {
+         {
             id: crypto.randomUUID(),
             nome,
             tipo: "cartao",
