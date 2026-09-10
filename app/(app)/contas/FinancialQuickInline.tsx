@@ -23,14 +23,13 @@ export function FinancialQuickInline({ onCreated }: Props) {
 
     setLoading(true)
 
-    const payload =
-      tipo === "conta"
-        ? {
-            id: crypto.randomUUID(),
-            nome,
-            tipo: "conta",
-            logo_url: null
-          }
+const payload = {
+  id: crypto.randomUUID(),
+  nome,
+  tipo,
+  logo_url: null,
+  limite: tipo === "cartao" ? limite : null
+}
         : {
             id: crypto.randomUUID(),
             nome,
