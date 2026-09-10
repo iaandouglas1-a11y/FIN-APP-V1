@@ -1,7 +1,7 @@
 import { getInvestimentos, getContasWithMovs, getInvestimentoSaldos } from "@/lib/queries";
 import { Card, StatPill, Input, Button } from "@/components/ui";
-import { currency } from "@/lib/format";
-import { TrendingUp, LineChart as LineChartIcon, PieChart as PieChartIcon, Filter } from "lucide-react";
+import { currency, dateBR } from "@/lib/format";
+import { TrendingUp, Filter } from "lucide-react";
 import InvestimentoAccordion from "./InvestimentoAccordion";
 import InvestimentoQuickForms from "./InvestimentoQuickForms";
 import { InvestimentoEvolutionChart, CategoryPie } from "@/components/Charts";
@@ -53,14 +53,15 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
   // Mês atual no formato yyyy-MM, para pré-preencher o formulário
   const mesAtual = new Date().toISOString().slice(0, 7);
 
-  // Resumo geral (patrimônio e rentabilidade são sempre "de todo o período" —
-  // são posições atuais, não faz sentido recortá-las por data)
+  // Resumo geral (posição atual = sem filtro, todo o histórico)
   const totalAtual     = investimentos.reduce((s, i) => s + Number(i.valor_atual), 0);
   const totalAportadoGeral  = movimentos.filter(m => m.tipo === "aporte").reduce((s, m) => s + Number(m.valor), 0);
   const totalResgatadoGeral = movimentos.filter(m => m.tipo === "resgate").reduce((s, m) => s + Number(m.valor), 0);
   const totalInvestidoGeral = totalAportadoGeral - totalResgatadoGeral;
   const rentTotal      = totalInvestidoGeral > 0 ? ((totalAtual - totalInvestidoGeral) / totalInvestidoGeral) * 100 : 0;
-  const positivo       = rentTotal >= 0;
+
+  // Filtro de período ativo?
+  const filtroAtivo = Boolean(sp.inicio || sp.fim);
 
   // Movimentos filtrados pelo período selecionado — alimentam os 3 stat pills
   // abaixo (sem filtro = todo o histórico, igual ao comportamento de Movimentações)
@@ -73,6 +74,36 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
   const totalResgatado = movimentosPeriodo.filter(m => m.tipo === "resgate").reduce((s, m) => s + Number(m.valor), 0);
   const totalInvestido = totalAportado - totalResgatado;
 
+  // Patrimônio no período: usa o saldo mensal registrado (mesma fonte do gráfico
+  // de evolução) mais próximo do fim do intervalo selecionado, em vez do valor
+  // atual "ao vivo" — assim o card reflete de fato a data filtrada.
+  function saldoAteData(fim?: string) {
+    if (!fim) return null;
+    const mesLimite = fim.slice(0, 7); // yyyy-MM
+    let melhor: string | null = null;
+    for (const mes of Array.from(saldosPorMes.keys()).sort()) {
+      if (mes <= mesLimite) melhor = mes;
+      else break;
+    }
+    return melhor ? saldosPorMes.get(melhor)! : null;
+  }
+
+  const dataCorte = sp.fim ?? sp.inicio ?? null;
+  const saldoPeriodo = filtroAtivo ? saldoAteData(dataCorte ?? undefined) : null;
+  const patrimonio = saldoPeriodo ?? totalAtual;
+
+  // Investido acumulado até a data de corte (não só dentro da janela), pra a
+  // rentabilidade do período continuar fazendo sentido.
+  const movimentosAteCorte = dataCorte ? movimentos.filter((m) => m.data <= dataCorte) : movimentos;
+  const aportadoAteCorte  = movimentosAteCorte.filter(m => m.tipo === "aporte").reduce((s, m) => s + Number(m.valor), 0);
+  const resgatadoAteCorte = movimentosAteCorte.filter(m => m.tipo === "resgate").reduce((s, m) => s + Number(m.valor), 0);
+  const investidoAteCorte = aportadoAteCorte - resgatadoAteCorte;
+
+  const rentabilidade = filtroAtivo
+    ? (investidoAteCorte > 0 ? ((patrimonio - investidoAteCorte) / investidoAteCorte) * 100 : 0)
+    : rentTotal;
+  const positivo = rentabilidade >= 0;
+
   // Distribuição da carteira: Renda Fixa x Renda Variável (por valor atual)
   const distribuicao = [
     { name: "Renda Fixa", value: investimentos.filter(i => i.tipo === "renda_fixa").reduce((s, i) => s + Number(i.valor_atual), 0) },
@@ -81,16 +112,21 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
 
   return (
     <div className="space-y-6">
-      {/* Hero: patrimônio + rentabilidade lado a lado (sempre geral, não filtrado) */}
+      {/* Hero: patrimônio + rentabilidade — reflete o período filtrado quando houver */}
       <div className="glass-card p-6 flex items-end justify-between gap-4">
         <div>
           <div className="text-[11px] font-bold uppercase tracking-widest text-ink-secondary">Patrimônio investido</div>
-          <div className="num text-[32px] leading-tight font-extrabold tracking-tight text-ink-primary mt-1.5">{currency(totalAtual)}</div>
+          <div className="num text-[32px] leading-tight font-extrabold tracking-tight text-ink-primary mt-1.5">{currency(patrimonio)}</div>
+          {filtroAtivo && (
+            <div className="text-[10px] text-ink-tertiary mt-1">
+              {saldoPeriodo !== null ? `Saldo registrado até ${dateBR(dataCorte!)}` : "Sem saldo registrado no período — mostrando posição atual"}
+            </div>
+          )}
         </div>
         <div className="text-right shrink-0">
           <div className="text-[10px] font-bold uppercase tracking-wide text-ink-secondary">Rentabilidade</div>
           <div className={`num text-base font-extrabold mt-1 ${positivo ? "text-[#6fc23b]" : "text-[#f87171]"}`}>
-            {positivo ? "+" : ""}{rentTotal.toFixed(2)}%
+            {positivo ? "+" : ""}{rentabilidade.toFixed(2)}%
           </div>
         </div>
       </div>
@@ -155,9 +191,9 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
       {/* Distribuição da carteira — Renda Fixa x Renda Variável */}
       {distribuicao.length > 0 && (
         <Card className="border-surface-border/60 p-4">
-          <div className="flex items-center gap-2 mb-4 text-slate-400 font-bold uppercase text-xs tracking-widest">
-            <PieChartIcon className="h-4 w-4" />
-            <span>Distribuição da Carteira</span>
+          <div className="mb-4 pb-3 border-b border-surface-border/50">
+            <h2 className="text-[15px] font-bold text-white">Distribuição da carteira</h2>
+            <p className="text-xs text-ink-tertiary mt-1">Renda fixa x renda variável por valor atual</p>
           </div>
           <CategoryPie data={distribuicao} />
         </Card>
@@ -165,9 +201,9 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
 
       {/* Gráfico de evolução do patrimônio — exige ao menos 2 meses registrados */}
       <Card className="border-surface-border/60 p-4">
-        <div className="flex items-center gap-2 mb-4 text-slate-400 font-bold uppercase text-xs tracking-widest">
-          <LineChartIcon className="h-4 w-4" />
-          <span>Evolução do Patrimônio</span>
+        <div className="mb-4 pb-3 border-b border-surface-border/50">
+          <h2 className="text-[15px] font-bold text-white">Evolução do patrimônio</h2>
+          <p className="text-xs text-ink-tertiary mt-1">Saldo total registrado por mês</p>
         </div>
         {evolutionData.length < 2 ? (
           <div className="text-center py-8 px-2 border border-dashed border-surface-border/70 rounded-xl">
@@ -181,15 +217,20 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
       </Card>
 
       {/* Carteira */}
-      <div>
-        <h3 className="text-[15px] font-bold text-ink-primary mb-2.5 px-1">Carteira</h3>
+      <Card className="border-surface-border/60 p-4">
+        <div className="mb-4 pb-3 border-b border-surface-border/50">
+          <h2 className="text-[15px] font-bold text-white">Carteira</h2>
+          <p className="text-xs text-ink-tertiary mt-1">
+            {investimentos.length} {investimentos.length === 1 ? "investimento cadastrado" : "investimentos cadastrados"}
+          </p>
+        </div>
         <div className="space-y-3">
           {investimentos.length === 0 ? (
-            <Card className="text-center py-16 border-surface-border/60">
+            <div className="text-center py-10">
               <TrendingUp className="h-12 w-12 text-slate-600 mx-auto mb-4" />
               <h3 className="text-base font-semibold text-slate-300 mb-2">Nenhum investimento cadastrado</h3>
               <p className="text-slate-500 text-sm">Adicione seu primeiro investimento acima</p>
-            </Card>
+            </div>
           ) : (
             investimentos.map(inv => {
               const movInv = movimentos.filter(m => m.investimento_id === inv.id);
@@ -209,7 +250,7 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
             })
           )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
