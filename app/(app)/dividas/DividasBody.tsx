@@ -156,10 +156,10 @@ export default function DividasBody({
             <button
               type="button"
               onClick={() => setFiltroFluxo("este_mes")}
-              className={`text-sm px-5 py-2 rounded-full border-2 transition-all duration-150 font-medium ${
+              className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
                 filtroFluxo === "este_mes"
-                  ? "border-[#5DA832] bg-[#5DA832]/10 text-[#6fc23b]"
-                  : "border-surface-border/40 bg-transparent text-slate-500 hover:text-slate-400"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
               }`}
             >
               Este mês
@@ -167,10 +167,10 @@ export default function DividasBody({
             <button
               type="button"
               onClick={() => setFiltroFluxo("mes_anterior")}
-              className={`text-sm px-5 py-2 rounded-full border-2 transition-all duration-150 font-medium ${
+              className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
                 filtroFluxo === "mes_anterior"
-                  ? "border-[#5DA832] bg-[#5DA832]/10 text-[#6fc23b]"
-                  : "border-surface-border/40 bg-transparent text-slate-500 hover:text-slate-400"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
               }`}
             >
               Mês anterior
@@ -178,10 +178,10 @@ export default function DividasBody({
             <button
               type="button"
               onClick={() => setFiltroFluxo("2_meses")}
-              className={`text-sm px-5 py-2 rounded-full border-2 transition-all duration-150 font-medium ${
+              className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
                 filtroFluxo === "2_meses"
-                  ? "border-[#5DA832] bg-[#5DA832]/10 text-[#6fc23b]"
-                  : "border-surface-border/40 bg-transparent text-slate-500 hover:text-slate-400"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
               }`}
             >
               2 meses atrás
@@ -189,14 +189,14 @@ export default function DividasBody({
             <button
               type="button"
               onClick={() => setFiltroFluxo("personalizado")}
-              className={`flex items-center justify-center h-9 w-9 rounded-full border-2 transition-all duration-150 ${
+              className={`shrink-0 flex items-center justify-center h-7 w-7 rounded-full text-[11.5px] font-semibold transition-all duration-200 border ${
                 filtroFluxo === "personalizado"
-                  ? "border-[#5DA832] bg-[#5DA832]/10 text-[#6fc23b]"
-                  : "border-surface-border/40 bg-transparent text-slate-500 hover:text-slate-400"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
               }`}
               title="Filtro personalizado"
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M3 6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2H3V6M7 12h10M5 18h14" />
               </svg>
             </button>
