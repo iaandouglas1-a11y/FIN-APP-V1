@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useState } from "react";
-import { Plus, X, ListChecks, Pencil, Copy, Trash2, Archive, ArchiveRestore, CheckSquare, Square } from "lucide-react";
+import { Plus, X, ListChecks, Pencil, Copy, Trash2, Archive, ArchiveRestore, CheckSquare, Square, Link as LinkIcon } from "lucide-react";
 import { Card, FormGroup, Input, EmptyState } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { saveLista, deleteLista, arquivarLista, duplicarLista, saveItem, toggleItem, deleteItem } from "@/app/(app)/actions_listas";
@@ -247,6 +246,9 @@ function ListaCardExpandida({ lista }: { lista: ListaComItens }) {
             ) : (
               itens.map((item) => {
                 const editandoEsteItem = editandoItemId === item.id;
+                const descricao = (item as any).descricao as string | undefined;
+                const isUrl = descricao && (descricao.startsWith("http://") || descricao.startsWith("https://"));
+
                 return (
                   <div key={item.id} className="px-4 py-3 flex items-start gap-3 hover:bg-surface/30 transition-all group/item">
                     {editandoEsteItem ? (
@@ -260,7 +262,7 @@ function ListaCardExpandida({ lista }: { lista: ListaComItens }) {
                         <input type="hidden" name="id" value={item.id} />
                         <input type="hidden" name="lista_id" value={lista.id} />
                         <Input name="nome" defaultValue={item.nome} required autoFocus className="h-8 text-xs" />
-                        <Input name="descricao" defaultValue={(item as any).descricao ?? ""} placeholder="Descrição" className="h-8 text-xs" />
+                        <Input name="descricao" defaultValue={descricao ?? ""} placeholder="Link ou descrição (opt)" className="h-8 text-xs" />
                         <div className="flex items-center gap-1">
                           <Input name="valor" type="number" step="0.01" min="0" defaultValue={item.valor != null ? String(item.valor) : ""} placeholder="Valor" className="h-8 text-xs w-24" />
                           <button type="submit" className="h-8 px-2 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-xs font-bold">OK</button>
@@ -281,10 +283,31 @@ function ListaCardExpandida({ lista }: { lista: ListaComItens }) {
                           <p className={`text-xs transition-all ${item.concluido ? "line-through text-slate-600" : "text-slate-300"}`}>
                             {item.nome}
                           </p>
-                          {(item as any).descricao && (
-                            <p className={`text-[10px] mt-0.5 break-words ${item.concluido ? "text-slate-700" : "text-slate-500"}`}>
-                              {(item as any).descricao}
-                            </p>
+                          {descricao && (
+                            <div className="flex items-center gap-1.5 mt-1.5">
+                              {isUrl ? (
+                                <>
+                                  <LinkIcon className={`h-3 w-3 shrink-0 ${item.concluido ? "text-slate-700" : "text-slate-600"}`} />
+                                  <a
+                                    href={descricao}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title={descricao}
+                                    className={`text-[10px] truncate max-w-[150px] ${
+                                      item.concluido
+                                        ? "text-slate-700 line-through"
+                                        : "text-[#6fc23b] hover:text-[#7dd649] underline underline-offset-1"
+                                    }`}
+                                  >
+                                    {descricao.replace(/^https?:\/\/(www\.)?/, "")}
+                                  </a>
+                                </>
+                              ) : (
+                                <p className={`text-[10px] truncate max-w-[180px] ${item.concluido ? "text-slate-700 line-through" : "text-slate-500"}`}>
+                                  {descricao}
+                                </p>
+                              )}
+                            </div>
                           )}
                         </div>
 
@@ -316,26 +339,28 @@ function ListaCardExpandida({ lista }: { lista: ListaComItens }) {
             )}
           </div>
 
-          {/* Rodapé: totais + adicionar item */}
-          <div className="px-4 py-3 border-t border-surface-border/40 space-y-3 bg-surface-2/30">
-            {total > 0 && (
-              <div className="flex items-center justify-between text-xs text-slate-500">
-                <span>Concluído: <span className="text-emerald-400 font-semibold">{currency(totalConcluido)}</span></span>
-                <span>Total: <span className="text-white font-semibold">{currency(total)}</span></span>
-              </div>
-            )}
-            <form action={saveItem} className="grid grid-cols-[1fr_auto_auto] gap-1.5 items-end">
-              <input type="hidden" name="lista_id" value={lista.id} />
-              <div className="space-y-0.5">
-                <Input name="nome" placeholder="Novo item..." required className="h-8 text-xs" />
-                <Input name="descricao" placeholder="Desc (opt)" className="h-8 text-xs" />
-              </div>
-              <Input name="valor" type="number" step="0.01" min="0" placeholder="R$" className="w-16 h-8 text-xs" />
-              <button type="submit" className="h-8 px-2 bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-xs font-bold rounded-lg transition-all">
-                +
-              </button>
-            </form>
+          {/* Totais */}
+          <div className="px-4 py-3 border-t border-surface-border/40 flex items-center justify-between text-xs bg-surface-2/30">
+            <div className="text-slate-500">
+              Concluído: <span className="text-emerald-400 font-semibold">{currency(totalConcluido)}</span>
+            </div>
+            <div className="text-slate-500">
+              Total: <span className="text-white font-semibold">{currency(total)}</span>
+            </div>
           </div>
+
+          {/* Novo item — Compacto */}
+          <form action={saveItem} className="px-4 py-3 border-t border-surface-border/40 grid grid-cols-[1fr_auto_auto] gap-1.5 items-end bg-surface-2/30">
+            <input type="hidden" name="lista_id" value={lista.id} />
+            <div className="space-y-1">
+              <Input name="nome" placeholder="Nome..." required className="h-8 text-xs" />
+              <Input name="descricao" placeholder="Link (opt)" className="h-8 text-xs" />
+            </div>
+            <Input name="valor" type="number" step="0.01" min="0" placeholder="R$" className="w-16 h-8 text-xs" />
+            <button type="submit" className="h-8 px-2 bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-xs font-bold rounded-lg transition-all">
+              +
+            </button>
+          </form>
         </div>
       )}
     </div>
