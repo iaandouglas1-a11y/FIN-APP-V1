@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useState } from "react";
-import { Plus, X, ListChecks } from "lucide-react";
+import { Plus, X, ListChecks, Pencil, Copy, Trash2, Archive, ArchiveRestore, CheckSquare, Square } from "lucide-react";
 import { Card, FormGroup, Input, EmptyState } from "@/components/ui";
-import { saveLista } from "@/app/(app)/actions_listas";
-import { ListaAccordion } from "./ListaAccordion";
+import { currency } from "@/lib/format";
+import { saveLista, deleteLista, arquivarLista, duplicarLista, saveItem, toggleItem, deleteItem } from "@/app/(app)/actions_listas";
 import type { Lista, ListaItem } from "@/types/database";
 
 type ListaComItens = Lista & { lista_itens: ListaItem[] };
@@ -23,7 +24,7 @@ export default function ListasBody({
 
   return (
     <>
-      {/* Nova lista — mesmo padrão de "Nova transação" */}
+      {/* Nova lista */}
       <button
         type="button"
         onClick={() => setPainelAberto((v) => !v)}
@@ -78,7 +79,7 @@ export default function ListasBody({
         </div>
       )}
 
-      {/* Ativas / Arquivadas — só um bloco visível por vez */}
+      {/* Toggle */}
       <div className="flex gap-1.5 bg-surface-2/60 rounded-xl p-1">
         <button
           type="button"
@@ -118,7 +119,7 @@ export default function ListasBody({
               title={aba === "ativa" ? "Nenhuma lista ativa" : "Nenhuma lista arquivada"}
             />
           ) : (
-            lista.map((l) => <ListaCard key={l.id} lista={l} />)
+            lista.map((l) => <ListaCardExpandida key={l.id} lista={l} />)
           )}
         </div>
       </Card>
@@ -126,20 +127,24 @@ export default function ListasBody({
   );
 }
 
-function ListaCard({ lista }: { lista: ListaComItens }) {
+function ListaCardExpandida({ lista }: { lista: ListaComItens }) {
   const [aberta, setAberta] = useState(false);
+  const [editandoLista, setEditandoLista] = useState(false);
+  const [editandoItemId, setEditandoItemId] = useState<string | null>(null);
 
   const itens = lista.lista_itens ?? [];
   const concluidos = itens.filter((i) => i.concluido).length;
   const total = itens.reduce((s, i) => s + (i.valor ? Number(i.valor) : 0), 0);
+  const totalConcluido = itens.filter((i) => i.concluido).reduce((s, i) => s + (i.valor ? Number(i.valor) : 0), 0);
   const progresso = itens.length > 0 ? Math.round((concluidos / itens.length) * 100) : 0;
 
   return (
-    <>
+    <div className="bg-surface/50 border border-surface-border/40 rounded-lg overflow-hidden">
+      {/* Header sempre visível */}
       <button
         type="button"
         onClick={() => setAberta((v) => !v)}
-        className="w-full bg-surface/50 border border-surface-border/40 rounded-lg p-4 text-left hover:bg-surface/70 transition-all duration-150"
+        className="w-full p-4 text-left hover:bg-surface/70 transition-all duration-150"
       >
         <div className="flex items-start gap-3 mb-3">
           <div className="h-5 w-5 text-[#5DA832] shrink-0 mt-0.5">
@@ -182,9 +187,157 @@ function ListaCard({ lista }: { lista: ListaComItens }) {
         </div>
       </button>
 
+      {/* Conteúdo expandido */}
       {aberta && (
-        <ListaAccordion lista={lista} />
+        <div className="border-t border-surface-border/40">
+          {/* Ações da lista */}
+          <div className="px-4 py-3 border-b border-surface-border/40 flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setEditandoLista(true)}
+              title="Editar"
+              className="p-1.5 text-slate-600 hover:text-[#6fc23b] hover:bg-[#5DA832]/10 rounded transition-all duration-200"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+            <form action={duplicarLista} className="inline">
+              <input type="hidden" name="id" value={lista.id} />
+              <button type="submit" title="Duplicar" className="p-1.5 text-slate-600 hover:text-[#6fc23b] hover:bg-[#5DA832]/10 rounded transition-all duration-200">
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+            </form>
+            <form action={arquivarLista} className="inline">
+              <input type="hidden" name="id" value={lista.id} />
+              <input type="hidden" name="status" value={lista.status} />
+              <button type="submit" title={lista.status === "ativa" ? "Arquivar" : "Restaurar"} className="p-1.5 text-slate-600 hover:text-amber-400 hover:bg-amber-500/10 rounded transition-all duration-200">
+                {lista.status === "ativa" ? <Archive className="h-3.5 w-3.5" /> : <ArchiveRestore className="h-3.5 w-3.5" />}
+              </button>
+            </form>
+            <form action={deleteLista} className="inline">
+              <input type="hidden" name="id" value={lista.id} />
+              <button type="submit" title="Excluir" className="p-1.5 text-slate-600 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-all duration-200">
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </form>
+          </div>
+
+          {/* Edição da lista */}
+          {editandoLista && (
+            <form
+              action={async (formData) => {
+                await saveLista(formData);
+                setEditandoLista(false);
+              }}
+              className="px-4 py-3 border-b border-surface-border/40 space-y-2 bg-[#5DA832]/5"
+            >
+              <input type="hidden" name="id" value={lista.id} />
+              <Input name="nome" defaultValue={lista.nome} required autoFocus className="h-9 text-sm" />
+              <Input name="descricao" defaultValue={lista.descricao ?? ""} placeholder="Descrição" className="h-9 text-sm" />
+              <div className="flex gap-2">
+                <button type="submit" className="h-8 px-3 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-xs font-bold">Salvar</button>
+                <button type="button" onClick={() => setEditandoLista(false)} className="h-8 px-3 rounded-lg text-slate-400 hover:text-white text-xs font-semibold">Cancelar</button>
+              </div>
+            </form>
+          )}
+
+          {/* Itens */}
+          <div className="divide-y divide-surface-border/40">
+            {itens.length === 0 ? (
+              <p className="px-4 py-4 text-xs text-slate-600 italic">Nenhum item</p>
+            ) : (
+              itens.map((item) => {
+                const editandoEsteItem = editandoItemId === item.id;
+                return (
+                  <div key={item.id} className="px-4 py-3 flex items-start gap-3 hover:bg-surface/30 transition-all group/item">
+                    {editandoEsteItem ? (
+                      <form
+                        action={async (formData) => {
+                          await saveItem(formData);
+                          setEditandoItemId(null);
+                        }}
+                        className="flex-1 space-y-1.5"
+                      >
+                        <input type="hidden" name="id" value={item.id} />
+                        <input type="hidden" name="lista_id" value={lista.id} />
+                        <Input name="nome" defaultValue={item.nome} required autoFocus className="h-8 text-xs" />
+                        <Input name="descricao" defaultValue={(item as any).descricao ?? ""} placeholder="Descrição" className="h-8 text-xs" />
+                        <div className="flex items-center gap-1">
+                          <Input name="valor" type="number" step="0.01" min="0" defaultValue={item.valor != null ? String(item.valor) : ""} placeholder="Valor" className="h-8 text-xs w-24" />
+                          <button type="submit" className="h-8 px-2 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-xs font-bold">OK</button>
+                          <button type="button" onClick={() => setEditandoItemId(null)} className="h-8 px-2 rounded-lg text-slate-400 hover:text-white text-xs font-semibold">Cancela</button>
+                        </div>
+                      </form>
+                    ) : (
+                      <>
+                        <form action={toggleItem} className="mt-0.5">
+                          <input type="hidden" name="id" value={item.id} />
+                          <input type="hidden" name="concluido" value={String(item.concluido)} />
+                          <button type="submit" className={`shrink-0 transition-all ${item.concluido ? "text-emerald-400" : "text-slate-600 hover:text-slate-400"}`}>
+                            {item.concluido ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+                          </button>
+                        </form>
+
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-xs transition-all ${item.concluido ? "line-through text-slate-600" : "text-slate-300"}`}>
+                            {item.nome}
+                          </p>
+                          {(item as any).descricao && (
+                            <p className={`text-[10px] mt-0.5 break-words ${item.concluido ? "text-slate-700" : "text-slate-500"}`}>
+                              {(item as any).descricao}
+                            </p>
+                          )}
+                        </div>
+
+                        {item.valor != null && (
+                          <span className={`text-xs font-semibold shrink-0 ${item.concluido ? "text-slate-600 line-through" : "text-slate-400"}`}>
+                            {currency(Number(item.valor))}
+                          </span>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => setEditandoItemId(item.id)}
+                          className="opacity-0 group-hover/item:opacity-100 p-1 text-slate-600 hover:text-[#6fc23b] rounded transition-all"
+                        >
+                          <Pencil className="h-3 w-3" />
+                        </button>
+
+                        <form action={deleteItem} className="inline">
+                          <input type="hidden" name="id" value={item.id} />
+                          <button type="submit" className="opacity-0 group-hover/item:opacity-100 p-1 text-slate-600 hover:text-rose-400 rounded transition-all">
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </form>
+                      </>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Rodapé: totais + adicionar item */}
+          <div className="px-4 py-3 border-t border-surface-border/40 space-y-3 bg-surface-2/30">
+            {total > 0 && (
+              <div className="flex items-center justify-between text-xs text-slate-500">
+                <span>Concluído: <span className="text-emerald-400 font-semibold">{currency(totalConcluido)}</span></span>
+                <span>Total: <span className="text-white font-semibold">{currency(total)}</span></span>
+              </div>
+            )}
+            <form action={saveItem} className="grid grid-cols-[1fr_auto_auto] gap-1.5 items-end">
+              <input type="hidden" name="lista_id" value={lista.id} />
+              <div className="space-y-0.5">
+                <Input name="nome" placeholder="Novo item..." required className="h-8 text-xs" />
+                <Input name="descricao" placeholder="Desc (opt)" className="h-8 text-xs" />
+              </div>
+              <Input name="valor" type="number" step="0.01" min="0" placeholder="R$" className="w-16 h-8 text-xs" />
+              <button type="submit" className="h-8 px-2 bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-xs font-bold rounded-lg transition-all">
+                +
+              </button>
+            </form>
+          </div>
+        </div>
       )}
-    </>
+    </div>
   );
 }
