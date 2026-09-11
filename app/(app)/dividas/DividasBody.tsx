@@ -30,7 +30,9 @@ export default function DividasBody({
   contas,
 }: Props) {
   const [aba, setAba] = useState<"aberto" | "liquidado">("aberto");
-  const [filtroFluxo, setFiltroFluxo] = useState<"este_mes" | "mes_anterior" | "2_meses">("este_mes");
+  const [filtroFluxo, setFiltroFluxo] = useState<"este_mes" | "mes_anterior" | "2_meses" | "personalizado">("este_mes");
+  const [dataInicio, setDataInicio] = useState<string>("");
+  const [dataFim, setDataFim] = useState<string>("");
 
   const lista = aba === "aberto" ? dividasAbertas : dividasLiquidadas;
 
@@ -39,21 +41,31 @@ export default function DividasBody({
   const fluxoFiltrado = useMemo(() => {
     if (fluxo.length === 0) return [];
 
-    let dataInicio: Date;
+    let dtInicio: Date;
+    let dtFim: Date;
+
     if (filtroFluxo === "este_mes") {
-      dataInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+      dtFim = hoje;
     } else if (filtroFluxo === "mes_anterior") {
-      dataInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+      dtFim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
+    } else if (filtroFluxo === "2_meses") {
+      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 2, 1);
+      dtFim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
     } else {
-      dataInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 2, 1);
+      // Personalizado
+      if (!dataInicio || !dataFim) return [];
+      dtInicio = new Date(dataInicio);
+      dtFim = new Date(dataFim);
     }
 
     return fluxo.filter(p => {
       if (!p.data) return false;
       const dataPag = new Date(p.data);
-      return dataPag >= dataInicio && dataPag <= hoje;
+      return dataPag >= dtInicio && dataPag <= dtFim;
     });
-  }, [fluxo, filtroFluxo, hoje]);
+  }, [fluxo, filtroFluxo, dataInicio, dataFim, hoje]);
 
   return (
     <>
@@ -139,40 +151,77 @@ export default function DividasBody({
         </div>
 
         {/* Filtro de datas */}
-        <div className="flex gap-2 mb-4 pb-3 border-b border-surface-border/40 flex-wrap">
-          <button
-            type="button"
-            onClick={() => setFiltroFluxo("este_mes")}
-            className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${
-              filtroFluxo === "este_mes"
-                ? "bg-surface-2 border-[#5DA832]/50 text-white"
-                : "bg-surface/30 border-surface-border/40 text-slate-500 hover:text-slate-400"
-            }`}
-          >
-            Este mês
-          </button>
-          <button
-            type="button"
-            onClick={() => setFiltroFluxo("mes_anterior")}
-            className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${
-              filtroFluxo === "mes_anterior"
-                ? "bg-surface-2 border-[#5DA832]/50 text-white"
-                : "bg-surface/30 border-surface-border/40 text-slate-500 hover:text-slate-400"
-            }`}
-          >
-            Mês anterior
-          </button>
-          <button
-            type="button"
-            onClick={() => setFiltroFluxo("2_meses")}
-            className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${
-              filtroFluxo === "2_meses"
-                ? "bg-surface-2 border-[#5DA832]/50 text-white"
-                : "bg-surface/30 border-surface-border/40 text-slate-500 hover:text-slate-400"
-            }`}
-          >
-            2 meses atrás
-          </button>
+        <div className="mb-4 pb-3 border-b border-surface-border/40 space-y-3">
+          <div className="flex gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setFiltroFluxo("este_mes")}
+              className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${
+                filtroFluxo === "este_mes"
+                  ? "bg-surface-2 border-[#5DA832]/50 text-white"
+                  : "bg-surface/30 border-surface-border/40 text-slate-500 hover:text-slate-400"
+              }`}
+            >
+              Este mês
+            </button>
+            <button
+              type="button"
+              onClick={() => setFiltroFluxo("mes_anterior")}
+              className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${
+                filtroFluxo === "mes_anterior"
+                  ? "bg-surface-2 border-[#5DA832]/50 text-white"
+                  : "bg-surface/30 border-surface-border/40 text-slate-500 hover:text-slate-400"
+              }`}
+            >
+              Mês anterior
+            </button>
+            <button
+              type="button"
+              onClick={() => setFiltroFluxo("2_meses")}
+              className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${
+                filtroFluxo === "2_meses"
+                  ? "bg-surface-2 border-[#5DA832]/50 text-white"
+                  : "bg-surface/30 border-surface-border/40 text-slate-500 hover:text-slate-400"
+              }`}
+            >
+              2 meses atrás
+            </button>
+            <button
+              type="button"
+              onClick={() => setFiltroFluxo("personalizado")}
+              className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${
+                filtroFluxo === "personalizado"
+                  ? "bg-surface-2 border-[#5DA832]/50 text-white"
+                  : "bg-surface/30 border-surface-border/40 text-slate-500 hover:text-slate-400"
+              }`}
+            >
+              Personalizado
+            </button>
+          </div>
+
+          {/* Inputs de intervalo — só aparecem quando "Personalizado" tá ativo */}
+          {filtroFluxo === "personalizado" && (
+            <div className="flex gap-2 items-end">
+              <div className="flex-1">
+                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">De</label>
+                <input
+                  type="date"
+                  value={dataInicio}
+                  onChange={(e) => setDataInicio(e.target.value)}
+                  className="w-full h-8 px-2 rounded-lg bg-surface border border-surface-border/40 text-white text-xs"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">Até</label>
+                <input
+                  type="date"
+                  value={dataFim}
+                  onChange={(e) => setDataFim(e.target.value)}
+                  className="w-full h-8 px-2 rounded-lg bg-surface border border-surface-border/40 text-white text-xs"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Lista de pagamentos */}
