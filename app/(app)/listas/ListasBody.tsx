@@ -118,10 +118,73 @@ export default function ListasBody({
               title={aba === "ativa" ? "Nenhuma lista ativa" : "Nenhuma lista arquivada"}
             />
           ) : (
-            lista.map((l) => <ListaAccordion key={l.id} lista={l} />)
+            lista.map((l) => <ListaCard key={l.id} lista={l} />)
           )}
         </div>
       </Card>
+    </>
+  );
+}
+
+function ListaCard({ lista }: { lista: ListaComItens }) {
+  const [aberta, setAberta] = useState(false);
+
+  const itens = lista.lista_itens ?? [];
+  const concluidos = itens.filter((i) => i.concluido).length;
+  const total = itens.reduce((s, i) => s + (i.valor ? Number(i.valor) : 0), 0);
+  const progresso = itens.length > 0 ? Math.round((concluidos / itens.length) * 100) : 0;
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setAberta((v) => !v)}
+        className="w-full bg-surface/50 border border-surface-border/40 rounded-lg p-4 text-left hover:bg-surface/70 transition-all duration-150"
+      >
+        <div className="flex items-start gap-3 mb-3">
+          <div className="h-5 w-5 text-[#5DA832] shrink-0 mt-0.5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 12h18M3 6h18M3 18h18" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-white text-sm truncate">{lista.nome}</h3>
+            {lista.descricao && (
+              <p className="text-xs text-slate-500 mt-1 truncate">{lista.descricao}</p>
+            )}
+          </div>
+          <svg
+            className={`h-4 w-4 text-slate-600 shrink-0 transition-transform duration-200 ${aberta ? "rotate-180" : ""}`}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-surface-2 rounded-lg p-2.5 text-center">
+            <p className="text-[10px] text-slate-500 font-semibold mb-1">Progresso</p>
+            <p className="text-sm font-bold text-[#6fc23b]">{progresso}%</p>
+          </div>
+          <div className="bg-surface-2 rounded-lg p-2.5 text-center">
+            <p className="text-[10px] text-slate-500 font-semibold mb-1">Itens</p>
+            <p className="text-sm font-bold text-white">{concluidos}/{itens.length}</p>
+          </div>
+          <div className="bg-surface-2 rounded-lg p-2.5 text-center">
+            <p className="text-[10px] text-slate-500 font-semibold mb-1">Total</p>
+            <p className="text-sm font-bold text-white">
+              {total > 0 ? `R$ ${(total / 1000).toFixed(1)}K` : "—"}
+            </p>
+          </div>
+        </div>
+      </button>
+
+      {aberta && (
+        <ListaAccordion lista={lista} />
+      )}
     </>
   );
 }
