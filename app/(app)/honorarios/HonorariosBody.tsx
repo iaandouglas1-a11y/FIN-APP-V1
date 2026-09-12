@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Plus, X, User, Pencil, Trash2 } from "lucide-react";
-import { Card, FormGroup, Input, Select, Badge } from "@/components/ui";
+import { Card, FormGroup, Input, Select } from "@/components/ui";
 import { currency } from "@/lib/format";
-import { saveHonorario, deleteHonorario, pagarHonorario } from "@/app/(app)/actions_honorarios";
+import { saveHonorario, deleteHonorario } from "@/app/(app)/actions_honorarios";
 import PagarHonorarioBtn from "./PagarHonorarioBtn";
 import EditarHonorarioBtn from "./EditarHonorarioBtn";
 
