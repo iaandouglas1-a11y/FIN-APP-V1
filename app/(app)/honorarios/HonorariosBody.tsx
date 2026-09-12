@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Plus, X, User, Pencil, Trash2 } from "lucide-react";
 import { Card, FormGroup, Input, Select } from "@/components/ui";
 import { currency } from "@/lib/format";
@@ -30,6 +30,39 @@ export default function HonorariosBody({
   contas = [],
 }: Props) {
   const [painelAberto, setPainelAberto] = useState(false);
+  const [filtroData, setFiltroData] = useState<"este_mes" | "mes_anterior" | "3_meses" | "personalizado">("este_mes");
+  const [dataInicio, setDataInicio] = useState<string>("");
+  const [dataFim, setDataFim] = useState<string>("");
+
+  // Filtro de datas
+  const hoje = new Date();
+  const honorariosFiltrados = useMemo(() => {
+    if (honorarios.length === 0) return [];
+
+    let dtInicio: Date;
+    let dtFim: Date;
+
+    if (filtroData === "este_mes") {
+      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+      dtFim = hoje;
+    } else if (filtroData === "mes_anterior") {
+      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+      dtFim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
+    } else if (filtroData === "3_meses") {
+      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 3, 1);
+      dtFim = hoje;
+    } else {
+      // Personalizado
+      if (!dataInicio || !dataFim) return [];
+      dtInicio = new Date(dataInicio);
+      dtFim = new Date(dataFim);
+    }
+
+    return honorarios.filter((h) => {
+      const dataHonorario = new Date(h.vencimento);
+      return dataHonorario >= dtInicio && dataHonorario <= dtFim;
+    });
+  }, [honorarios, filtroData, dataInicio, dataFim, hoje]);
 
   return (
     <>
@@ -150,18 +183,95 @@ export default function HonorariosBody({
         <div className="mb-4 pb-3 border-b border-surface-border/50 flex items-center justify-between">
           <div>
             <h2 className="text-[15px] font-bold text-white">Honorários Lançados</h2>
-            <p className="text-xs text-ink-tertiary mt-1">{honorarios.length} lançamentos</p>
+            <p className="text-xs text-ink-tertiary mt-1">{honorariosFiltrados.length} lançamentos</p>
           </div>
           <span className="text-xs font-semibold border border-[#5DA832]/40 bg-[#5DA832]/10 text-[#6fc23b] px-2.5 py-1 rounded-full">
-            {honorarios.length} lançamentos
+            {honorariosFiltrados.length} lançamentos
           </span>
         </div>
 
+        {/* Filtro de datas */}
+        <div className="mb-4 pb-3 border-b border-surface-border/40 space-y-3">
+          <div className="flex gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setFiltroData("este_mes")}
+              className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
+                filtroData === "este_mes"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
+              }`}
+            >
+              Este mês
+            </button>
+            <button
+              type="button"
+              onClick={() => setFiltroData("mes_anterior")}
+              className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
+                filtroData === "mes_anterior"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
+              }`}
+            >
+              Mês anterior
+            </button>
+            <button
+              type="button"
+              onClick={() => setFiltroData("3_meses")}
+              className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
+                filtroData === "3_meses"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
+              }`}
+            >
+              3 meses
+            </button>
+            <button
+              type="button"
+              onClick={() => setFiltroData("personalizado")}
+              className={`shrink-0 flex items-center justify-center h-7 w-7 rounded-full text-[11.5px] font-semibold transition-all duration-200 border ${
+                filtroData === "personalizado"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
+              }`}
+              title="Filtro personalizado"
+            >
+              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2H3V6M7 12h10M5 18h14" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Inputs de intervalo — só aparecem quando "Personalizado" tá ativo */}
+          {filtroData === "personalizado" && (
+            <div className="flex gap-2 items-end">
+              <div className="flex-1">
+                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">De</label>
+                <input
+                  type="date"
+                  value={dataInicio}
+                  onChange={(e) => setDataInicio(e.target.value)}
+                  className="w-full h-8 px-2 rounded-lg bg-surface border border-surface-border/40 text-white text-xs"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">Até</label>
+                <input
+                  type="date"
+                  value={dataFim}
+                  onChange={(e) => setDataFim(e.target.value)}
+                  className="w-full h-8 px-2 rounded-lg bg-surface border border-surface-border/40 text-white text-xs"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="space-y-2.5">
-          {honorarios.length === 0 ? (
-            <p className="text-center py-6 text-sm text-slate-600 italic">Nenhum honorário lançado.</p>
+          {honorariosFiltrados.length === 0 ? (
+            <p className="text-center py-6 text-sm text-slate-600 italic">Nenhum honorário neste período.</p>
           ) : (
-            honorarios.map((h) => {
+            honorariosFiltrados.map((h) => {
               const statusColors = {
                 pago: { bg: "bg-emerald-500/15", text: "text-emerald-400", label: "✓ Pago" },
                 pendente: { bg: "bg-amber-500/15", text: "text-amber-400", label: "Pendente" },
