@@ -1,4 +1,4 @@
-import { getHonorarios } from "@/lib/queries";
+import { getHonorarios, getContasWithMovs } from "@/lib/queries";
 import { currency, dateBR } from "@/lib/format";
 import HonorariosBody from "./HonorariosBody";
 
@@ -9,7 +9,12 @@ function formatCompetencia(competencia: string) {
 }
 
 export default async function HonorariosPage() {
-  const { honorarios, clientes } = await getHonorarios();
+  const [{ honorarios, clientes }, contasData] = await Promise.all([
+    getHonorarios(),
+    getContasWithMovs(),
+  ]);
+
+  const contas = contasData.contas.map((c) => ({ id: c.id, nome: c.nome }));
 
   const hoje = new Date();
   const hojeStr = hoje.toISOString().slice(0, 10);
@@ -62,6 +67,7 @@ export default async function HonorariosPage() {
         clientes={clientes}
         honorarios={ordenados}
         mesAtualValue={mesAtual}
+        contas={contas}
       />
     </div>
   );
