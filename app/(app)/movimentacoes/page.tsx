@@ -211,7 +211,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                           {m.descricao || m.contas?.nome || m.cartoes?.nome || "—"}
                         </div>
                       </div>
-                      <AmountText value={Number(m.valor)} signed tone={m.tipo === "receita" ? "green" : "red"} />
+                      <AmountText value={m.tipo === "receita" ? Number(m.valor) : -Number(m.valor)} signed tone={m.tipo === "receita" ? "green" : "red"} />
                       <div className="flex items-center gap-0.5 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity">
                         <EditarMovimentacaoBtn
                           mov={m}
