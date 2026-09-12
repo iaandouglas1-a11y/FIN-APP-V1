@@ -16,6 +16,7 @@ type Props = {
   clientes: { id: string; nome: string }[];
   honorarios: any[];
   mesAtualValue: string;
+  contas?: { id: string; nome: string }[];
 };
 
 export default function HonorariosBody({
@@ -26,6 +27,7 @@ export default function HonorariosBody({
   clientes,
   honorarios,
   mesAtualValue,
+  contas = [],
 }: Props) {
   const [painelAberto, setPainelAberto] = useState(false);
 
@@ -191,9 +193,26 @@ export default function HonorariosBody({
                   {/* Ações */}
                   <div className="flex items-center gap-2 mt-3 pt-3 border-t border-surface-border/30">
                     {h.status !== "pago" && (
-                      <PagarHonorarioBtn honorarioId={h.id} />
+                      <PagarHonorarioBtn
+                        honorarioId={h.id}
+                        clienteNome={h.clienteNome}
+                        valor={Number(h.valor)}
+                        pago={h.pago}
+                        pagoEm={h.pago_em || null}
+                        contas={contas}
+                      />
                     )}
-                    <EditarHonorarioBtn honorarioId={h.id} />
+                    <EditarHonorarioBtn
+                      honorario={{
+                        id: h.id,
+                        cliente_id: h.cliente_id,
+                        competencia: h.competencia,
+                        valor: Number(h.valor),
+                        vencimento: h.vencimento,
+                        observacao: h.observacao,
+                      }}
+                      clientes={clientes}
+                    />
                     <form action={deleteHonorario} className="inline">
                       <input type="hidden" name="id" value={h.id} />
                       <button
