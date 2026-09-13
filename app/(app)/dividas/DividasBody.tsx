@@ -46,26 +46,24 @@ export default function DividasBody({
 
     if (filtroFluxo === "este_mes") {
       dtInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-      dtFim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+      dtFim = hoje;
     } else if (filtroFluxo === "mes_anterior") {
       dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
       dtFim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
     } else if (filtroFluxo === "2_meses") {
       dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 2, 1);
-      dtFim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+      dtFim = hoje;
     } else {
       // Personalizado
       if (!dataInicio || !dataFim) return [];
       dtInicio = new Date(dataInicio);
       dtFim = new Date(dataFim);
-      // Adiciona 1 dia ao dtFim para incluir o último dia completo
-      dtFim.setDate(dtFim.getDate() + 1);
     }
 
     return fluxo.filter(p => {
       if (!p.data) return false;
-      const dataPag = new Date(p.data + "T00:00:00");
-      return dataPag >= dtInicio && dataPag < dtFim;
+      const dataPag = new Date(p.data);
+      return dataPag >= dtInicio && dataPag <= dtFim;
     });
   }, [fluxo, filtroFluxo, dataInicio, dataFim, hoje]);
 
@@ -153,7 +151,7 @@ export default function DividasBody({
         </div>
 
         {/* Filtro de datas */}
-        <div className="mb-4 pb-3 border-b border-surface-border/40 flex items-center gap-2 flex-wrap">
+        <div className="mb-4 pb-3 border-b border-surface-border/40 flex items-center gap-2">
           <button
             type="button"
             onClick={() => setFiltroFluxo("este_mes")}
@@ -188,6 +186,9 @@ export default function DividasBody({
             2 meses atrás
           </button>
 
+          {/* Espaçador para empurrar botões para a direita */}
+          <div className="flex-1" />
+
           {/* Botão X para limpar filtro personalizado */}
           {filtroFluxo === "personalizado" && (
             <button
@@ -207,7 +208,7 @@ export default function DividasBody({
           )}
 
           {/* Botão filtro personalizado */}
-          <details className="relative shrink-0 ml-auto">
+          <details className="relative shrink-0">
             <summary className="list-none cursor-pointer w-8 h-8 rounded-full bg-surface border border-surface-border/50 flex items-center justify-center text-ink-tertiary hover:text-ink-primary transition-colors">
               <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M3 6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2H3V6M7 12h10M5 18h14" />
