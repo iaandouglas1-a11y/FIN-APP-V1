@@ -1,6 +1,5 @@
 import { Surface, AmountText } from "@/components/ui";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
-import type { Conta, Cartao } from "@/types/database";
 import ContasCartoesBody from "./ContasCartoesBody";
 
 export default async function ContasECartoesPage() {
@@ -14,8 +13,8 @@ export default async function ContasECartoesPage() {
   if (contasRes.error) throw contasRes.error;
   if (cartoesRes.error) throw cartoesRes.error;
 
-  const contasRaw = (contasRes.data || []) as Conta[];
-  const cartoesRaw = (cartoesRes.data || []) as Cartao[];
+  const contasRaw = (contasRes.data || []) as any[];
+  const cartoesRaw = (cartoesRes.data || []) as any[];
 
   const contas = contasRaw.map((c) => ({
     id: c.id,
