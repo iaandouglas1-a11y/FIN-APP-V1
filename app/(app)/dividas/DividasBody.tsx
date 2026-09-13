@@ -153,80 +153,91 @@ export default function DividasBody({
         </div>
 
         {/* Filtro de datas */}
-        <div className="mb-4 pb-3 border-b border-surface-border/40 space-y-3">
-          <div className="flex gap-2 flex-wrap">
+        <div className="mb-4 pb-3 border-b border-surface-border/40 flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={() => setFiltroFluxo("este_mes")}
+            className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
+              filtroFluxo === "este_mes"
+                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
+            }`}
+          >
+            Este mês
+          </button>
+          <button
+            type="button"
+            onClick={() => setFiltroFluxo("mes_anterior")}
+            className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
+              filtroFluxo === "mes_anterior"
+                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
+            }`}
+          >
+            Mês anterior
+          </button>
+          <button
+            type="button"
+            onClick={() => setFiltroFluxo("2_meses")}
+            className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
+              filtroFluxo === "2_meses"
+                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
+            }`}
+          >
+            2 meses atrás
+          </button>
+
+          {/* Botão X para limpar filtro personalizado */}
+          {filtroFluxo === "personalizado" && (
             <button
               type="button"
-              onClick={() => setFiltroFluxo("este_mes")}
-              className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
-                filtroFluxo === "este_mes"
-                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
-                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
-              }`}
+              onClick={() => {
+                setFiltroFluxo("este_mes");
+                setDataInicio("");
+                setDataFim("");
+              }}
+              className="shrink-0 h-7 w-7 rounded-full border border-surface-border/50 flex items-center justify-center text-ink-tertiary hover:text-ink-primary transition-colors"
+              title="Limpar filtro"
             >
-              Este mês
+              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
             </button>
-            <button
-              type="button"
-              onClick={() => setFiltroFluxo("mes_anterior")}
-              className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
-                filtroFluxo === "mes_anterior"
-                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
-                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
-              }`}
-            >
-              Mês anterior
-            </button>
-            <button
-              type="button"
-              onClick={() => setFiltroFluxo("2_meses")}
-              className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
-                filtroFluxo === "2_meses"
-                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
-                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
-              }`}
-            >
-              2 meses atrás
-            </button>
-            <button
-              type="button"
-              onClick={() => setFiltroFluxo("personalizado")}
-              className={`shrink-0 flex items-center justify-center h-7 w-7 rounded-full text-[11.5px] font-semibold transition-all duration-200 border ${
-                filtroFluxo === "personalizado"
-                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
-                  : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
-              }`}
-              title="Filtro personalizado"
-            >
+          )}
+
+          {/* Botão filtro personalizado */}
+          <details className="relative shrink-0 ml-auto">
+            <summary className="list-none cursor-pointer w-8 h-8 rounded-full bg-surface border border-surface-border/50 flex items-center justify-center text-ink-tertiary hover:text-ink-primary transition-colors">
               <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M3 6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2H3V6M7 12h10M5 18h14" />
               </svg>
-            </button>
-          </div>
-
-          {/* Inputs de intervalo — só aparecem quando "Personalizado" tá ativo */}
-          {filtroFluxo === "personalizado" && (
-            <div className="flex gap-2 items-end">
-              <div className="flex-1">
-                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">De</label>
+            </summary>
+            <form className="absolute right-0 top-10 z-20 w-72 p-3.5 rounded-xl bg-surface border border-surface-border space-y-2.5">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-ink-tertiary">Período personalizado</p>
+              <div className="flex items-center gap-1.5">
                 <input
                   type="date"
                   value={dataInicio}
-                  onChange={(e) => setDataInicio(e.target.value)}
-                  className="w-full h-8 px-2 rounded-lg bg-surface border border-surface-border/40 text-white text-xs"
+                  onChange={(e) => {
+                    setDataInicio(e.target.value);
+                    setFiltroFluxo("personalizado");
+                  }}
+                  className="h-9 flex-1 min-w-0 text-xs px-2 rounded-lg bg-surface-2 border border-surface-border/40 text-white"
                 />
-              </div>
-              <div className="flex-1">
-                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">Até</label>
+                <span className="text-slate-600 text-[10px] shrink-0">até</span>
                 <input
                   type="date"
                   value={dataFim}
-                  onChange={(e) => setDataFim(e.target.value)}
-                  className="w-full h-8 px-2 rounded-lg bg-surface border border-surface-border/40 text-white text-xs"
+                  onChange={(e) => {
+                    setDataFim(e.target.value);
+                    setFiltroFluxo("personalizado");
+                  }}
+                  className="h-9 flex-1 min-w-0 text-xs px-2 rounded-lg bg-surface-2 border border-surface-border/40 text-white"
                 />
               </div>
-            </div>
-          )}
+            </form>
+          </details>
         </div>
 
         {/* Lista de pagamentos */}
