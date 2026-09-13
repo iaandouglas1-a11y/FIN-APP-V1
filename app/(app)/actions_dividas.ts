@@ -1,3 +1,4 @@
+
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -150,6 +151,7 @@ export async function savePagamento(formData: FormData) {
 
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
+  revalidatePath("/contas");
   revalidatePath("/dashboard");
 }
 
@@ -186,6 +188,7 @@ export async function realizarPagamento(formData: FormData) {
 
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
+  revalidatePath("/contas");
   revalidatePath("/dashboard");
 }
 
@@ -207,6 +210,7 @@ export async function deletePagamento(formData: FormData) {
 
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
+  revalidatePath("/contas");
 }
 
 export async function desfazerPagamento(formData: FormData) {
@@ -239,6 +243,7 @@ export async function desfazerPagamento(formData: FormData) {
 
   revalidatePath("/dividas");
   revalidatePath("/movimentacoes");
+  revalidatePath("/contas");
   revalidatePath("/dashboard");
   // Removido o retorno para evitar erro de tipagem no formulário (action espera void)
 }
