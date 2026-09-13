@@ -1,11 +1,23 @@
 import { Surface, AmountText } from "@/components/ui";
-import { getContasWithMovs } from "@/lib/queries";
+import { createServerSupabaseClient } from "@/lib/supabase";
+import type { Conta, Cartao } from "@/types/database";
 import ContasCartoesBody from "./ContasCartoesBody";
 
 export default async function ContasECartoesPage() {
-  const contasData = await getContasWithMovs();
-  
-  const contas = contasData.contas.map(c => ({
+  const supabase = await createServerSupabaseClient();
+
+  const [contasRes, cartoesRes] = await Promise.all([
+    supabase.from("contas").select("*").order("nome"),
+    supabase.from("cartoes").select("*").order("nome"),
+  ]);
+
+  if (contasRes.error) throw contasRes.error;
+  if (cartoesRes.error) throw cartoesRes.error;
+
+  const contasRaw = (contasRes.data || []) as Conta[];
+  const cartoesRaw = (cartoesRes.data || []) as Cartao[];
+
+  const contas = contasRaw.map((c) => ({
     id: c.id,
     nome: c.nome,
     tipo: "conta" as const,
@@ -13,7 +25,7 @@ export default async function ContasECartoesPage() {
     saldo: Number(c.saldo || 0),
   }));
 
-  const cartoes = contasData.cartoes.map(c => ({
+  const cartoes = cartoesRaw.map((c) => ({
     id: c.id,
     nome: c.nome,
     tipo: "cartao" as const,
