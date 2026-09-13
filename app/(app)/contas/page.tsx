@@ -2,6 +2,11 @@ import { Surface, AmountText } from "@/components/ui";
 import { getFinancialOverview } from "@/lib/financialengine";
 import ContasCartoesBody from "./ContasCartoesBody";
 
+// Normaliza -0 para 0 (evita apresentação de -0,00)
+function normalizeZero(value: number): number {
+  return Object.is(value, -0) ? 0 : value;
+}
+
 export default async function ContasECartoesPage() {
   const items = await getFinancialOverview();
 
@@ -12,7 +17,7 @@ export default async function ContasECartoesPage() {
       nome: c.nome,
       tipo: "conta" as const,
       logo_url: c.logo_url,
-      saldo: c.saldo,
+      saldo: normalizeZero(c.saldo),
     }));
 
   const cartoes = items
@@ -22,13 +27,13 @@ export default async function ContasECartoesPage() {
       nome: c.nome,
       tipo: "cartao" as const,
       logo_url: c.logo_url,
-      saldo: c.saldo,
-      limite: c.limite || 0,
-      usado: c.usado || 0,
-      disponivel: c.disponivel || 0,
+      saldo: normalizeZero(c.saldo),
+      limite: normalizeZero(c.limite || 0),
+      usado: normalizeZero(c.usado || 0),
+      disponivel: normalizeZero(c.disponivel || 0),
     }));
 
-  const saldoConsolidado = contas.reduce((s, c) => s + c.saldo, 0);
+  const saldoConsolidado = normalizeZero(contas.reduce((s, c) => s + c.saldo, 0));
 
   return (
     <div className="space-y-6">
