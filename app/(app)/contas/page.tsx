@@ -1,5 +1,5 @@
 import { Surface, AmountText } from "@/components/ui";
-import { createServerSupabaseClient } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabaseClient";
 import type { Conta, Cartao } from "@/types/database";
 import ContasCartoesBody from "./ContasCartoesBody";
 
