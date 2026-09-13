@@ -69,6 +69,7 @@ export async function saveMovimentacao(formData: FormData) {
   if (result.error) throw new Error(result.error.message); 
   revalidatePath("/movimentacoes"); 
   revalidatePath("/dashboard"); 
+  revalidatePath("/contas");
 }
 
 export async function duplicarMovimentacao(formData: FormData) {
@@ -95,6 +96,7 @@ export async function duplicarMovimentacao(formData: FormData) {
 
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
+  revalidatePath("/contas");
 }
 
 export async function deleteMovimentacao(formData: FormData) { 
@@ -104,6 +106,7 @@ export async function deleteMovimentacao(formData: FormData) {
   if (error) throw new Error(error.message); 
   revalidatePath("/movimentacoes"); 
   revalidatePath("/dashboard"); 
+  revalidatePath("/contas");
 }
 
 // --- Contas ---
