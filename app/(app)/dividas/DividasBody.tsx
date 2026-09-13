@@ -46,24 +46,26 @@ export default function DividasBody({
 
     if (filtroFluxo === "este_mes") {
       dtInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-      dtFim = hoje;
+      dtFim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
     } else if (filtroFluxo === "mes_anterior") {
       dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
       dtFim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
     } else if (filtroFluxo === "2_meses") {
       dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 2, 1);
-      dtFim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
+      dtFim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
     } else {
       // Personalizado
       if (!dataInicio || !dataFim) return [];
       dtInicio = new Date(dataInicio);
       dtFim = new Date(dataFim);
+      // Adiciona 1 dia ao dtFim para incluir o último dia completo
+      dtFim.setDate(dtFim.getDate() + 1);
     }
 
     return fluxo.filter(p => {
       if (!p.data) return false;
-      const dataPag = new Date(p.data);
-      return dataPag >= dtInicio && dataPag <= dtFim;
+      const dataPag = new Date(p.data + "T00:00:00");
+      return dataPag >= dtInicio && dataPag < dtFim;
     });
   }, [fluxo, filtroFluxo, dataInicio, dataFim, hoje]);
 
