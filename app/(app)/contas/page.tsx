@@ -1,39 +1,32 @@
 import { Surface, AmountText } from "@/components/ui";
-import { createServerSupabaseClient } from "@/lib/supabaseClient";
+import { getFinancialOverview } from "@/lib/financialengine";
 import ContasCartoesBody from "./ContasCartoesBody";
 
 export default async function ContasECartoesPage() {
-  const supabase = await createServerSupabaseClient();
+  const items = await getFinancialOverview();
 
-  const [contasRes, cartoesRes] = await Promise.all([
-    supabase.from("contas").select("*").order("nome"),
-    supabase.from("cartoes").select("*").order("nome"),
-  ]);
+  const contas = items
+    .filter((i) => i.tipo === "conta")
+    .map((c) => ({
+      id: c.id,
+      nome: c.nome,
+      tipo: "conta" as const,
+      logo_url: c.logo_url,
+      saldo: c.saldo,
+    }));
 
-  if (contasRes.error) throw contasRes.error;
-  if (cartoesRes.error) throw cartoesRes.error;
-
-  const contasRaw = (contasRes.data || []) as any[];
-  const cartoesRaw = (cartoesRes.data || []) as any[];
-
-  const contas = contasRaw.map((c) => ({
-    id: c.id,
-    nome: c.nome,
-    tipo: "conta" as const,
-    logo_url: c.logo_url,
-    saldo: Number(c.saldo || 0),
-  }));
-
-  const cartoes = cartoesRaw.map((c) => ({
-    id: c.id,
-    nome: c.nome,
-    tipo: "cartao" as const,
-    logo_url: c.logo_url,
-    saldo: -Number(c.saldo_usado || 0),
-    limite: Number(c.limite || 0),
-    usado: Number(c.saldo_usado || 0),
-    disponivel: Number(c.limite || 0) - Number(c.saldo_usado || 0),
-  }));
+  const cartoes = items
+    .filter((i) => i.tipo === "cartao")
+    .map((c) => ({
+      id: c.id,
+      nome: c.nome,
+      tipo: "cartao" as const,
+      logo_url: c.logo_url,
+      saldo: c.saldo,
+      limite: c.limite || 0,
+      usado: c.usado || 0,
+      disponivel: c.disponivel || 0,
+    }));
 
   const saldoConsolidado = contas.reduce((s, c) => s + c.saldo, 0);
 
