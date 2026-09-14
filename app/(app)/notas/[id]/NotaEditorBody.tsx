@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import {
   ChevronLeft, Pin, Trash2, Archive, ArchiveRestore,
@@ -21,6 +21,16 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
   const [novoItem, setNovoItem] = useState("");
   const [sujo, setSujo] = useState(false);
   const [salvando, startTransition] = useTransition();
+  const conteudoRef = useRef<HTMLTextAreaElement>(null);
+
+  // Autoajusta a altura do campo de texto ao conteúdo — sem isso, o "rows"
+  // fixo deixava uma área vazia grande entre o texto e o checklist.
+  useEffect(() => {
+    const el = conteudoRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [conteudo]);
 
   function salvar(nextTitulo = titulo, nextConteudo = conteudo, nextItens = itens) {
     const fd = new FormData();
@@ -114,24 +124,27 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
         {salvando && " · salvando..."}
       </p>
 
-      {/* Título */}
-      <input
-        value={titulo}
-        onChange={(e) => { setTitulo(e.target.value); setSujo(true); }}
-        onBlur={() => sujo && salvar()}
-        placeholder="Título"
-        className="w-full bg-transparent text-[19px] font-bold text-white placeholder:text-slate-600 outline-none border-none"
-      />
+      {/* Título, conteúdo e checklist — espaçamento reduzido para não deixar
+          área vazia entre o texto e os itens */}
+      <div className="space-y-1.5">
+        <input
+          value={titulo}
+          onChange={(e) => { setTitulo(e.target.value); setSujo(true); }}
+          onBlur={() => sujo && salvar()}
+          placeholder="Título"
+          className="w-full bg-transparent text-[19px] font-bold text-white placeholder:text-slate-600 outline-none border-none"
+        />
 
-      {/* Conteúdo livre */}
-      <textarea
-        value={conteudo}
-        onChange={(e) => { setConteudo(e.target.value); setSujo(true); }}
-        onBlur={() => sujo && salvar()}
-        placeholder="Escreva algo..."
-        rows={6}
-        className="w-full bg-transparent text-[13.5px] text-ink-secondary placeholder:text-slate-600 outline-none border-none resize-none leading-relaxed"
-      />
+        <textarea
+          ref={conteudoRef}
+          value={conteudo}
+          onChange={(e) => { setConteudo(e.target.value); setSujo(true); }}
+          onBlur={() => sujo && salvar()}
+          placeholder="Escreva algo..."
+          rows={1}
+          className="w-full bg-transparent text-[13.5px] text-white placeholder:text-slate-600 outline-none border-none resize-none leading-relaxed overflow-hidden"
+        />
+      </div>
 
       {/* Checklist */}
       <div className="space-y-0.5">
@@ -144,7 +157,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
             >
               {item.concluido ? <CheckSquare className="h-[18px] w-[18px]" /> : <Square className="h-[18px] w-[18px]" />}
             </button>
-            <span className={`text-[13.5px] flex-1 ${item.concluido ? "text-slate-500 line-through" : "text-ink-primary"}`}>
+            <span className={`text-[13.5px] flex-1 ${item.concluido ? "text-slate-500 line-through" : "text-white"}`}>
               {item.texto}
             </span>
             <button
@@ -169,7 +182,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
               }
             }}
             placeholder="Adicionar item"
-            className="flex-1 bg-transparent text-[13.5px] text-ink-primary placeholder:text-slate-600 outline-none border-none"
+            className="flex-1 bg-transparent text-[13.5px] text-white placeholder:text-slate-600 outline-none border-none"
           />
         </div>
       </div>
@@ -178,11 +191,11 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
         <button
           type="button"
           onClick={() => salvar()}
-          disabled={!sujo || salvando}
+          disabled={salvando}
           className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] disabled:opacity-40 disabled:cursor-not-allowed text-[#0A0A0A] text-xs font-bold transition-all duration-200"
         >
           <Check className="h-3.5 w-3.5" />
-          Salvar
+          {salvando ? "Salvando..." : "Salvar"}
         </button>
       </div>
     </div>
