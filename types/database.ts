@@ -54,8 +54,14 @@ export interface ListaItem {
 }
 
 // ── Notas ─────────────────────────────────────────────────
+// Cada nota é um corpo único e contínuo de "blocos" em sequência — igual ao
+// app de Notas do iPhone: linhas de texto livre e itens de checklist podem
+// se intercalar em qualquer ordem, sem separação rígida entre "texto" e
+// "checklist". `tipo` é opcional por compatibilidade com notas salvas antes
+// dessa mudança (nesse caso, tratamos a ausência de `tipo` como "item").
 export interface NotaItem {
   id: string;
+  tipo?: "texto" | "item";
   texto: string;
   concluido: boolean;
 }
