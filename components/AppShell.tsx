@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
   LayoutDashboard, ArrowUpRight,
-  Receipt, Wallet, Tags, ChevronRight, ListChecks, Users, TrendingDown, TrendingUp, HandCoins
+  Receipt, Wallet, Tags, ChevronRight, ListChecks, Users, TrendingDown, TrendingUp, HandCoins, StickyNote
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -33,6 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         { href: "/contas", label: "Bancos e Contas", icon: Wallet },
         { href: "/faturas", label: "Faturas", icon: Receipt },
         { href: "/listas", label: "Listas", icon: ListChecks },
+        { href: "/notas", label: "Notas", icon: StickyNote },
         { href: "/clientes", label: "Acessos Clientes", icon: Users },
         { href: "/honorarios", label: "Honorários", icon: HandCoins },
         { href: "/dividas", label: "Dívidas", icon: TrendingDown },
