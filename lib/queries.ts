@@ -192,3 +192,24 @@ export async function getHonorarios() {
     clientes:   (clientesRes.data || []) as Pick<Cliente, "id" | "nome">[],
   };
 }
+
+// ── Notas ─────────────────────────────────────────────────
+import type { Nota } from "@/types/database";
+
+export async function getNotas(status?: "ativa" | "arquivada") {
+  noStore();
+  const s = await createServerSupabaseClient();
+  let q = s.from("notas").select("*").order("fixada", { ascending: false }).order("updated_at", { ascending: false });
+  if (status) q = q.eq("status", status);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data || []) as Nota[];
+}
+
+export async function getNota(id: string) {
+  noStore();
+  const s = await createServerSupabaseClient();
+  const { data, error } = await s.from("notas").select("*").eq("id", id).single();
+  if (error) throw error;
+  return data as Nota;
+}
