@@ -4,65 +4,110 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import {
   ChevronLeft, Pin, Trash2, Archive, ArchiveRestore,
-  Plus, X, Check, Square, CheckSquare,
+  Plus, X, Check, Square, CheckSquare, Type,
 } from "lucide-react";
 import { saveNota, deleteNota, togglePinNota, arquivarNota } from "@/app/(app)/actions_notas";
 import { dateBR } from "@/lib/format";
 import type { Nota, NotaItem } from "@/types/database";
 
+type Bloco = NotaItem;
+
 function uid() {
   return Math.random().toString(36).slice(2, 10);
 }
 
+// Migra o formato antigo (conteúdo solto + checklist separada) para o corpo
+// único de blocos — mantém a ordem: texto livre primeiro, depois os itens.
+function blocosIniciais(nota: Nota): Bloco[] {
+  const brutos = (nota.itens ?? []) as any[];
+  const jaEhModeloNovo = brutos.some((b) => b && typeof b.tipo === "string");
+  if (jaEhModeloNovo) return brutos as Bloco[];
+
+  const blocos: Bloco[] = [];
+  if (nota.conteudo?.trim()) {
+    blocos.push({ id: uid(), tipo: "texto", texto: nota.conteudo, concluido: false });
+  }
+  for (const it of brutos) {
+    if (it && typeof it.texto === "string") {
+      blocos.push({ id: it.id ?? uid(), tipo: "item", texto: it.texto, concluido: Boolean(it.concluido) });
+    }
+  }
+  return blocos;
+}
+
 export default function NotaEditorBody({ nota }: { nota: Nota }) {
   const [titulo, setTitulo] = useState(nota.titulo);
-  const [conteudo, setConteudo] = useState(nota.conteudo);
-  const [itens, setItens] = useState<NotaItem[]>(nota.itens ?? []);
-  const [novoItem, setNovoItem] = useState("");
+  const [blocos, setBlocos] = useState<Bloco[]>(() => blocosIniciais(nota));
   const [sujo, setSujo] = useState(false);
   const [salvando, startTransition] = useTransition();
-  const conteudoRef = useRef<HTMLTextAreaElement>(null);
+  const [focoPendente, setFocoPendente] = useState<string | null>(null);
+  const inputsRef = useRef<Record<string, HTMLInputElement | null>>({});
 
-  // Autoajusta a altura do campo de texto ao conteúdo — sem isso, o "rows"
-  // fixo deixava uma área vazia grande entre o texto e o checklist.
   useEffect(() => {
-    const el = conteudoRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-  }, [conteudo]);
+    if (!focoPendente) return;
+    inputsRef.current[focoPendente]?.focus();
+    setFocoPendente(null);
+  }, [focoPendente]);
 
-  function salvar(nextTitulo = titulo, nextConteudo = conteudo, nextItens = itens) {
+  function salvar(nextTitulo = titulo, nextBlocos = blocos) {
     const fd = new FormData();
     fd.set("id", nota.id);
     fd.set("titulo", nextTitulo);
-    fd.set("conteudo", nextConteudo);
-    fd.set("itens", JSON.stringify(nextItens));
+    fd.set("itens", JSON.stringify(nextBlocos));
     startTransition(async () => {
       await saveNota(fd);
       setSujo(false);
     });
   }
 
-  function adicionarItem() {
-    const texto = novoItem.trim();
-    if (!texto) return;
-    const next = [...itens, { id: uid(), texto, concluido: false }];
-    setItens(next);
-    setNovoItem("");
-    salvar(titulo, conteudo, next);
+  function atualizarTexto(id: string, texto: string) {
+    setBlocos((prev) => prev.map((b) => (b.id === id ? { ...b, texto } : b)));
+    setSujo(true);
   }
 
-  function alternarItem(id: string) {
-    const next = itens.map((i) => (i.id === id ? { ...i, concluido: !i.concluido } : i));
-    setItens(next);
-    salvar(titulo, conteudo, next);
+  function alternarConcluido(id: string) {
+    const next = blocos.map((b) => (b.id === id ? { ...b, concluido: !b.concluido } : b));
+    setBlocos(next);
+    salvar(titulo, next);
   }
 
-  function removerItem(id: string) {
-    const next = itens.filter((i) => i.id !== id);
-    setItens(next);
-    salvar(titulo, conteudo, next);
+  // Insere um novo bloco logo após o atual (Enter) e foca nele — repete o
+  // tipo da linha de origem, exatamente como no app de Notas do iPhone.
+  function inserirApos(id: string, tipo: "texto" | "item") {
+    const novo: Bloco = { id: uid(), tipo, texto: "", concluido: false };
+    setBlocos((prev) => {
+      const idx = prev.findIndex((b) => b.id === id);
+      const next = [...prev];
+      next.splice(idx + 1, 0, novo);
+      return next;
+    });
+    setFocoPendente(novo.id);
+  }
+
+  function adicionarBloco(tipo: "texto" | "item") {
+    const novo: Bloco = { id: uid(), tipo, texto: "", concluido: false };
+    setBlocos((prev) => [...prev, novo]);
+    setFocoPendente(novo.id);
+  }
+
+  function removerBloco(id: string) {
+    const next = blocos.filter((b) => b.id !== id);
+    setBlocos(next);
+    salvar(titulo, next);
+  }
+
+  // Backspace numa linha vazia remove o bloco e volta o foco pra linha
+  // anterior, sem round-trip ao servidor (o bloco nunca chegou a ser salvo).
+  function aoTeclar(e: React.KeyboardEvent<HTMLInputElement>, bloco: Bloco, index: number) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      inserirApos(bloco.id, bloco.tipo || "item");
+    } else if (e.key === "Backspace" && bloco.texto === "" && index > 0) {
+      e.preventDefault();
+      const anterior = blocos[index - 1];
+      setBlocos((prev) => prev.filter((b) => b.id !== bloco.id));
+      setFocoPendente(anterior.id);
+    }
   }
 
   return (
@@ -124,45 +169,45 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
         {salvando && " · salvando..."}
       </p>
 
-      {/* Título, conteúdo e checklist — espaçamento reduzido para não deixar
-          área vazia entre o texto e os itens */}
-      <div className="space-y-1.5">
-        <input
-          value={titulo}
-          onChange={(e) => { setTitulo(e.target.value); setSujo(true); }}
-          onBlur={() => sujo && salvar()}
-          placeholder="Título"
-          className="w-full bg-transparent text-[19px] font-bold text-white placeholder:text-slate-600 outline-none border-none"
-        />
+      {/* Título */}
+      <input
+        value={titulo}
+        onChange={(e) => { setTitulo(e.target.value); setSujo(true); }}
+        onBlur={() => sujo && salvar()}
+        placeholder="Título"
+        className="w-full bg-transparent text-[19px] font-bold text-white placeholder:text-slate-600 outline-none border-none"
+      />
 
-        <textarea
-          ref={conteudoRef}
-          value={conteudo}
-          onChange={(e) => { setConteudo(e.target.value); setSujo(true); }}
-          onBlur={() => sujo && salvar()}
-          placeholder="Escreva algo..."
-          rows={1}
-          className="w-full bg-transparent text-[13.5px] text-white placeholder:text-slate-600 outline-none border-none resize-none leading-relaxed overflow-hidden"
-        />
-      </div>
-
-      {/* Checklist */}
-      <div className="space-y-0.5">
-        {itens.map((item) => (
-          <div key={item.id} className="flex items-center gap-2.5 py-1.5 group">
+      {/* Corpo único — texto livre e checklist na mesma sequência, sem
+          separação entre "conteúdo" e "itens" */}
+      <div className="space-y-0.5 -mt-1">
+        {blocos.map((bloco, index) => (
+          <div key={bloco.id} className="flex items-center gap-2.5 py-1 group">
+            {bloco.tipo === "texto" ? (
+              <span className="w-[18px] shrink-0" />
+            ) : (
+              <button
+                type="button"
+                onClick={() => alternarConcluido(bloco.id)}
+                className={bloco.concluido ? "text-[#5DA832] shrink-0" : "text-slate-600 hover:text-slate-400 shrink-0"}
+              >
+                {bloco.concluido ? <CheckSquare className="h-[18px] w-[18px]" /> : <Square className="h-[18px] w-[18px]" />}
+              </button>
+            )}
+            <input
+              ref={(el) => { inputsRef.current[bloco.id] = el; }}
+              value={bloco.texto}
+              onChange={(e) => atualizarTexto(bloco.id, e.target.value)}
+              onBlur={() => sujo && salvar()}
+              onKeyDown={(e) => aoTeclar(e, bloco, index)}
+              placeholder={bloco.tipo === "texto" ? "Escreva algo..." : "Item"}
+              className={`flex-1 bg-transparent text-[13.5px] outline-none border-none placeholder:text-slate-600 ${
+                bloco.concluido ? "text-slate-500 line-through" : "text-white"
+              }`}
+            />
             <button
               type="button"
-              onClick={() => alternarItem(item.id)}
-              className={item.concluido ? "text-[#5DA832] shrink-0" : "text-slate-600 hover:text-slate-400 shrink-0"}
-            >
-              {item.concluido ? <CheckSquare className="h-[18px] w-[18px]" /> : <Square className="h-[18px] w-[18px]" />}
-            </button>
-            <span className={`text-[13.5px] flex-1 ${item.concluido ? "text-slate-500 line-through" : "text-white"}`}>
-              {item.texto}
-            </span>
-            <button
-              type="button"
-              onClick={() => removerItem(item.id)}
+              onClick={() => removerBloco(bloco.id)}
               className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-rose-400 transition-opacity shrink-0"
             >
               <X className="h-3.5 w-3.5" />
@@ -170,20 +215,24 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
           </div>
         ))}
 
-        <div className="flex items-center gap-2.5 py-1.5">
-          <Plus className="h-[18px] w-[18px] text-slate-600 shrink-0" />
-          <input
-            value={novoItem}
-            onChange={(e) => setNovoItem(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                adicionarItem();
-              }
-            }}
-            placeholder="Adicionar item"
-            className="flex-1 bg-transparent text-[13.5px] text-white placeholder:text-slate-600 outline-none border-none"
-          />
+        {/* Continuar a nota — texto ou novo item, sempre ao final do mesmo fluxo */}
+        <div className="flex items-center gap-3 pt-1.5">
+          <button
+            type="button"
+            onClick={() => adicionarBloco("texto")}
+            className="flex items-center gap-1.5 text-[12px] font-semibold text-ink-tertiary hover:text-ink-primary transition-colors"
+          >
+            <Type className="h-3.5 w-3.5" />
+            Texto
+          </button>
+          <button
+            type="button"
+            onClick={() => adicionarBloco("item")}
+            className="flex items-center gap-1.5 text-[12px] font-semibold text-ink-tertiary hover:text-ink-primary transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Item
+          </button>
         </div>
       </div>
 
