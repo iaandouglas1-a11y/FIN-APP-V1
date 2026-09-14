@@ -16,8 +16,10 @@ const notaSchema = z.object({
 
 function entries(f: FormData) { return Object.fromEntries(f.entries()); }
 
-// Faz o parse defensivo do checklist (vem como JSON stringificado do form) —
-// descarta itens malformados ou sem texto em vez de derrubar o salvamento.
+// Faz o parse defensivo do corpo da nota (vem como JSON stringificado do
+// form) — descarta blocos malformados ou sem texto em vez de derrubar o
+// salvamento. `tipo` ausente (notas salvas antes do modelo unificado) vira
+// "item", que era o único tipo que existia até então.
 function parseItens(raw?: string): NotaItem[] {
   if (!raw) return [];
   try {
@@ -25,7 +27,12 @@ function parseItens(raw?: string): NotaItem[] {
     if (!Array.isArray(arr)) return [];
     return arr
       .filter((i) => i && typeof i.texto === "string" && i.texto.trim() !== "")
-      .map((i) => ({ id: String(i.id), texto: String(i.texto).trim(), concluido: Boolean(i.concluido) }));
+      .map((i) => ({
+        id: String(i.id),
+        tipo: i.tipo === "texto" ? "texto" : "item",
+        texto: String(i.texto).trim(),
+        concluido: i.tipo === "texto" ? false : Boolean(i.concluido),
+      }));
   } catch {
     return [];
   }
@@ -55,7 +62,6 @@ export async function saveNota(formData: FormData) {
   const { error } = await (s.from("notas") as any)
     .update({
       titulo: parsed.data.titulo || "",
-      conteudo: parsed.data.conteudo || "",
       itens: parseItens(parsed.data.itens),
       updated_at: new Date().toISOString(),
     })
