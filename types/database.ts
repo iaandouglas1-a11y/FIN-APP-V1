@@ -53,6 +53,24 @@ export interface ListaItem {
   created_at: string;
 }
 
+// ── Notas ─────────────────────────────────────────────────
+export interface NotaItem {
+  id: string;
+  texto: string;
+  concluido: boolean;
+}
+
+export interface Nota {
+  id: string;
+  titulo: string;
+  conteudo: string;
+  itens: NotaItem[];
+  fixada: boolean;
+  status: "ativa" | "arquivada";
+  created_at: string;
+  updated_at: string;
+}
+
 // ── Clientes ──────────────────────────────────────────────
 export interface Cliente {
   id: string;
