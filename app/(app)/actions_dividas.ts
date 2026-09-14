@@ -1,269 +1,249 @@
-"use client";
 
-import { useState, useMemo } from "react";
-import { Plus, TrendingDown } from "lucide-react";
-import { Card, StatPill } from "@/components/ui";
-import { currency } from "@/lib/format";
-import DividaAccordion from "./DividaAccordion";
-import PagamentoAccordion from "./PagamentoAccordion";
-import DividaQuickForms from "./DividaQuickForms";
+"use server";
 
-type Props = {
-  totalDevido: number;
-  totalPago: number;
-  saldoAtual: number;
-  dividasAbertas: any[];
-  dividasLiquidadas: any[];
-  fluxo: any[];
-  categorias: any[];
-  contas: any[];
-};
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { createServerSupabaseClient } from "@/lib/supabaseClient";
 
-export default function DividasBody({
-  totalDevido,
-  totalPago,
-  saldoAtual,
-  dividasAbertas,
-  dividasLiquidadas,
-  fluxo,
-  categorias,
-  contas,
-}: Props) {
-  const [aba, setAba] = useState<"aberto" | "liquidado">("aberto");
-  const [filtroFluxo, setFiltroFluxo] = useState<"este_mes" | "mes_anterior" | "2_meses" | "personalizado">("este_mes");
-  const [dataInicio, setDataInicio] = useState<string>("");
-  const [dataFim, setDataFim] = useState<string>("");
+// ── Schemas ───────────────────────────────────────────────
+const dividaSchema = z.object({
+  descricao:    z.string().min(2, "Descrição muito curta"),
+  valor:        z.coerce.number().positive("Valor deve ser maior que zero"),
+  observacao:   z.string().optional().or(z.literal("")),
+  data:         z.string().min(10, "Data inválida"),
+  situacao:     z.enum(["pendente", "liquidado", "parcial"]).default("pendente"),
+  categoria_id: z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
+});
 
-  const lista = aba === "aberto" ? dividasAbertas : dividasLiquidadas;
+const pagamentoSchema = z.object({
+  divida_id:    z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
+  descricao:    z.string().min(2, "Descrição muito curta"),
+  data:         z.string().min(10, "Data inválida"),
+  valor:        z.coerce.number().positive("Valor deve ser maior que zero"),
+  tipo:         z.enum(["orcado", "realizado"]),
+  conta_id:     z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
+  categoria_id: z.string().uuid().optional().or(z.literal("")).transform(v => v || null),
+});
 
-  // Filtro de datas pro fluxo
-  const hoje = new Date();
-  const fluxoFiltrado = useMemo(() => {
-    if (fluxo.length === 0) return [];
+function entries(f: FormData) { return Object.fromEntries(f.entries()); }
 
-    let dtInicio: Date;
-    let dtFim: Date;
+// ── Sincronização automática de situação ────────────────────
+// Recalcula o total pago (pagamentos "realizado" vinculados) de uma dívida e
+// atualiza sua situação: pendente (nada pago) → parcial (pago > 0 e < total)
+// → liquidado (pago >= total). É chamada sempre que um pagamento vinculado a
+// uma dívida é criado, editado, desfeito ou excluído — assim o % e o status
+// na tela de Dívidas ficam sempre corretos, sem ação manual do usuário.
+async function syncDividaSituacao(s: any, dividaId: string | null) {
+  if (!dividaId) return;
 
-    if (filtroFluxo === "este_mes") {
-      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-      dtFim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
-    } else if (filtroFluxo === "mes_anterior") {
-      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
-      dtFim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
-    } else if (filtroFluxo === "2_meses") {
-      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 2, 1);
-      dtFim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
-    } else {
-      // Personalizado
-      if (!dataInicio || !dataFim) return [];
-      dtInicio = new Date(dataInicio);
-      dtFim = new Date(dataFim);
-      // Adiciona 1 dia ao dtFim para incluir o último dia completo
-      dtFim.setDate(dtFim.getDate() + 1);
-    }
+  const { data: divida } = await s.from("dividas").select("valor,situacao").eq("id", dividaId).single();
+  if (!divida) return;
 
-    return fluxo.filter(p => {
-      if (!p.data) return false;
-      const dataPag = new Date(p.data + "T00:00:00");
-      return dataPag >= dtInicio && dataPag < dtFim;
-    });
-  }, [fluxo, filtroFluxo, dataInicio, dataFim, hoje]);
+  const { data: pagamentos } = await s.from("divida_pagamentos").select("valor,tipo").eq("divida_id", dividaId);
+  const pago = (pagamentos || [])
+    .filter((p: any) => p.tipo === "realizado")
+    .reduce((sum: number, p: any) => sum + Number(p.valor), 0);
 
-  return (
-    <>
-      {/* Métricas — 3 pills */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-surface/50 border border-surface-border/40 rounded-lg p-3.5">
-          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Total devido</p>
-          <p className="text-lg font-bold text-rose-400">{currency(totalDevido)}</p>
-        </div>
-        <div className="bg-surface/50 border border-surface-border/40 rounded-lg p-3.5">
-          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Total pago</p>
-          <p className="text-lg font-bold text-emerald-400">{currency(totalPago)}</p>
-        </div>
-      </div>
+  const valorTotal = Number(divida.valor);
+  const novaSituacao: "pendente" | "parcial" | "liquidado" =
+    valorTotal > 0 && pago >= valorTotal ? "liquidado" : pago > 0 ? "parcial" : "pendente";
 
-      <div className="bg-surface/50 border border-surface-border/40 rounded-lg p-3.5">
-        <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Saldo em aberto</p>
-        <p className="text-lg font-bold text-amber-400">{currency(saldoAtual)}</p>
-      </div>
+  if (novaSituacao !== divida.situacao) {
+    await s.from("dividas").update({ situacao: novaSituacao }).eq("id", dividaId);
+  }
+}
 
-      {/* Botões — Nova dívida | Novo pagamento */}
-      <DividaQuickForms categorias={categorias} contas={contas} dividasAbertas={dividasAbertas} />
+// ── Dívidas ───────────────────────────────────────────────
+export async function saveDivida(formData: FormData) {
+  const id     = String(formData.get("id") || "");
+  const parsed = dividaSchema.safeParse(entries(formData));
+  if (!parsed.success) throw new Error(parsed.error.errors[0].message);
 
-      {/* Toggle Aberto/Liquidado */}
-      <div className="flex gap-1.5 bg-surface-2/60 rounded-xl p-1">
-        <button
-          type="button"
-          onClick={() => setAba("aberto")}
-          className={`flex-1 text-center py-2 rounded-lg text-[12.5px] font-semibold transition-all duration-200 ${
-            aba === "aberto" ? "bg-[#5DA832]/20 text-[#6fc23b]" : "text-ink-tertiary hover:text-ink-secondary"
-          }`}
-        >
-          Em aberto ({dividasAbertas.length})
-        </button>
-        <button
-          type="button"
-          onClick={() => setAba("liquidado")}
-          className={`flex-1 text-center py-2 rounded-lg text-[12.5px] font-semibold transition-all duration-200 ${
-            aba === "liquidado" ? "bg-[#5DA832]/20 text-[#6fc23b]" : "text-ink-tertiary hover:text-ink-secondary"
-          }`}
-        >
-          Liquidadas ({dividasLiquidadas.length})
-        </button>
-      </div>
+  const s = await createServerSupabaseClient();
+  const result = id
+    ? await (s.from("dividas") as any).update(parsed.data).eq("id", id)
+    : await (s.from("dividas") as any).insert(parsed.data);
+  if (result.error) throw new Error(result.error.message);
 
-      {/* Lista de dívidas */}
-      <Card className="border-surface-border/60 p-4">
-        <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">
-            {aba === "aberto" ? "Dívidas em aberto" : "Dívidas liquidadas"}
-          </h2>
-          <p className="text-xs text-ink-tertiary mt-1">
-            {lista.length} {lista.length === 1 ? "dívida" : "dívidas"}
-          </p>
-        </div>
+  // Se o valor total foi editado, o % e a situação podem ter mudado
+  if (id) await syncDividaSituacao(s, id);
 
-        <div className="space-y-2.5">
-          {lista.length === 0 ? (
-            <p className="text-center py-6 text-sm text-slate-600 italic">
-              {aba === "aberto" ? "Nenhuma dívida em aberto. 🎉" : "Nenhuma dívida liquidada ainda."}
-            </p>
-          ) : (
-            lista.map((d) => (
-              <DividaAccordion
-                key={d.id}
-                divida={d}
-                categorias={categorias}
-                categoriaNome={d.categoriaNome}
-                tone={d.situacao === "liquidado" ? "green" : d.pct > 0 ? "amber" : "red"}
-                pct={d.pct}
-                pagos={d.pagos}
-              />
-            ))
-          )}
-        </div>
-      </Card>
+  revalidatePath("/dividas");
+}
 
-      {/* Fluxo de Pagamentos */}
-      <Card className="border-surface-border/60 p-4">
-        <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">Fluxo de pagamentos</h2>
-          <p className="text-xs text-ink-tertiary mt-1">Pagamentos registrados por data</p>
-        </div>
+export async function deleteDivida(formData: FormData) {
+  const id = String(formData.get("id"));
+  const s  = await createServerSupabaseClient();
+  const { error } = await (s.from("dividas") as any).delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/dividas");
+}
 
-        {/* Filtro de datas */}
-        <div className="mb-4 pb-3 border-b border-surface-border/40 flex items-center gap-2 flex-wrap">
-          <button
-            type="button"
-            onClick={() => setFiltroFluxo("este_mes")}
-            className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
-              filtroFluxo === "este_mes"
-                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
-                : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
-            }`}
-          >
-            Este mês
-          </button>
-          <button
-            type="button"
-            onClick={() => setFiltroFluxo("mes_anterior")}
-            className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
-              filtroFluxo === "mes_anterior"
-                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
-                : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
-            }`}
-          >
-            Mês anterior
-          </button>
-          <button
-            type="button"
-            onClick={() => setFiltroFluxo("2_meses")}
-            className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
-              filtroFluxo === "2_meses"
-                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
-                : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
-            }`}
-          >
-            2 meses atrás
-          </button>
+export async function alterarSituacaoDivida(formData: FormData) {
+  const id = String(formData.get("id"));
+  const atual = String(formData.get("situacao"));
 
-          {/* Botão X para limpar filtro personalizado */}
-          {filtroFluxo === "personalizado" && (
-            <button
-              type="button"
-              onClick={() => {
-                setFiltroFluxo("este_mes");
-                setDataInicio("");
-                setDataFim("");
-              }}
-              className="shrink-0 h-7 w-7 rounded-full border border-surface-border/50 flex items-center justify-center text-ink-tertiary hover:text-ink-primary transition-colors"
-              title="Limpar filtro"
-            >
-              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            </button>
-          )}
+  // Alternância manual: qualquer estado ↔ liquidado (override manual).
+  // O status "parcial" volta a ser calculado automaticamente a partir dos
+  // pagamentos assim que um novo pagamento for lançado/editado/desfeito.
+  const novaSituacao: "pendente" | "liquidado" = atual === "liquidado" ? "pendente" : "liquidado";
 
-          {/* Botão filtro personalizado */}
-          <details className="relative shrink-0 ml-auto">
-            <summary className="list-none cursor-pointer w-8 h-8 rounded-full bg-surface border border-surface-border/50 flex items-center justify-center text-ink-tertiary hover:text-ink-primary transition-colors">
-              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2H3V6M7 12h10M5 18h14" />
-              </svg>
-            </summary>
-            <form className="absolute right-0 top-10 z-20 w-72 p-3.5 rounded-xl bg-surface border border-surface-border space-y-2.5">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-ink-tertiary">Período personalizado</p>
-              <div className="flex items-center gap-1.5">
-                <input
-                  type="date"
-                  value={dataInicio}
-                  onChange={(e) => {
-                    setDataInicio(e.target.value);
-                    setFiltroFluxo("personalizado");
-                  }}
-                  className="h-9 flex-1 min-w-0 text-xs px-2 rounded-lg bg-surface-2 border border-surface-border/40 text-white"
-                />
-                <span className="text-slate-600 text-[10px] shrink-0">até</span>
-                <input
-                  type="date"
-                  value={dataFim}
-                  onChange={(e) => {
-                    setDataFim(e.target.value);
-                    setFiltroFluxo("personalizado");
-                  }}
-                  className="h-9 flex-1 min-w-0 text-xs px-2 rounded-lg bg-surface-2 border border-surface-border/40 text-white"
-                />
-              </div>
-            </form>
-          </details>
-        </div>
+  const s = await createServerSupabaseClient();
+  const { error } = await (s.from("dividas") as any).update({ situacao: novaSituacao }).eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/dividas");
+  // Removido o retorno para evitar erro de tipagem no formulário (action espera void)
+}
 
-        {/* Lista de pagamentos */}
-        <div className="space-y-0 divide-y divide-surface-border/40">
-          {fluxoFiltrado.length === 0 ? (
-            <p className="text-center py-6 text-sm text-slate-600 italic">
-              Nenhum pagamento neste período.
-            </p>
-          ) : (
-            fluxoFiltrado.map((p) => {
-              const categoriaNome = p.categoria_id
-                ? categorias.find(cat => cat.id === p.categoria_id)?.nome ?? null
-                : null;
-              return (
-                <PagamentoAccordion
-                  key={p.id}
-                  pagamento={p}
-                  categoriaNome={categoriaNome}
-                  contas={contas}
-                  categorias={categorias}
-                />
-              );
-            })
-          )}
-        </div>
-      </Card>
-    </>
-  );
+// ── Pagamentos ────────────────────────────────────────────
+export async function savePagamento(formData: FormData) {
+  const id     = String(formData.get("id") || "");
+  const parsed = pagamentoSchema.safeParse(entries(formData));
+  if (!parsed.success) throw new Error(parsed.error.errors[0].message);
+
+  const s = await createServerSupabaseClient();
+
+  // Se estamos editando, guarda a dívida antiga (pode ter sido trocada)
+  let dividaAntigaId: string | null = null;
+  if (id) {
+    const { data: antigo } = await (s.from("divida_pagamentos") as any).select("divida_id").eq("id", id).single();
+    dividaAntigaId = antigo?.divida_id ?? null;
+  }
+
+  // Se realizado → criar movimentação automaticamente
+  let movimentacao_id: string | null = null;
+  if (parsed.data.tipo === "realizado" && parsed.data.conta_id) {
+    const { data: mov, error: movErr } = await (s.from("movimentacoes") as any)
+      .insert({
+        tipo:         "despesa",
+        valor:        parsed.data.valor,
+        data:         parsed.data.data,
+        categoria_id: parsed.data.categoria_id,
+        conta_id:     parsed.data.conta_id,
+        status:       "realizado",
+        descricao:    parsed.data.descricao,
+      })
+      .select("id").single();
+    if (movErr) throw new Error(movErr.message);
+    movimentacao_id = mov?.id || null;
+  }
+
+  const payload = {
+    divida_id:      parsed.data.divida_id,
+    descricao:      parsed.data.descricao,
+    data:           parsed.data.data,
+    valor:          parsed.data.valor,
+    tipo:           parsed.data.tipo,
+    categoria_id:   parsed.data.categoria_id,
+    movimentacao_id,
+  };
+
+  const result = id
+    ? await (s.from("divida_pagamentos") as any).update(payload).eq("id", id)
+    : await (s.from("divida_pagamentos") as any).insert(payload);
+  if (result.error) throw new Error(result.error.message);
+
+  // Recalcula a(s) dívida(s) afetada(s) — a nova e, se mudou, a antiga também
+  await syncDividaSituacao(s, parsed.data.divida_id);
+  if (dividaAntigaId && dividaAntigaId !== parsed.data.divida_id) {
+    await syncDividaSituacao(s, dividaAntigaId);
+  }
+
+  revalidatePath("/dividas");
+  revalidatePath("/movimentacoes");
+  revalidatePath("/contas");
+  revalidatePath("/dashboard");
+}
+
+export async function realizarPagamento(formData: FormData) {
+  const id          = String(formData.get("id"));
+  const conta_id    = String(formData.get("conta_id"));
+  const descricao   = String(formData.get("descricao"));
+  const valor       = Number(formData.get("valor"));
+  const data        = String(formData.get("data"));
+  const categoria_id = formData.get("categoria_id") ? String(formData.get("categoria_id")) : null;
+
+  const s = await createServerSupabaseClient();
+
+  // Cria movimentação com a categoria escolhida
+  const { data: mov, error: movErr } = await (s.from("movimentacoes") as any)
+    .insert({
+      tipo: "despesa", valor, data,
+      categoria_id, conta_id,
+      status: "realizado", descricao,
+    })
+    .select("id").single();
+  if (movErr) throw new Error(movErr.message);
+
+  // Descobre a dívida vinculada antes de atualizar
+  const { data: pagAtual } = await (s.from("divida_pagamentos") as any).select("divida_id").eq("id", id).single();
+
+  // Atualiza pagamento
+  const { error } = await (s.from("divida_pagamentos") as any)
+    .update({ tipo: "realizado", movimentacao_id: mov?.id })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+
+  await syncDividaSituacao(s, pagAtual?.divida_id ?? null);
+
+  revalidatePath("/dividas");
+  revalidatePath("/movimentacoes");
+  revalidatePath("/contas");
+  revalidatePath("/dashboard");
+}
+
+export async function deletePagamento(formData: FormData) {
+  const id = String(formData.get("id"));
+  const s  = await createServerSupabaseClient();
+
+  // Deletar movimentação vinculada se existir, e guardar a dívida pra resync
+  const { data: pag } = await (s.from("divida_pagamentos") as any)
+    .select("movimentacao_id, divida_id").eq("id", id).single();
+  if (pag?.movimentacao_id) {
+    await (s.from("movimentacoes") as any).delete().eq("id", pag.movimentacao_id);
+  }
+
+  const { error } = await (s.from("divida_pagamentos") as any).delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  await syncDividaSituacao(s, pag?.divida_id ?? null);
+
+  revalidatePath("/dividas");
+  revalidatePath("/movimentacoes");
+  revalidatePath("/contas");
+}
+
+export async function desfazerPagamento(formData: FormData) {
+  const id = String(formData.get("id"));
+  const s  = await createServerSupabaseClient();
+
+  // Buscar o pagamento para saber se tem movimentação
+  const { data: pag } = await (s.from("divida_pagamentos") as any)
+    .select("movimentacao_id, tipo, divida_id").eq("id", id).single();
+
+  if (!pag) throw new Error("Pagamento não encontrado");
+
+  // Se era realizado e tinha movimentação, deleta a movimentação
+  if (pag.movimentacao_id) {
+    await (s.from("movimentacoes") as any).delete().eq("id", pag.movimentacao_id);
+  }
+
+  if (pag.tipo === "realizado") {
+    const { error } = await (s.from("divida_pagamentos") as any)
+      .update({ tipo: "orcado", movimentacao_id: null })
+      .eq("id", id);
+    if (error) throw new Error(error.message);
+  } else {
+    // Se for orçado, removemos o registro de pagamento (a previsão)
+    const { error } = await (s.from("divida_pagamentos") as any).delete().eq("id", id);
+    if (error) throw new Error(error.message);
+  }
+
+  await syncDividaSituacao(s, pag.divida_id ?? null);
+
+  revalidatePath("/dividas");
+  revalidatePath("/movimentacoes");
+  revalidatePath("/contas");
+  revalidatePath("/dashboard");
+  // Removido o retorno para evitar erro de tipagem no formulário (action espera void)
 }
