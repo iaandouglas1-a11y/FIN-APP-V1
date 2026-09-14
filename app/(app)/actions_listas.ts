@@ -1,145 +1,105 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
+import type { NotaItem } from "@/types/database";
 
 // ── Schemas ───────────────────────────────────────────────
-const listaSchema = z.object({
-  nome: z.string().min(2, "Nome muito curto"),
-  descricao: z.string().optional().or(z.literal("")),
+const notaSchema = z.object({
+  id: z.string().uuid("Nota inválida"),
+  titulo: z.string().optional().or(z.literal("")),
+  conteudo: z.string().optional().or(z.literal("")),
+  itens: z.string().optional().or(z.literal("")), // JSON stringificado
 });
 
-const itemSchema = z.object({
-  lista_id: z.string().uuid("Lista inválida"),
-  nome: z.string().min(1, "Informe o nome do item"),
-  descricao: z.string().optional().or(z.literal("")),
-  valor: z.coerce.number().nonnegative("Valor inválido").optional().or(z.literal("")),
-});
+function entries(f: FormData) { return Object.fromEntries(f.entries()); }
 
-function entries(f: FormData) {
-  return Object.fromEntries(f.entries());
+// Faz o parse defensivo do corpo da nota (vem como JSON stringificado do
+// form) — descarta blocos malformados ou sem texto em vez de derrubar o
+// salvamento. `tipo` ausente (notas salvas antes do modelo unificado) vira
+// "item", que era o único tipo que existia até então.
+function parseItens(raw?: string): NotaItem[] {
+  if (!raw) return [];
+  try {
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) return [];
+    return arr
+      .filter((i) => i && typeof i.texto === "string" && i.texto.trim() !== "")
+      .map((i) => ({
+        id: String(i.id),
+        tipo: i.tipo === "texto" ? "texto" : "item",
+        texto: String(i.texto).trim(),
+        concluido: i.tipo === "texto" ? false : Boolean(i.concluido),
+      }));
+  } catch {
+    return [];
+  }
 }
 
-// ── Listas ────────────────────────────────────────────────
-export async function saveLista(formData: FormData) {
-  const id = String(formData.get("id") || "");
-  const parsed = listaSchema.safeParse(entries(formData));
+// ── Notas ─────────────────────────────────────────────────
+
+// Cria uma nota vazia e já redireciona pra tela de edição dela —
+// o botão "Nova nota" é só um form sem campos que chama esta action.
+export async function criarNota() {
+  const s = await createServerSupabaseClient();
+  const { data, error } = await (s.from("notas") as any)
+    .insert({ titulo: "", conteudo: "", itens: [], fixada: false, status: "ativa" })
+    .select("id")
+    .single();
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/notas");
+  redirect(`/notas/${data.id}`);
+}
+
+export async function saveNota(formData: FormData) {
+  const parsed = notaSchema.safeParse(entries(formData));
   if (!parsed.success) throw new Error(parsed.error.errors[0].message);
 
   const s = await createServerSupabaseClient();
-  const payload = { nome: parsed.data.nome, descricao: parsed.data.descricao || null };
-  const result = id
-    ? await (s.from("listas") as any).update(payload).eq("id", id)
-    : await (s.from("listas") as any).insert(payload);
+  const { error } = await (s.from("notas") as any)
+    .update({
+      titulo: parsed.data.titulo || "",
+      itens: parseItens(parsed.data.itens),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", parsed.data.id);
+  if (error) throw new Error(error.message);
 
-  if (result.error) throw new Error(result.error.message);
-  revalidatePath("/listas");
+  revalidatePath("/notas");
+  revalidatePath(`/notas/${parsed.data.id}`);
 }
 
-export async function deleteLista(formData: FormData) {
+export async function deleteNota(formData: FormData) {
   const id = String(formData.get("id"));
   const s = await createServerSupabaseClient();
-  const { error } = await (s.from("listas") as any).delete().eq("id", id);
+  const { error } = await (s.from("notas") as any).delete().eq("id", id);
   if (error) throw new Error(error.message);
-  revalidatePath("/listas");
+
+  revalidatePath("/notas");
+  redirect("/notas");
 }
 
-export async function arquivarLista(formData: FormData) {
+export async function togglePinNota(formData: FormData) {
+  const id = String(formData.get("id"));
+  const fixada = formData.get("fixada") === "true";
+  const s = await createServerSupabaseClient();
+  const { error } = await (s.from("notas") as any).update({ fixada: !fixada }).eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/notas");
+  revalidatePath(`/notas/${id}`);
+}
+
+export async function arquivarNota(formData: FormData) {
   const id = String(formData.get("id"));
   const status = String(formData.get("status")) === "arquivada" ? "ativa" : "arquivada";
   const s = await createServerSupabaseClient();
-  const { error } = await (s.from("listas") as any).update({ status }).eq("id", id);
+  const { error } = await (s.from("notas") as any).update({ status }).eq("id", id);
   if (error) throw new Error(error.message);
-  revalidatePath("/listas");
-}
 
-export async function duplicarLista(formData: FormData) {
-  const id = String(formData.get("id"));
-  const s = await createServerSupabaseClient();
-
-  // Busca lista e itens originais
-  const { data: original, error: e1 } = await (s.from("listas") as any)
-    .select("*").eq("id", id).single();
-  if (e1) throw new Error(e1.message);
-
-  const { data: itens, error: e2 } = await (s.from("lista_itens") as any)
-    .select("*").eq("lista_id", id);
-  if (e2) throw new Error(e2.message);
-
-  // Insere nova lista
-  const { data: novaLista, error: e3 } = await (s.from("listas") as any)
-    .insert({ nome: `${original.nome} (cópia)`, descricao: original.descricao, status: "ativa" })
-    .select().single();
-  if (e3) throw new Error(e3.message);
-
-  // Insere itens na nova lista
-  if (itens && itens.length > 0) {
-    const novosItens = itens.map((item: any) => ({
-      lista_id: novaLista.id,
-      nome: item.nome,
-      valor: item.valor,
-      concluido: false,
-    }));
-    const { error: e4 } = await (s.from("lista_itens") as any).insert(novosItens);
-    if (e4) throw new Error(e4.message);
-  }
-
-  revalidatePath("/listas");
-}
-
-// ── Itens ─────────────────────────────────────────────────
-export async function saveItem(formData: FormData) {
-  const id = String(formData.get("id") || "");
-  const raw = entries(formData);
-  const parsed = itemSchema.safeParse(raw);
-  if (!parsed.success) throw new Error(parsed.error.errors[0].message);
-
-  const s = await createServerSupabaseClient();
-  const payload = {
-    lista_id: parsed.data.lista_id,
-    nome: parsed.data.nome,
-    descricao: parsed.data.descricao || null,
-    valor: parsed.data.valor || null,
-  };
-
-  const result = id
-    ? await (s.from("lista_itens") as any).update({ nome: payload.nome, descricao: payload.descricao, valor: payload.valor }).eq("id", id)
-    : await (s.from("lista_itens") as any).insert(payload);
-
-  if (result.error) throw new Error(result.error.message);
-  revalidatePath("/listas");
-}
-
-export async function toggleItem(formData: FormData) {
-  const id = String(formData.get("id"));
-  const concluido = formData.get("concluido") === "true";
-  const s = await createServerSupabaseClient();
-  const { error } = await (s.from("lista_itens") as any)
-    .update({ concluido: !concluido }).eq("id", id);
-  if (error) throw new Error(error.message);
-  revalidatePath("/listas");
-}
-
-export async function deleteItem(formData: FormData) {
-  const id = String(formData.get("id"));
-  const s = await createServerSupabaseClient();
-  const { error } = await (s.from("lista_itens") as any).delete().eq("id", id);
-  if (error) throw new Error(error.message);
-  revalidatePath("/listas");
-}
-
-export async function editarItem(formData: FormData) {
-  const id = String(formData.get("id"));
-  const nome = String(formData.get("nome") || "").trim();
-  const valor = formData.get("valor");
-
-  if (!nome) throw new Error("Nome do item é obrigatório");
-
-  const s = await createServerSupabaseClient();
-  const { error } = await (s.from("lista_itens") as any)
-    .update({ nome, valor: valor ? Number(valor) : null })
-    .eq("id", id);
-  if (error) throw new Error(error.message);
-  revalidatePath("/listas");
+  revalidatePath("/notas");
+  redirect("/notas");
 }
