@@ -2,7 +2,7 @@
 
 import {
   Receipt, ListChecks, Users, HandCoins, TrendingDown,
-  TrendingUp, Tags,
+  TrendingUp, Tags, StickyNote,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -25,6 +25,7 @@ const secondaryNav: { href: string; label: string; icon: any; tone: IconTone }[]
   { href: "/clientes", label: "Clientes", icon: Users, tone: "blue" },
   { href: "/categorias", label: "Categorias", icon: Tags, tone: "amber" },
   { href: "/listas", label: "Listas", icon: ListChecks, tone: "green" },
+  { href: "/notas", label: "Notas", icon: StickyNote, tone: "green" },
 ];
 
 export function MoreMenuDrawer({ open, onClose }: MoreMenuDrawerProps) {
