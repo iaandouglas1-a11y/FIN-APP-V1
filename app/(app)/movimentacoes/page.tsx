@@ -93,7 +93,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
               href={withParam(sp, "tipo", t.value)}
               className={clsx(
                 "flex-1 text-center py-2 text-[12.5px] font-semibold rounded-lg transition-all duration-150",
-                active ? "bg-[#5DA832] text-[#06111F]" : "text-ink-secondary hover:text-ink-primary"
+                active ? "bg-[#5DA832] text-[#0A0A0A]" : "text-ink-secondary hover:text-ink-primary"
               )}
             >
               {t.label}

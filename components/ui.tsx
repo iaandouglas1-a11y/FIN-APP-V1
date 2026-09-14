@@ -257,7 +257,7 @@ const TONE_COLORS: Record<string, { bg: string; fg: string }> = {
   amber:  { bg: "rgba(245,165,36,0.14)", fg: "#f5a524" },
   blue:   { bg: "rgba(62,143,240,0.14)", fg: "#60a5fa" },
   purple: { bg: "rgba(168,109,240,0.16)",fg: "#c084fc" },
-  gray:   { bg: "#142D52",               fg: "#94A3B8" },
+  gray:   { bg: "#202020",               fg: "#94A3B8" },
 };
 export type IconTone = keyof typeof TONE_COLORS;
 
@@ -433,7 +433,7 @@ export function SegmentedControl<T extends string>({
           onClick={() => onChange(opt.value)}
           className={clsx(
             "flex-1 text-center py-2 text-[12.5px] font-semibold rounded-lg transition-all duration-150",
-            value === opt.value ? "bg-[#5DA832] text-[#06111F]" : "text-ink-secondary hover:text-ink-primary"
+            value === opt.value ? "bg-[#5DA832] text-[#0A0A0A]" : "text-ink-secondary hover:text-ink-primary"
           )}
         >
           {opt.label}

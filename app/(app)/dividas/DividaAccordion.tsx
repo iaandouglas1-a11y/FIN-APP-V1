@@ -77,7 +77,7 @@ export default function DividaAccordion({ divida, categorias, categoriaNome, ton
 
           {!liquidada && (
             <>
-              <ProgressBar pct={pct} color={pct > 60 ? "#5DA832" : pct > 0 ? "#F5A524" : "#1E3A66"} />
+              <ProgressBar pct={pct} color={pct > 60 ? "#5DA832" : pct > 0 ? "#F5A524" : "#2E2E2E"} />
               {pagos > 0 && (
                 <p className="text-[10.5px] text-ink-tertiary mt-1.5">
                   {currency(pagos)} pagos de {currency(Number(divida.valor))}

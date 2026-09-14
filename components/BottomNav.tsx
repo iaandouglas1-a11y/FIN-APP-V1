@@ -75,7 +75,7 @@ export function BottomNav({ onMoreClick, onQuickAddClick }: BottomNavProps) {
             className="w-11 h-11 rounded-full bg-[#5DA832] flex items-center justify-center shadow-fab active:scale-90 transition-transform -mt-1"
             aria-label="Ação rápida"
           >
-            <Plus className="w-[22px] h-[22px] text-[#06111F]" strokeWidth={2.5} />
+            <Plus className="w-[22px] h-[22px] text-[#0A0A0A]" strokeWidth={2.5} />
           </button>
 
           {trailingItems.map((item) => (

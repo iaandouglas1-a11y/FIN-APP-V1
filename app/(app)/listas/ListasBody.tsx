@@ -69,7 +69,7 @@ export default function ListasBody({
 
             <button
               type="submit"
-              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-sm font-bold transition-all duration-200"
+              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-bold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
               Criar lista
@@ -233,7 +233,7 @@ function ListaCardExpandida({ lista }: { lista: ListaComItens }) {
               <Input name="nome" defaultValue={lista.nome} required autoFocus className="h-9 text-sm" />
               <Input name="descricao" defaultValue={lista.descricao ?? ""} placeholder="Descrição" className="h-9 text-sm" />
               <div className="flex gap-2">
-                <button type="submit" className="h-8 px-3 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-xs font-bold">Salvar</button>
+                <button type="submit" className="h-8 px-3 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-xs font-bold">Salvar</button>
                 <button type="button" onClick={() => setEditandoLista(false)} className="h-8 px-3 rounded-lg text-slate-400 hover:text-white text-xs font-semibold">Cancelar</button>
               </div>
             </form>
@@ -265,7 +265,7 @@ function ListaCardExpandida({ lista }: { lista: ListaComItens }) {
                         <Input name="descricao" defaultValue={descricao ?? ""} placeholder="Link ou descrição (opt)" className="h-8 text-xs" />
                         <div className="flex items-center gap-1">
                           <Input name="valor" type="number" step="0.01" min="0" defaultValue={item.valor != null ? String(item.valor) : ""} placeholder="Valor" className="h-8 text-xs w-24" />
-                          <button type="submit" className="h-8 px-2 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-xs font-bold">OK</button>
+                          <button type="submit" className="h-8 px-2 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-xs font-bold">OK</button>
                           <button type="button" onClick={() => setEditandoItemId(null)} className="h-8 px-2 rounded-lg text-slate-400 hover:text-white text-xs font-semibold">Cancela</button>
                         </div>
                       </form>
@@ -357,7 +357,7 @@ function ListaCardExpandida({ lista }: { lista: ListaComItens }) {
               <Input name="descricao" placeholder="Link (opt)" className="h-8 text-xs" />
             </div>
             <Input name="valor" type="number" step="0.01" min="0" placeholder="R$" className="w-16 h-8 text-xs" />
-            <button type="submit" className="h-8 px-2 bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-xs font-bold rounded-lg transition-all">
+            <button type="submit" className="h-8 px-2 bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-xs font-bold rounded-lg transition-all">
               +
             </button>
           </form>

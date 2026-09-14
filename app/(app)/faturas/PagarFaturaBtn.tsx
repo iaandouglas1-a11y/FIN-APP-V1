@@ -44,7 +44,7 @@ export default function PagarFaturaBtn({ faturaId, cartaoId, total, pago, pagoEm
             Cancelar baixa
           </button>
         ) : (
-          <div className="flex items-center gap-2 p-2 rounded-xl bg-[#0D2340] border border-amber-500/40">
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-[#161616] border border-amber-500/40">
             <span className="text-xs text-amber-400 px-2">Confirmar cancelamento?</span>
             <form action={cancelarPagamentoFatura}>
               <input type="hidden" name="fatura_id" value={faturaId} />
@@ -82,7 +82,7 @@ export default function PagarFaturaBtn({ faturaId, cartaoId, total, pago, pagoEm
           Pagar Fatura
         </button>
       ) : (
-        <div className="flex items-center gap-2 p-2 rounded-xl bg-[#0D2340] border border-[#5DA832]/40">
+        <div className="flex items-center gap-2 p-2 rounded-xl bg-[#161616] border border-[#5DA832]/40">
           <select
             value={contaSelecionada}
             onChange={(e) => setContaSelecionada(e.target.value)}

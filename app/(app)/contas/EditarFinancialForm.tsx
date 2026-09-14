@@ -101,7 +101,7 @@ export function EditarFinancialForm({ items, onClose, onSaved }: Props) {
             type="button"
             onClick={handleSave}
             disabled={loading}
-            className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#06111F] text-sm font-bold transition-all duration-200 disabled:opacity-60"
+            className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-bold transition-all duration-200 disabled:opacity-60"
           >
             <Pencil className="h-4 w-4" />
             {loading ? "Salvando..." : "Salvar"}

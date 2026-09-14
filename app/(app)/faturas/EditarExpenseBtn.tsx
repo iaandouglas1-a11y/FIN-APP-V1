@@ -53,7 +53,7 @@ export default function EditarExpenseBtn({ exp, categorias, contas, cartoes, fat
   }
 
   return (
-    <div className="mt-2 p-3 bg-[#0D2340]/80 border border-[#5DA832]/20 rounded-lg space-y-2">
+    <div className="mt-2 p-3 bg-[#161616]/80 border border-[#5DA832]/20 rounded-lg space-y-2">
       <form action={saveMovimentacao} className="space-y-2">
         <input type="hidden" name="id" value={exp.id} />
         <input type="hidden" name="tipo" value="despesa" />

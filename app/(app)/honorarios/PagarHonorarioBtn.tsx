@@ -45,7 +45,7 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
             Cancelar baixa
           </button>
         ) : (
-          <div className="flex items-center gap-2 p-1.5 rounded-xl bg-[#0D2340] border border-amber-500/40">
+          <div className="flex items-center gap-2 p-1.5 rounded-xl bg-[#161616] border border-amber-500/40">
             <span className="text-xs text-amber-400 px-1">Confirmar?</span>
             <form action={cancelarPagamentoHonorario}>
               <input type="hidden" name="id" value={honorarioId} />
@@ -82,7 +82,7 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
           Marcar como pago
         </button>
       ) : (
-        <div className="w-full sm:w-auto p-3 rounded-xl bg-[#0D2340] border border-[#5DA832]/40 space-y-2">
+        <div className="w-full sm:w-auto p-3 rounded-xl bg-[#161616] border border-[#5DA832]/40 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#5DA832]/70">
               Receber {currency(valor)}
