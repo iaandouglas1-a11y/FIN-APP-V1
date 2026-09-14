@@ -68,16 +68,18 @@ export default function NotasBody({ notas }: { notas: Nota[] }) {
         ) : (
           <ListGroup className="rounded-lg divide-y divide-surface-border/40">
             {lista.map((n) => {
-              const concluidos = n.itens.filter((i) => i.concluido).length;
+              const checklist = n.itens.filter((i) => (i.tipo ?? "item") === "item");
+              const concluidos = checklist.filter((i) => i.concluido).length;
+              const primeiroTexto = n.itens.find((i) => i.tipo === "texto")?.texto;
               const subtitle =
-                n.itens.length > 0
-                  ? `${concluidos} de ${n.itens.length} itens concluídos`
-                  : n.conteudo?.trim() || "Sem conteúdo";
+                checklist.length > 0
+                  ? `${concluidos} de ${checklist.length} itens concluídos`
+                  : (primeiroTexto || n.conteudo)?.trim() || "Sem conteúdo";
               return (
                 <ListRow
                   key={n.id}
                   href={`/notas/${n.id}`}
-                  icon={n.itens.length > 0 ? ListChecks : StickyNote}
+                  icon={checklist.length > 0 ? ListChecks : StickyNote}
                   tone={n.fixada ? "green" : "gray"}
                   title={n.titulo?.trim() || "Nova nota"}
                   subtitle={subtitle}
