@@ -133,7 +133,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                 <div className="text-[14px] font-semibold text-ink-primary truncate">{m.categorias?.nome ?? "Sem categoria"}</div>
                 <div className="text-[11.5px] text-ink-tertiary mt-0.5 truncate">{m.descricao || (m.contas?.nome ?? "")}</div>
               </div>
-              <AmountText value={Number(m.valor)} signed tone={m.tipo === "receita" ? "green" : "red"} />
+              <AmountText value={m.tipo === "receita" ? Number(m.valor) : -Number(m.valor)} signed tone={m.tipo === "receita" ? "green" : "red"} />
             </div>
           ))}
         </Surface>
