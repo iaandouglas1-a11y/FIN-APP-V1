@@ -34,25 +34,6 @@ export type Cartao = Database["public"]["Tables"]["cartoes"]["Row"];
 export type Fatura = Database["public"]["Tables"]["faturas"]["Row"];
 export type Movimentacao = Database["public"]["Tables"]["movimentacoes"]["Row"];
 
-// ── Listas ────────────────────────────────────────────────
-export interface Lista {
-  id: string;
-  nome: string;
-  descricao: string | null;
-  status: "ativa" | "arquivada";
-  created_at: string;
-}
-
-export interface ListaItem {
-  id: string;
-  lista_id: string;
-  nome: string;
-  descricao: string | null;
-  valor: number | null;
-  concluido: boolean;
-  created_at: string;
-}
-
 // ── Notas ─────────────────────────────────────────────────
 // Cada nota é um corpo único e contínuo de "blocos" em sequência — igual ao
 // app de Notas do iPhone: linhas de texto livre e itens de checklist podem
