@@ -92,41 +92,6 @@ export function monthlyDre(movs: Movimentacao[]) {
   return [...map.values()].sort((a, b) => a.mes.localeCompare(b.mes)); 
 }
 
-// ── Listas ────────────────────────────────────────────────
-import type { Lista, ListaItem } from "@/types/database";
-
-export async function getListas(status?: "ativa" | "arquivada") {
-  noStore();
-  const s = await createServerSupabaseClient();
-  let q = s.from("listas").select("*").order("created_at", { ascending: false });
-  if (status) q = q.eq("status", status);
-  const { data, error } = await q;
-  if (error) throw error;
-  return (data || []) as Lista[];
-}
-
-export async function getListaComItens(listaId: string) {
-  noStore();
-  const s = await createServerSupabaseClient();
-  const [lista, itens] = await Promise.all([
-    s.from("listas").select("*").eq("id", listaId).single(),
-    s.from("lista_itens").select("*").eq("lista_id", listaId).order("created_at", { ascending: true }),
-  ]);
-  if (lista.error) throw lista.error;
-  if (itens.error) throw itens.error;
-  return { lista: lista.data as Lista, itens: (itens.data || []) as ListaItem[] };
-}
-
-export async function getListasComItens(status?: "ativa" | "arquivada") {
-  noStore();
-  const s = await createServerSupabaseClient();
-  let q = s.from("listas").select("*, lista_itens(*)").order("created_at", { ascending: false });
-  if (status) q = q.eq("status", status);
-  const { data, error } = await q;
-  if (error) throw error;
-  return (data || []) as (Lista & { lista_itens: ListaItem[] })[];
-}
-
 // ── Dívidas ───────────────────────────────────────────────
 import type { Divida, DividaPagamento } from "@/types/database";
 
