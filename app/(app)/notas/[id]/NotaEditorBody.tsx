@@ -182,10 +182,8 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
           separação entre "conteúdo" e "itens" */}
       <div className="space-y-0.5 -mt-1">
         {blocos.map((bloco, index) => (
-          <div key={bloco.id} className="flex items-center gap-2.5 py-1 group">
-            {bloco.tipo === "texto" ? (
-              <span className="w-[18px] shrink-0" />
-            ) : (
+          <div key={bloco.id} className={`flex items-center py-1 group ${bloco.tipo === "texto" ? "" : "gap-2.5"}`}>
+            {bloco.tipo !== "texto" && (
               <button
                 type="button"
                 onClick={() => alternarConcluido(bloco.id)}
@@ -208,7 +206,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
             <button
               type="button"
               onClick={() => removerBloco(bloco.id)}
-              className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-rose-400 transition-opacity shrink-0"
+              className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-rose-400 transition-opacity shrink-0 ml-2.5"
             >
               <X className="h-3.5 w-3.5" />
             </button>
