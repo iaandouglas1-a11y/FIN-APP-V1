@@ -17,20 +17,21 @@ const notaSchema = z.object({
 function entries(f: FormData) { return Object.fromEntries(f.entries()); }
 
 // Faz o parse defensivo do corpo da nota (vem como JSON stringificado do
-// form) — descarta blocos malformados ou sem texto em vez de derrubar o
-// salvamento. `tipo` ausente (notas salvas antes do modelo unificado) vira
-// "item", que era o único tipo que existia até então.
+// form) — descarta itens de checklist sem texto (não fazem sentido vazios),
+// mas preserva blocos de texto vazios: são usados como linha em branco pra
+// separar seções dentro da mesma nota. `tipo` ausente (notas salvas antes
+// do modelo unificado) vira "item", que era o único tipo que existia antes.
 function parseItens(raw?: string): NotaItem[] {
   if (!raw) return [];
   try {
     const arr = JSON.parse(raw);
     if (!Array.isArray(arr)) return [];
     return arr
-      .filter((i) => i && typeof i.texto === "string" && i.texto.trim() !== "")
+      .filter((i) => i && typeof i.texto === "string" && (i.tipo === "texto" || i.texto.trim() !== ""))
       .map((i) => ({
         id: String(i.id),
         tipo: i.tipo === "texto" ? "texto" : "item",
-        texto: String(i.texto).trim(),
+        texto: i.tipo === "texto" ? String(i.texto) : String(i.texto).trim(),
         concluido: i.tipo === "texto" ? false : Boolean(i.concluido),
       }));
   } catch {
