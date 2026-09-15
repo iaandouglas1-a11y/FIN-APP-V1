@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Receipt, ListChecks, Users, HandCoins, TrendingDown,
+  Receipt, Users, HandCoins, TrendingDown,
   TrendingUp, Tags, StickyNote,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -24,7 +24,6 @@ const secondaryNav: { href: string; label: string; icon: any; tone: IconTone }[]
   { href: "/honorarios", label: "Honorários", icon: HandCoins, tone: "green" },
   { href: "/clientes", label: "Clientes", icon: Users, tone: "blue" },
   { href: "/categorias", label: "Categorias", icon: Tags, tone: "amber" },
-  { href: "/listas", label: "Listas", icon: ListChecks, tone: "green" },
   { href: "/notas", label: "Notas", icon: StickyNote, tone: "green" },
 ];
 
