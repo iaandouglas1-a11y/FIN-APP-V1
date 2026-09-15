@@ -198,7 +198,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
               onChange={(e) => atualizarTexto(bloco.id, e.target.value)}
               onBlur={() => sujo && salvar()}
               onKeyDown={(e) => aoTeclar(e, bloco, index)}
-              placeholder={bloco.tipo === "texto" ? "Escreva algo..." : "Item"}
+              placeholder={bloco.tipo === "texto" ? "" : "Item"}
               className={`flex-1 bg-transparent text-[13.5px] outline-none border-none placeholder:text-slate-600 ${
                 bloco.concluido ? "text-slate-500 line-through" : "text-white"
               }`}
