@@ -53,28 +53,32 @@ function CategoriaGroup({
   defaultOpen: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  const count = categorias.length;
+  const countLabel = `${count} ${count === 1 ? "categoria" : "categorias"}`;
 
   return (
     <Card className="p-0 overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-3.5"
+        className={`w-full flex items-center justify-between px-4 py-3.5 text-left ${
+          open ? "border-b border-surface-border/50" : ""
+        }`}
       >
-        <span className="text-[10.5px] font-bold uppercase tracking-wide text-ink-secondary">{label}</span>
-        <div className="flex items-center gap-2">
-          <span className="text-[11.5px] text-slate-500">{categorias.length}</span>
-          {open ? (
-            <ChevronUp className="h-3.5 w-3.5 text-slate-500" />
-          ) : (
-            <ChevronDown className="h-3.5 w-3.5 text-slate-500" />
-          )}
+        <div>
+          <h2 className="text-[15px] font-bold text-white">{label}</h2>
+          <p className="text-xs text-ink-tertiary mt-1">{countLabel}</p>
         </div>
+        {open ? (
+          <ChevronUp className="h-3.5 w-3.5 text-slate-500 shrink-0" />
+        ) : (
+          <ChevronDown className="h-3.5 w-3.5 text-slate-500 shrink-0" />
+        )}
       </button>
 
       {open && (
         categorias.length === 0 ? (
-          <div className="px-4 pb-4">
+          <div className="px-4 pb-4 pt-3">
             <p className="text-xs text-slate-500">Nenhuma categoria de {label.toLowerCase()} ainda.</p>
           </div>
         ) : (
