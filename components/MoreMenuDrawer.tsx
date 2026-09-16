@@ -2,7 +2,7 @@
 
 import {
   Receipt, Users, HandCoins, TrendingDown,
-  TrendingUp, Tags, StickyNote,
+  TrendingUp, Tags, Wallet,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -24,6 +24,7 @@ const secondaryNavGroups: { label: string; items: SecondaryNavItem[] }[] = [
   {
     label: "Financeiro",
     items: [
+      { href: "/contas", label: "Contas", icon: Wallet, tone: "gray" },
       { href: "/faturas", label: "Faturas", icon: Receipt, tone: "red" },
       { href: "/dividas", label: "Dívidas", icon: TrendingDown, tone: "amber" },
       { href: "/investimentos", label: "Investim.", icon: TrendingUp, tone: "purple" },
@@ -40,7 +41,6 @@ const secondaryNavGroups: { label: string; items: SecondaryNavItem[] }[] = [
     label: "Sistema",
     items: [
       { href: "/categorias", label: "Categorias", icon: Tags, tone: "amber" },
-      { href: "/notas", label: "Notas", icon: StickyNote, tone: "green" },
     ],
   },
 ];
