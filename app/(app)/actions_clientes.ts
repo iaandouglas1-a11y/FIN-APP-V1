@@ -20,12 +20,15 @@ export async function saveCliente(formData: FormData) {
   const parsed = clienteSchema.safeParse(entries(formData));
   if (!parsed.success) throw new Error(parsed.error.errors[0].message);
 
-  const payload = {
+  const payload: Record<string, unknown> = {
     nome:      parsed.data.nome,
     cpf:       parsed.data.cpf || null,
     cnpj:      parsed.data.cnpj || null,
     senha_gov: parsed.data.senha_gov || null,
   };
+  // Só define "ativo" na criação — numa edição não queremos reativar
+  // silenciosamente um cliente que foi desativado de propósito.
+  if (!id) payload.ativo = true;
 
   const s = await createServerSupabaseClient();
   const result = id
@@ -33,6 +36,15 @@ export async function saveCliente(formData: FormData) {
     : await (s.from("clientes") as any).insert(payload);
 
   if (result.error) throw new Error(result.error.message);
+  revalidatePath("/clientes");
+}
+
+export async function setClienteAtivo(formData: FormData) {
+  const id = String(formData.get("id"));
+  const ativo = String(formData.get("ativo")) === "true";
+  const s = await createServerSupabaseClient();
+  const { error } = await (s.from("clientes") as any).update({ ativo }).eq("id", id);
+  if (error) throw new Error(error.message);
   revalidatePath("/clientes");
 }
 
