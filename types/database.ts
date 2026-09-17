@@ -65,6 +65,7 @@ export interface Cliente {
   cpf: string | null;
   cnpj: string | null;
   senha_gov: string | null;
+  ativo: boolean;
   created_at: string;
 }
 
