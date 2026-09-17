@@ -17,11 +17,10 @@ body {
   color: #F5F7FA;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
-  /* viewportFit: "cover" + status bar "black-translucent" (app/layout.tsx) fazem o
-     conteúdo se estender por baixo da Dynamic Island no iPhone 15 Pro. Antes só o
-     rodapé tinha o respiro da safe area (por causa da bottom nav); o topo não tinha
-     nada, então o conteúdo das telas encostava/entrava embaixo da Dynamic Island. */
-  padding-top: env(safe-area-inset-top);
+  /* O respiro do topo (Dynamic Island / status bar) não é feito aqui —
+     um padding-top no body não tem efeito confiável dentro do layout flex
+     de AppShell.tsx. Ele é aplicado direto no container de conteúdo
+     (o mesmo lugar que já trata a safe area de baixo), em AppShell.tsx. */
   padding-bottom: env(safe-area-inset-bottom);
 }
 
