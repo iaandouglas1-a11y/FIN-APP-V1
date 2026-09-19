@@ -135,11 +135,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* ── Conteúdo principal ── */}
       <main className="flex-1 flex flex-col min-w-0 bg-bg">
         {/*
-          Padding superior no mobile: respiro pra Dynamic Island/status bar
-          (mesmo mecanismo do padding inferior, que já compensa a bottom nav).
-          No desktop permanece igual (sem safe area, sidebar não precisa disso).
+          Padding superior no mobile: respiro pra Dynamic Island/status bar.
+          Usa max() com um piso fixo (3.5rem) em vez de confiar só no
+          env(safe-area-inset-top) — em alguns contextos de PWA instalado
+          esse valor pode não resolver como esperado, então garantimos um
+          mínimo visível independente disso.
         */}
-        <div className="flex-1 p-4 md:p-8 pt-[calc(1rem+env(safe-area-inset-top))] md:pt-8 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-8 overflow-y-auto">
+        <div className="flex-1 p-4 md:p-8 pt-[max(3.5rem,calc(1rem+env(safe-area-inset-top)))] md:pt-8 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-8 overflow-y-auto">
           <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}
           </div>
