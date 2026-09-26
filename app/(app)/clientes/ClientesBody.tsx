@@ -134,6 +134,7 @@ export default function ClientesBody({ ativos, inativos }: Props) {
                 cliente={cliente}
                 deleteCliente={deleteCliente}
                 setClienteAtivo={setClienteAtivo}
+                saveCliente={saveCliente}
               />
             ))}
           </div>
