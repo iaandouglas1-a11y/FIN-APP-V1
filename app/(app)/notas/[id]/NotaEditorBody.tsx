@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import {
   ChevronLeft, Pin, Trash2, Archive, ArchiveRestore,
-  Plus, X, Check, Square, CheckSquare, Type,
+  Plus, X, Check, Square, CheckSquare, Type, Pencil,
 } from "lucide-react";
 import { saveNota, deleteNota, togglePinNota, arquivarNota } from "@/app/(app)/actions_notas";
 import { dateBR } from "@/lib/format";
@@ -14,6 +14,14 @@ type Bloco = NotaItem;
 
 function uid() {
   return Math.random().toString(36).slice(2, 10);
+}
+
+// Detecta se o texto do bloco é, ele sozinho, um link http(s) — regra simples
+// e conservadora pra não confundir texto comum ("R$ 280,00", "Kit 3 Meias...")
+// com uma URL colada.
+const URL_REGEX = /^https?:\/\/\S+$/i;
+function ehLink(texto: string) {
+  return URL_REGEX.test(texto.trim());
 }
 
 // Migra o formato antigo (conteúdo solto + checklist separada) para o corpo
@@ -41,6 +49,10 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
   const [sujo, setSujo] = useState(false);
   const [salvando, startTransition] = useTransition();
   const [focoPendente, setFocoPendente] = useState<string | null>(null);
+  // Bloco de link atualmente em modo de edição (input) — enquanto null/diferente
+  // do id, um bloco cujo texto é uma URL é exibido como link clicável em vez
+  // de campo editável.
+  const [editandoLinkId, setEditandoLinkId] = useState<string | null>(null);
   const inputsRef = useRef<Record<string, HTMLInputElement | null>>({});
 
   useEffect(() => {
@@ -111,7 +123,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
   }
 
   return (
-    <div className="space-y-4 max-w-2xl">
+    <div className="space-y-4 w-full">
       {/* Header — voltar + fixar/arquivar/excluir */}
       <div className="flex items-center justify-between">
         <Link
@@ -181,7 +193,9 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
       {/* Corpo único — texto livre e checklist na mesma sequência, sem
           separação entre "conteúdo" e "itens" */}
       <div className="space-y-0.5 -mt-1">
-        {blocos.map((bloco, index) => (
+        {blocos.map((bloco, index) => {
+          const linkAtivo = ehLink(bloco.texto) && editandoLinkId !== bloco.id;
+          return (
           <div key={bloco.id} className={`flex items-center py-1 group ${bloco.tipo === "texto" ? "" : "gap-2.5"}`}>
             {bloco.tipo !== "texto" && (
               <button
@@ -192,17 +206,44 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
                 {bloco.concluido ? <CheckSquare className="h-[18px] w-[18px]" /> : <Square className="h-[18px] w-[18px]" />}
               </button>
             )}
-            <input
-              ref={(el) => { inputsRef.current[bloco.id] = el; }}
-              value={bloco.texto}
-              onChange={(e) => atualizarTexto(bloco.id, e.target.value)}
-              onBlur={() => sujo && salvar()}
-              onKeyDown={(e) => aoTeclar(e, bloco, index)}
-              placeholder={bloco.tipo === "texto" ? "" : "Item"}
-              className={`flex-1 bg-transparent text-[13.5px] outline-none border-none placeholder:text-slate-600 ${
-                bloco.concluido ? "text-slate-500 line-through" : "text-white"
-              }`}
-            />
+            {linkAtivo ? (
+              <a
+                href={bloco.texto.trim()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex-1 min-w-0 break-all text-[13.5px] underline decoration-[#5DA832]/40 underline-offset-2 hover:decoration-[#5DA832] ${
+                  bloco.concluido ? "text-slate-500 line-through" : "text-[#6fc23b]"
+                }`}
+              >
+                {bloco.texto}
+              </a>
+            ) : (
+              <input
+                ref={(el) => { inputsRef.current[bloco.id] = el; }}
+                value={bloco.texto}
+                onChange={(e) => atualizarTexto(bloco.id, e.target.value)}
+                onBlur={() => {
+                  if (sujo) salvar();
+                  // Volta a exibir como link (se for o caso) assim que o campo perde o foco
+                  setEditandoLinkId(null);
+                }}
+                onKeyDown={(e) => aoTeclar(e, bloco, index)}
+                placeholder={bloco.tipo === "texto" ? "" : "Item"}
+                className={`flex-1 min-w-0 bg-transparent text-[13.5px] outline-none border-none placeholder:text-slate-600 ${
+                  bloco.concluido ? "text-slate-500 line-through" : "text-white"
+                }`}
+              />
+            )}
+            {linkAtivo && (
+              <button
+                type="button"
+                onClick={() => { setEditandoLinkId(bloco.id); setFocoPendente(bloco.id); }}
+                className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-slate-300 transition-opacity shrink-0 ml-2.5"
+                title="Editar link"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
+            )}
             <button
               type="button"
               onClick={() => removerBloco(bloco.id)}
@@ -211,7 +252,8 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
-        ))}
+          );
+        })}
 
         {/* Continuar a nota — texto ou novo item, sempre ao final do mesmo fluxo */}
         <div className="flex items-center gap-3 pt-1.5">
