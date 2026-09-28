@@ -60,7 +60,7 @@ function NavItem({ item, isActive }: { item: BottomNavItem; isActive: boolean })
 export function BottomNav({ onMoreClick, onQuickAddClick }: BottomNavProps) {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname?.startsWith(`${href}/`);
-  const isMoreActive = ["/faturas", "/dividas", "/investimentos", "/contas", "/honorarios", "/clientes", "/categorias"].some(isActive);
+  const isMoreActive = ["/faturas", "/orcamento", "/dividas", "/investimentos", "/contas", "/honorarios", "/clientes", "/categorias"].some(isActive);
 
   return (
     <nav className="md:hidden fixed z-50 w-full px-4 bottom-[max(10px,env(safe-area-inset-bottom))]">
