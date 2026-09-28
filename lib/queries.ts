@@ -178,3 +178,90 @@ export async function getNota(id: string) {
   if (error) throw error;
   return data as Nota;
 }
+
+// ── Orçamento ─────────────────────────────────────────────
+import type { OrcamentoItem, OrcamentoParcela } from "@/types/database";
+
+// Itens (receita/despesa fixo ou variável) da competência + todas as compras
+// parceladas cadastradas — quais parcelas estão ativas naquele mês é decidido
+// por parcelaInfoParaMes(), sem precisar de um registro por mês.
+export async function getOrcamento(competencia: string) {
+  noStore();
+  const s = await createServerSupabaseClient();
+  const inicio = `${competencia.slice(0, 7)}-01`;
+  const [itensRes, parcelasRes] = await Promise.all([
+    s.from("orcamento_itens").select("*, categorias(nome)").eq("competencia", inicio),
+    s.from("orcamento_parcelas").select("*, categorias(nome)").order("data_primeira_parcela", { ascending: true }),
+  ]);
+  if (itensRes.error) throw itensRes.error;
+  if (parcelasRes.error) throw parcelasRes.error;
+  return {
+    itens:    (itensRes.data    || []) as (OrcamentoItem & { categorias: { nome: string } | null })[],
+    parcelas: (parcelasRes.data || []) as (OrcamentoParcela & { categorias: { nome: string } | null })[],
+  };
+}
+
+// Calcula se uma parcela está ativa numa competência e qual o número dela
+// (ex: "3 de 5") a partir da data da 1ª parcela e do total de parcelas.
+export function parcelaInfoParaMes(parcela: OrcamentoParcela, competencia: string) {
+  const [anoI, mesI] = parcela.data_primeira_parcela.slice(0, 7).split("-").map(Number);
+  const [anoC, mesC] = competencia.slice(0, 7).split("-").map(Number);
+  const diffMeses = (anoC - anoI) * 12 + (mesC - mesI);
+  const ativa = diffMeses >= 0 && diffMeses < parcela.parcelas_total;
+  return { ativa, parcelaAtual: diffMeses + 1, parcelasTotal: parcela.parcelas_total };
+}
+
+// Soma o realizado (despesas já lançadas em Movimentações) por categoria dentro
+// do mês — base do bloco "Orçado x realizado".
+export async function getRealizadoPorCategoria(competencia: string) {
+  noStore();
+  const s = await createServerSupabaseClient();
+  const inicio = `${competencia.slice(0, 7)}-01`;
+  const [ano, mes] = inicio.split("-").map(Number);
+  const fim = new Date(Date.UTC(ano, mes, 0)).toISOString().slice(0, 10);
+
+  const { data, error } = await s
+    .from("movimentacoes")
+    .select("categoria_id, valor")
+    .eq("tipo", "despesa")
+    .eq("status", "realizado")
+    .gte("data", inicio)
+    .lte("data", fim);
+  if (error) throw error;
+
+  const map = new Map<string, number>();
+  for (const m of (data || []) as any[]) {
+    if (!m.categoria_id) continue;
+    map.set(m.categoria_id, (map.get(m.categoria_id) || 0) + Number(m.valor));
+  }
+  return map;
+}
+
+// Média mensal gasta numa categoria nos últimos `meses` — usada para sugerir o
+// valor de um custo variável ao criá-lo no Orçamento.
+export async function getMediaGastoCategoria(categoriaId: string, meses = 3) {
+  noStore();
+  const s = await createServerSupabaseClient();
+  const hoje = new Date();
+  const inicio = new Date(Date.UTC(hoje.getUTCFullYear(), hoje.getUTCMonth() - meses, 1)).toISOString().slice(0, 10);
+
+  const { data, error } = await s
+    .from("movimentacoes")
+    .select("valor, data")
+    .eq("categoria_id", categoriaId)
+    .eq("tipo", "despesa")
+    .eq("status", "realizado")
+    .gte("data", inicio);
+  if (error) throw error;
+  if (!data || data.length === 0) return 0;
+
+  // Média por mês (não por lançamento) — meses sem nenhum gasto não entram na
+  // conta, então a sugestão não fica artificialmente baixa.
+  const porMes = new Map<string, number>();
+  for (const m of data as any[]) {
+    const chave = String(m.data).slice(0, 7);
+    porMes.set(chave, (porMes.get(chave) || 0) + Number(m.valor));
+  }
+  const totais = [...porMes.values()];
+  return totais.reduce((s, v) => s + v, 0) / totais.length;
+}
