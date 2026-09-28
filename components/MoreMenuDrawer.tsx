@@ -2,7 +2,7 @@
 
 import {
   Receipt, Users, HandCoins, TrendingDown,
-  TrendingUp, Tags, Wallet,
+  TrendingUp, Tags, Wallet, PiggyBank,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -26,6 +26,7 @@ const secondaryNavGroups: { label: string; items: SecondaryNavItem[] }[] = [
     items: [
       { href: "/contas", label: "Contas", icon: Wallet, tone: "gray" },
       { href: "/faturas", label: "Faturas", icon: Receipt, tone: "red" },
+      { href: "/orcamento", label: "Orçamento", icon: PiggyBank, tone: "green" },
       { href: "/dividas", label: "Dívidas", icon: TrendingDown, tone: "amber" },
       { href: "/investimentos", label: "Investim.", icon: TrendingUp, tone: "purple" },
     ],
