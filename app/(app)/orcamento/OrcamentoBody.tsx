@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, Copy, PiggyBank, Wallet, Receipt } from "lucide-react";
+import { Trash2, Copy, PiggyBank, Receipt } from "lucide-react";
 import { Card, StatPill, AmountText, EmptyState, ProgressBar, Badge, IconChip } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { getCategoryIcon } from "@/lib/categoryIcons";
@@ -18,6 +18,7 @@ type Item = {
   categoria_id: string | null;
   descricao: string;
   valor: number;
+  dia_referencia: number;
   categorias?: { nome: string } | null;
 };
 
@@ -28,18 +29,22 @@ type Parcela = {
   valor_parcela: number;
   parcelas_total: number;
   data_primeira_parcela: string;
+  dia_referencia: number;
   categorias?: { nome: string } | null;
   parcelaAtual: number;
   parcelasTotal: number;
 };
 
+type Lancamento = (Item & { kind: "item" }) | (Parcela & { kind: "parcela" });
+
 type Comparativo = { categoriaId: string; nome: string; orcado: number; realizado: number; pct: number };
 
 type Props = {
   competencia: string;
-  receitas: Item[];
-  despesasFixas: Item[];
-  despesasVariaveis: Item[];
+  quinzena1: Lancamento[];
+  quinzena2: Lancamento[];
+  subtotalQuinzena1: number;
+  subtotalQuinzena2: number;
   parcelasAtivas: Parcela[];
   totalReceitas: number;
   totalCustos: number;
@@ -49,45 +54,110 @@ type Props = {
   categorias: { id: string; nome: string }[];
 };
 
-function ItemRow({
-  item,
-  tone,
+// Uma linha de lançamento mistura receita, despesa e parcela — o sinal e a
+// cor vêm do tipo/kind; parcelas ganham um selo "Parcela X/Y" além do dia.
+function LancamentoRow({
+  lancamento,
   categorias,
   competencia,
 }: {
-  item: Item;
-  tone: "green" | "red" | "amber";
+  lancamento: Lancamento;
   categorias: { id: string; nome: string }[];
   competencia: string;
 }) {
-  const nomeCategoria = item.categorias?.nome ?? "Sem categoria";
+  const isParcela = lancamento.kind === "parcela";
+  const nomeCategoria = lancamento.categorias?.nome ?? "Sem categoria";
   const Icon = getCategoryIcon(nomeCategoria);
+  const valor = isParcela
+    ? -Number(lancamento.valor_parcela)
+    : lancamento.tipo === "receita" ? Number(lancamento.valor) : -Number(lancamento.valor);
+  const tone: "green" | "red" | "purple" = isParcela ? "purple" : valor >= 0 ? "green" : "red";
+
   return (
     <div className="list-row">
       <IconChip icon={Icon} tone={tone} />
       <div className="min-w-0 flex-1">
-        <div className="text-[14px] font-semibold text-ink-primary truncate">{item.descricao}</div>
-        <div className="text-[11.5px] text-ink-tertiary mt-0.5 truncate">{nomeCategoria}</div>
+        <div className="text-[14px] font-semibold text-ink-primary truncate">{lancamento.descricao}</div>
+        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+          <span className="text-[9px] font-bold uppercase tracking-wide text-ink-tertiary bg-surface-2 rounded-full px-2 py-0.5">
+            Dia {lancamento.dia_referencia}
+          </span>
+          {isParcela && (
+            <span className="text-[9px] font-bold uppercase tracking-wide text-[#c084fc] bg-[#8b5cf6]/10 rounded-full px-2 py-0.5">
+              Parcela {lancamento.parcelaAtual}/{lancamento.parcelasTotal}
+            </span>
+          )}
+        </div>
       </div>
-      <AmountText value={Number(item.valor)} tone={tone} />
+      <AmountText value={valor} signed />
       <div className="flex items-center gap-0.5 shrink-0">
-        <EditarOrcamentoItemBtn item={item} categorias={categorias} competencia={competencia} />
-        <form action={deleteOrcamentoItem}>
-          <input type="hidden" name="id" value={item.id} />
-          <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors">
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
-        </form>
+        {isParcela ? (
+          <>
+            <EditarOrcamentoParcelaBtn parcela={lancamento} categorias={categorias} />
+            <form action={deleteOrcamentoParcela}>
+              <input type="hidden" name="id" value={lancamento.id} />
+              <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors">
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <EditarOrcamentoItemBtn item={lancamento} categorias={categorias} competencia={competencia} />
+            <form action={deleteOrcamentoItem}>
+              <input type="hidden" name="id" value={lancamento.id} />
+              <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors">
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );
 }
 
+function QuinzenaCard({
+  titulo,
+  subtitulo,
+  itens,
+  subtotal,
+  categorias,
+  competencia,
+}: {
+  titulo: string;
+  subtitulo: string;
+  itens: Lancamento[];
+  subtotal: number;
+  categorias: { id: string; nome: string }[];
+  competencia: string;
+}) {
+  return (
+    <Card className="border-surface-border/60 p-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-[15px] font-bold text-white">{titulo}</h2>
+        <AmountText value={subtotal} signed />
+      </div>
+      <p className="text-xs text-ink-tertiary mt-1 mb-3">{subtitulo}</p>
+      {itens.length === 0 ? (
+        <EmptyState icon={<Receipt className="h-10 w-10" />} title="Nada lançado nesta quinzena" />
+      ) : (
+        <div>
+          {itens.map((l) => (
+            <LancamentoRow key={`${l.kind}-${l.id}`} lancamento={l} categorias={categorias} competencia={competencia} />
+          ))}
+        </div>
+      )}
+    </Card>
+  );
+}
+
 export default function OrcamentoBody({
   competencia,
-  receitas,
-  despesasFixas,
-  despesasVariaveis,
+  quinzena1,
+  quinzena2,
+  subtotalQuinzena1,
+  subtotalQuinzena2,
   parcelasAtivas,
   totalReceitas,
   totalCustos,
@@ -101,7 +171,7 @@ export default function OrcamentoBody({
 
   return (
     <>
-      {/* Hero: saldo projetado do orçamento */}
+      {/* Hero: saldo projetado do orçamento — mês inteiro */}
       <div className="glass-card p-6">
         <div className="text-[11px] font-bold uppercase tracking-widest text-ink-secondary">Saldo do orçamento</div>
         <AmountText value={saldo} size="hero" className="block mt-1.5" />
@@ -114,64 +184,26 @@ export default function OrcamentoBody({
 
       <OrcamentoQuickForms competencia={competencia} categorias={categorias} />
 
-      {/* Renda estimada */}
-      <Card className="border-surface-border/60 p-4">
-        <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">Renda estimada</h2>
-          <p className="text-xs text-ink-tertiary mt-1">
-            {receitas.length} {receitas.length === 1 ? "item" : "itens"}
-          </p>
-        </div>
-        {receitas.length === 0 ? (
-          <EmptyState icon={<Wallet className="h-10 w-10" />} title="Nenhuma receita orçada" />
-        ) : (
-          <div>
-            {receitas.map((i) => (
-              <ItemRow key={i.id} item={i} tone="green" categorias={categorias} competencia={competencia} />
-            ))}
-          </div>
-        )}
-      </Card>
+      {/* Quinzena 1 e 2 — receitas, despesas e parcelas ativas misturadas,
+          agrupadas por dia_referencia (corte fixo: 1-14 / 15-31) */}
+      <QuinzenaCard
+        titulo="Quinzena 1"
+        subtitulo="Dias 1 a 14 · saldo do período"
+        itens={quinzena1}
+        subtotal={subtotalQuinzena1}
+        categorias={categorias}
+        competencia={competencia}
+      />
+      <QuinzenaCard
+        titulo="Quinzena 2"
+        subtitulo="Dias 15 a 31 · saldo do período"
+        itens={quinzena2}
+        subtotal={subtotalQuinzena2}
+        categorias={categorias}
+        competencia={competencia}
+      />
 
-      {/* Custos fixos */}
-      <Card className="border-surface-border/60 p-4">
-        <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">Custos fixos</h2>
-          <p className="text-xs text-ink-tertiary mt-1">
-            {despesasFixas.length} {despesasFixas.length === 1 ? "item" : "itens"}
-          </p>
-        </div>
-        {despesasFixas.length === 0 ? (
-          <EmptyState icon={<Receipt className="h-10 w-10" />} title="Nenhum custo fixo orçado" />
-        ) : (
-          <div>
-            {despesasFixas.map((i) => (
-              <ItemRow key={i.id} item={i} tone="red" categorias={categorias} competencia={competencia} />
-            ))}
-          </div>
-        )}
-      </Card>
-
-      {/* Custos variáveis */}
-      <Card className="border-surface-border/60 p-4">
-        <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">Custos variáveis</h2>
-          <p className="text-xs text-ink-tertiary mt-1">
-            {despesasVariaveis.length} {despesasVariaveis.length === 1 ? "item" : "itens"}
-          </p>
-        </div>
-        {despesasVariaveis.length === 0 ? (
-          <EmptyState icon={<Receipt className="h-10 w-10" />} title="Nenhum custo variável orçado" />
-        ) : (
-          <div>
-            {despesasVariaveis.map((i) => (
-              <ItemRow key={i.id} item={i} tone="amber" categorias={categorias} competencia={competencia} />
-            ))}
-          </div>
-        )}
-      </Card>
-
-      {/* Compras parceladas — parcela atual calculada automaticamente */}
+      {/* Compras parceladas — visão de progresso, independente da quinzena */}
       <Card className="border-surface-border/60 p-4">
         <div className="mb-4 pb-3 border-b border-surface-border/50">
           <h2 className="text-[15px] font-bold text-white">Compras parceladas</h2>
@@ -189,7 +221,7 @@ export default function OrcamentoBody({
                   <div className="min-w-0">
                     <p className="text-[13px] font-semibold text-ink-primary truncate">{p.descricao}</p>
                     <p className="text-[11px] text-ink-tertiary mt-0.5">
-                      {p.parcelaAtual} de {p.parcelasTotal} · {currency(Number(p.valor_parcela))}
+                      {p.parcelaAtual} de {p.parcelasTotal} · {currency(Number(p.valor_parcela))} · Dia {p.dia_referencia}
                     </p>
                   </div>
                   <div className="flex items-center gap-0.5 shrink-0">
@@ -268,7 +300,7 @@ export default function OrcamentoBody({
       ) : (
         <div className="flex items-center gap-2 p-3 rounded-xl bg-surface border border-surface-border/60">
           <span className="text-xs text-ink-secondary flex-1">
-            Copiar receitas e custos fixos/variáveis para o próximo mês? Parcelas continuam automáticas.
+            Copiar receitas e custos fixos/variáveis (com o mesmo dia) para o próximo mês? Parcelas continuam automáticas.
           </span>
           <form
             action={async (formData) => {
