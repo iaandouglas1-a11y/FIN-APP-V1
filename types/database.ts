@@ -153,12 +153,16 @@ export interface InvestimentoSaldo {
 
 // ── Orçamento ─────────────────────────────────────────────
 // Um item de orçamento é um lançamento estimado (receita ou despesa) fixo ou
-// variável, vinculado a uma competência (sempre primeiro dia do mês). Compras
-// parceladas ficam numa tabela separada (orcamento_parcelas) porque não são
-// lançadas mês a mês: a parcela ativa em cada competência é calculada a partir
-// de `data_primeira_parcela` + `parcelas_total` (ver parcelaInfoParaMes em
-// lib/queries.ts), então duplicar o orçamento para o mês seguinte não precisa
-// copiá-las — elas continuam aparecendo sozinhas enquanto estiverem no período.
+// variável, vinculado a uma competência (sempre primeiro dia do mês) e a um
+// `dia_referencia` (1-31) — obrigatório em todo lançamento, inclusive nos de
+// data variável (ex: Honorários), pra permitir agrupar em quinzenas: dias
+// 1-14 caem na Quinzena 1, dias 15-31 na Quinzena 2 (corte fixo, sem opção de
+// ajuste). Compras parceladas ficam numa tabela separada (orcamento_parcelas)
+// porque não são lançadas mês a mês: a parcela ativa em cada competência é
+// calculada a partir de `data_primeira_parcela` + `parcelas_total` (ver
+// parcelaInfoParaMes em lib/queries.ts), então duplicar o orçamento para o mês
+// seguinte não precisa copiá-las — elas continuam aparecendo sozinhas enquanto
+// estiverem no período.
 export interface OrcamentoItem {
   id: string;
   competencia: string;      // primeiro dia do mês, ex: "2026-09-01"
@@ -167,6 +171,7 @@ export interface OrcamentoItem {
   categoria_id: string | null;
   descricao: string;
   valor: number;
+  dia_referencia: number;   // 1-31, obrigatório — define a quinzena
   created_at: string;
 }
 
@@ -177,5 +182,6 @@ export interface OrcamentoParcela {
   valor_parcela: number;
   parcelas_total: number;
   data_primeira_parcela: string; // primeiro dia do mês da 1ª parcela
+  dia_referencia: number;        // 1-31, obrigatório — define a quinzena
   created_at: string;
 }
