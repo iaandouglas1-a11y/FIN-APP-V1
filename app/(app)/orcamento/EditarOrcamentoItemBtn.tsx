@@ -13,6 +13,7 @@ interface Props {
     categoria_id: string | null;
     descricao: string;
     valor: number;
+    dia_referencia: number;
   };
   categorias: { id: string; nome: string }[];
   competencia: string; // yyyy-MM-01
@@ -74,14 +75,19 @@ export default function EditarOrcamentoItemBtn({ item, categorias, competencia }
             </FormGroup>
           </div>
 
-          <FormGroup label="Categoria">
-            <Select name="categoria_id" defaultValue={item.categoria_id ?? ""} className="h-9">
-              <option value="">Sem categoria</option>
-              {categorias.map((c) => (
-                <option key={c.id} value={c.id}>{c.nome}</option>
-              ))}
-            </Select>
-          </FormGroup>
+          <div className="grid grid-cols-2 gap-4">
+            <FormGroup label="Dia de referência">
+              <Input name="dia_referencia" type="number" min="1" max="31" step="1" defaultValue={item.dia_referencia} required className="h-9" />
+            </FormGroup>
+            <FormGroup label="Categoria">
+              <Select name="categoria_id" defaultValue={item.categoria_id ?? ""} className="h-9">
+                <option value="">Sem categoria</option>
+                {categorias.map((c) => (
+                  <option key={c.id} value={c.id}>{c.nome}</option>
+                ))}
+              </Select>
+            </FormGroup>
+          </div>
 
           <div className="pt-4 flex gap-3">
             <Button type="button" variant="ghost" onClick={() => setIsEditing(false)} className="flex-1">
