@@ -13,19 +13,65 @@ interface Props {
 
 type SubtipoGasto = "fixo" | "variavel" | "parcelado";
 
+/** Chips de atalho pro dia de referência (1 e 15, os dois pagamentos fixos)
+ * — clicar preenche o input controlado, mas o campo continua editável pra
+ * qualquer dia entre 1 e 31 (obrigatório em todo lançamento). */
+function DiaReferenciaField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <FormGroup label="Dia de referência">
+      <div className="flex items-center gap-1.5">
+        <Input
+          name="dia_referencia"
+          type="number"
+          min="1"
+          max="31"
+          step="1"
+          placeholder="1-31"
+          required
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="text-sm w-16 shrink-0"
+        />
+        <button
+          type="button"
+          onClick={() => onChange("1")}
+          className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors ${
+            value === "1" ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]" : "bg-surface-2/60 border-surface-border/50 text-ink-tertiary"
+          }`}
+        >
+          Dia 1
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange("15")}
+          className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors ${
+            value === "15" ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]" : "bg-surface-2/60 border-surface-border/50 text-ink-tertiary"
+          }`}
+        >
+          Dia 15
+        </button>
+      </div>
+    </FormGroup>
+  );
+}
+
 /** Botões "Nova receita" / "Novo gasto" lado a lado — mesmo padrão do
  * MovimentacaoQuickForms / DividaQuickForms: sempre visíveis, cada um revela
  * seu formulário (com botão de fechar) só quando clicado.
  *
  * "Novo gasto" tem 3 tipos: fixo, variável e parcelado. Parcelado vai para
- * outra tabela (saveOrcamentoParcela) e pede valor da parcela + nº de parcelas;
- * a 1ª parcela assume o mês que está sendo visualizado. Em custo variável, ao
- * escolher a categoria buscamos a média mensal dos últimos 3 meses e oferecemos
- * como sugestão de valor. */
+ * outra tabela (saveOrcamentoParcela) e pede valor da parcela + nº de
+ * parcelas; a 1ª parcela assume o mês que está sendo visualizado. Todo
+ * lançamento — inclusive os de data variável, como Honorários — exige um dia
+ * de referência (1-31), que é o que decide a quinzena. Em custo variável, ao
+ * escolher a categoria buscamos a média mensal dos últimos 3 meses e
+ * oferecemos como sugestão de valor. */
 export default function OrcamentoQuickForms({ competencia, categorias }: Props) {
   const [aberto, setAberto] = useState<null | "receita" | "gasto">(null);
   const [subtipoGasto, setSubtipoGasto] = useState<SubtipoGasto>("fixo");
   const [valorGasto, setValorGasto] = useState("");
+  const [diaGasto, setDiaGasto] = useState("1");
+  const [diaReceita, setDiaReceita] = useState("1");
   const [sugestao, setSugestao] = useState<number | null>(null);
 
   const mes = competencia.slice(0, 7);
@@ -33,6 +79,7 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
   function resetGasto() {
     setSubtipoGasto("fixo");
     setValorGasto("");
+    setDiaGasto("1");
     setSugestao(null);
   }
 
@@ -92,7 +139,11 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
               <Plus className="h-4 w-4" />
               <span>Nova receita</span>
             </div>
-            <button type="button" onClick={() => setAberto(null)} className="p-1 text-slate-500 hover:text-slate-300 rounded transition-colors">
+            <button
+              type="button"
+              onClick={() => { setAberto(null); setDiaReceita("1"); }}
+              className="p-1 text-slate-500 hover:text-slate-300 rounded transition-colors"
+            >
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -101,6 +152,7 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
             action={async (formData) => {
               await saveOrcamentoItem(formData);
               setAberto(null);
+              setDiaReceita("1");
             }}
             className="space-y-2"
           >
@@ -121,6 +173,7 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
                 </Select>
               </FormGroup>
             </div>
+            <DiaReferenciaField value={diaReceita} onChange={setDiaReceita} />
             <FormGroup label="Categoria (opcional)">
               <Select name="categoria_id" className="text-sm">
                 <option value="">Sem categoria</option>
@@ -215,6 +268,8 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
               </FormGroup>
             )}
 
+            <DiaReferenciaField value={diaGasto} onChange={setDiaGasto} />
+
             {subtipoGasto === "variavel" && sugestao !== null && (
               <button
                 type="button"
@@ -227,7 +282,7 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
 
             {subtipoGasto === "parcelado" && (
               <p className="text-[11px] text-ink-tertiary">
-                A 1ª parcela entra no mês que você está visualizando; as demais aparecem sozinhas nos meses seguintes.
+                A 1ª parcela entra no mês que você está visualizando; as demais aparecem sozinhas nos meses seguintes, sempre no mesmo dia.
               </p>
             )}
 
