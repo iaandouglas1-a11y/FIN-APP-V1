@@ -19,6 +19,13 @@ function labelCompetencia(competencia: string) {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
+// Valor já com sinal: receita soma, despesa e parcela subtraem — usado tanto
+// pra ordenar/somar as quinzenas quanto pra colorir a linha (verde/vermelho).
+function valorComSinal(l: { kind: "item" | "parcela"; tipo?: "receita" | "despesa"; valor?: number; valor_parcela?: number }) {
+  if (l.kind === "parcela") return -Number(l.valor_parcela);
+  return l.tipo === "receita" ? Number(l.valor) : -Number(l.valor);
+}
+
 export default async function OrcamentoPage({ searchParams }: { searchParams: Promise<{ mes?: string }> }) {
   const sp = await searchParams;
   const competencia = sp.mes && /^\d{4}-\d{2}$/.test(sp.mes) ? `${sp.mes}-01` : competenciaAtual();
@@ -45,8 +52,28 @@ export default async function OrcamentoPage({ searchParams }: { searchParams: Pr
   const totalCustos    = totalFixos + totalVariaveis + totalParcelas;
   const saldo          = totalReceitas - totalCustos;
 
+  // Lançamentos combinados (receitas + despesas + parcelas ativas), separados
+  // em duas quinzenas por dia_referencia — corte fixo em 15, sem opção de
+  // ajuste. Ordenados por dia dentro de cada quinzena.
+  const lancamentos = [
+    ...receitas.map((i) => ({ ...i, kind: "item" as const })),
+    ...despesasFixas.map((i) => ({ ...i, kind: "item" as const })),
+    ...despesasVariaveis.map((i) => ({ ...i, kind: "item" as const })),
+    ...parcelasAtivas.map((p) => ({ ...p, kind: "parcela" as const })),
+  ];
+
+  const quinzena1 = lancamentos
+    .filter((l) => l.dia_referencia <= 14)
+    .sort((a, b) => a.dia_referencia - b.dia_referencia);
+  const quinzena2 = lancamentos
+    .filter((l) => l.dia_referencia >= 15)
+    .sort((a, b) => a.dia_referencia - b.dia_referencia);
+
+  const subtotalQuinzena1 = quinzena1.reduce((s, l) => s + valorComSinal(l), 0);
+  const subtotalQuinzena2 = quinzena2.reduce((s, l) => s + valorComSinal(l), 0);
+
   // Orçado por categoria (fixos + variáveis + parcelas ativas) — base do gráfico
-  // de distribuição e do bloco "Orçado x realizado"
+  // de distribuição e do bloco "Orçado x realizado" (independe da quinzena)
   const orcadoPorCategoria = new Map<string, number>();
   for (const i of [...despesasFixas, ...despesasVariaveis]) {
     const chave = i.categoria_id || "sem_categoria";
@@ -118,9 +145,10 @@ export default async function OrcamentoPage({ searchParams }: { searchParams: Pr
 
       <OrcamentoBody
         competencia={competencia}
-        receitas={receitas}
-        despesasFixas={despesasFixas}
-        despesasVariaveis={despesasVariaveis}
+        quinzena1={quinzena1}
+        quinzena2={quinzena2}
+        subtotalQuinzena1={subtotalQuinzena1}
+        subtotalQuinzena2={subtotalQuinzena2}
         parcelasAtivas={parcelasAtivas}
         totalReceitas={totalReceitas}
         totalCustos={totalCustos}
