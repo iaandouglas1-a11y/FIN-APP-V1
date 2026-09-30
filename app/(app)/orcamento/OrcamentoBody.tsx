@@ -77,7 +77,11 @@ function LancamentoRow({
     <div className="list-row">
       <IconChip icon={Icon} tone={tone} />
       <div className="min-w-0 flex-1">
-        <div className="text-[14px] font-semibold text-ink-primary truncate">{lancamento.descricao}</div>
+        {/* Nome da categoria é o texto principal (mais resumido); a descrição
+            do lançamento vira legenda, pra continuar visível caso o usuário
+            queira ver do que se trata — mesmo padrão de Movimentações. */}
+        <div className="text-[14px] font-semibold text-ink-primary truncate">{nomeCategoria}</div>
+        <div className="text-[11.5px] text-ink-tertiary mt-0.5 truncate">{lancamento.descricao}</div>
         <div className="flex items-center gap-1.5 mt-1 flex-wrap">
           <span className="text-[9px] font-bold uppercase tracking-wide text-ink-tertiary bg-surface-2 rounded-full px-2 py-0.5">
             Dia {lancamento.dia_referencia}
