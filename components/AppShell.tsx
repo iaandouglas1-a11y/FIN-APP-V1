@@ -118,13 +118,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    /*
-      Mobile: o shell vira uma "tela" fixa (fixed inset-0) e SÓ o container de
-      conteúdo rola. Assim o conteúdo nunca passa por baixo da status bar /
-      Dynamic Island (que é translúcida por causa do black-translucent) e o
-      iOS não aplica o efeito de blur/fade nos títulos. Desktop segue igual.
-    */
-    <div className="bg-bg flex max-md:fixed max-md:inset-0 md:min-h-screen">
+    <div className="min-h-screen bg-bg flex">
       {/* ── Sidebar desktop (inalterado) ── */}
       <aside className={clsx(
         "hidden md:flex flex-col sticky top-0 h-screen transition-all duration-300 ease-in-out z-40",
@@ -140,14 +134,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* ── Conteúdo principal ── */}
-      <main className="flex-1 flex flex-col min-w-0 min-h-0 bg-bg">
-        {/* Faixa sólida da safe area (mobile): reserva o espaço da status bar / Dynamic Island */}
-        <div
-          aria-hidden
-          className="md:hidden shrink-0 bg-bg"
-          style={{ height: "env(safe-area-inset-top)" }}
-        />
-        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 pt-3 md:p-8 md:pt-8 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-8">
+      <main className="flex-1 flex flex-col min-w-0 bg-bg">
+        {/*
+          Topo: com a status bar opaca ("black") o iOS já começa a página abaixo dela
+          e o inset vale 0; se algum dia voltar a ser translúcida, o env() cobre.
+        */}
+        <div className="flex-1 p-4 md:p-8 pt-[calc(1rem+env(safe-area-inset-top))] md:pt-8 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-8">
           <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}
           </div>
