@@ -118,7 +118,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen bg-bg flex">
+    /*
+      Mobile: o shell vira uma "tela" fixa (fixed inset-0) e SÓ o container de
+      conteúdo rola. Assim o conteúdo nunca passa por baixo da status bar /
+      Dynamic Island (que é translúcida por causa do black-translucent) e o
+      iOS não aplica o efeito de blur/fade nos títulos. Desktop segue igual.
+    */
+    <div className="bg-bg flex max-md:fixed max-md:inset-0 md:min-h-screen">
       {/* ── Sidebar desktop (inalterado) ── */}
       <aside className={clsx(
         "hidden md:flex flex-col sticky top-0 h-screen transition-all duration-300 ease-in-out z-40",
@@ -134,15 +140,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* ── Conteúdo principal ── */}
-      <main className="flex-1 flex flex-col min-w-0 bg-bg">
-        {/*
-          Padding superior no mobile: respiro pra Dynamic Island/status bar.
-          Usa max() com um piso fixo (3.5rem) em vez de confiar só no
-          env(safe-area-inset-top) — em alguns contextos de PWA instalado
-          esse valor pode não resolver como esperado, então garantimos um
-          mínimo visível independente disso.
-        */}
-        <div className="flex-1 p-4 md:p-8 pt-[max(3.5rem,calc(1rem+env(safe-area-inset-top)))] md:pt-8 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-8 overflow-y-auto">
+      <main className="flex-1 flex flex-col min-w-0 min-h-0 bg-bg">
+        {/* Faixa sólida da safe area (mobile): reserva o espaço da status bar / Dynamic Island */}
+        <div
+          aria-hidden
+          className="md:hidden shrink-0 bg-bg"
+          style={{ height: "env(safe-area-inset-top)" }}
+        />
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 pt-3 md:p-8 md:pt-8 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-8">
           <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}
           </div>
