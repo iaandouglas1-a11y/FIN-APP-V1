@@ -135,8 +135,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* ── Conteúdo principal ── */}
       <main className="flex-1 flex flex-col min-w-0 bg-bg">
-        {/* Topo: status bar + faixa de blur do iOS 26 (ver --inset-top em globals.css) */}
-        <div className="flex-1 p-4 md:p-8 pt-[calc(1rem+var(--inset-top))] md:pt-8 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-8">
+        {/*
+          Tampa sólida fixa no topo (só mobile): cobre a status bar + a faixa de blur do iOS 26.
+          Quando a página rola, o conteúdo some atrás dela em vez de ficar borrado por baixo do relógio.
+        */}
+        <div
+          aria-hidden
+          className="app-top-cover md:hidden fixed inset-x-0 top-0 z-40 bg-bg pointer-events-none"
+        />
+        <div className="app-top-pad flex-1 p-4 md:p-8 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-8">
           <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}
           </div>
