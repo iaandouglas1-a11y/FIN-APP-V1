@@ -16,8 +16,8 @@ export default async function HonorariosPage() {
 
   const contas = contasData.contas.map((c) => ({ id: c.id, nome: c.nome }));
 
-  const hoje = new Date();
-  const hojeStr = hoje.toISOString().slice(0, 10);
+  // Data de hoje no fuso de Brasília (toISOString usa UTC e, depois das 21h, já cai no dia seguinte)
+  const hojeStr = new Date().toLocaleDateString("sv-SE", { timeZone: "America/Sao_Paulo" });
   const mesAtual = hojeStr.slice(0, 7);
 
   // Resumo do mês corrente (por competência)
