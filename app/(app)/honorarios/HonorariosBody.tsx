@@ -35,34 +35,45 @@ export default function HonorariosBody({
   const [dataFim, setDataFim] = useState<string>("");
 
   // Filtro de datas
-  const hoje = new Date();
+  // Compara strings "AAAA-MM-DD" (a mesma forma que vem do banco) em vez de objetos Date:
+  // new Date("2026-10-01") é interpretado como UTC e, no Brasil (UTC-3), vira 30/09 às 21h,
+  // o que jogava o honorário para o mês errado / fora do filtro.
   const honorariosFiltrados = useMemo(() => {
     if (honorarios.length === 0) return [];
 
-    let dtInicio: Date;
-    let dtFim: Date;
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const ymd = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+    const agora = new Date();
+    const ano = agora.getFullYear();
+    const mes = agora.getMonth();
+
+    let inicio: string;
+    let fim: string;
 
     if (filtroData === "este_mes") {
-      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-      dtFim = hoje;
+      // Dia 1º até o último dia do mês atual
+      inicio = ymd(new Date(ano, mes, 1));
+      fim = ymd(new Date(ano, mes + 1, 0));
     } else if (filtroData === "mes_anterior") {
-      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
-      dtFim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
+      inicio = ymd(new Date(ano, mes - 1, 1));
+      fim = ymd(new Date(ano, mes, 0));
     } else if (filtroData === "3_meses") {
-      dtInicio = new Date(hoje.getFullYear(), hoje.getMonth() - 3, 1);
-      dtFim = hoje;
+      // Mês atual + 2 anteriores, até o último dia do mês atual
+      inicio = ymd(new Date(ano, mes - 2, 1));
+      fim = ymd(new Date(ano, mes + 1, 0));
     } else {
-      // Personalizado
+      // Personalizado (os dois dias são inclusivos)
       if (!dataInicio || !dataFim) return [];
-      dtInicio = new Date(dataInicio);
-      dtFim = new Date(dataFim);
+      inicio = dataInicio;
+      fim = dataFim;
     }
 
     return honorarios.filter((h) => {
-      const dataHonorario = new Date(h.vencimento);
-      return dataHonorario >= dtInicio && dataHonorario <= dtFim;
+      const venc = String(h.vencimento ?? "").slice(0, 10);
+      return venc >= inicio && venc <= fim;
     });
-  }, [honorarios, filtroData, dataInicio, dataFim, hoje]);
+  }, [honorarios, filtroData, dataInicio, dataFim]);
 
   return (
     <>
