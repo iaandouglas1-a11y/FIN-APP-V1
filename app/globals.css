@@ -8,6 +8,32 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/*
+  iOS 26 (PWA na tela inicial): o sistema desenha um blur "Liquid Glass" que vai
+  ~40px ALÉM da status bar e não dá para desativar via web. O conteúdo precisa
+  começar abaixo dessa faixa (2.5rem extra, só quando instalado como app).
+  CSS simples, sem variáveis, para não depender de como o WebKit resolve env() dentro de var().
+*/
+.app-top-pad {
+  padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
+}
+.app-top-cover {
+  height: env(safe-area-inset-top, 0px);
+}
+@media (display-mode: standalone) {
+  .app-top-pad {
+    padding-top: calc(3.25rem + env(safe-area-inset-top, 0px));
+  }
+  .app-top-cover {
+    height: calc(2.5rem + env(safe-area-inset-top, 0px));
+  }
+}
+@media (min-width: 768px) {
+  .app-top-pad {
+    padding-top: 2rem;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
