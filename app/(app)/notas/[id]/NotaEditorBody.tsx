@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import {
   ChevronLeft, Pin, Trash2, Archive, ArchiveRestore,
-  Plus, X, Check, Square, CheckSquare, Type, Pencil,
+  Plus, X, Check, Square, CheckSquare, Type,
 } from "lucide-react";
 import { saveNota, deleteNota, togglePinNota, arquivarNota } from "@/app/(app)/actions_notas";
 import { dateBR } from "@/lib/format";
@@ -16,12 +16,33 @@ function uid() {
   return Math.random().toString(36).slice(2, 10);
 }
 
-// Detecta se o texto do bloco é, ele sozinho, um link http(s) — regra simples
-// e conservadora pra não confundir texto comum ("R$ 280,00", "Kit 3 Meias...")
-// com uma URL colada.
-const URL_REGEX = /^https?:\/\/\S+$/i;
-function ehLink(texto: string) {
-  return URL_REGEX.test(texto.trim());
+// Detecta URLs (http/https ou www.) ignorando pontuação final ("...site.com.")
+const URL_REGEX = /(https?:\/\/[^\s]*[^\s.,;:!?)]|www\.[^\s]*[^\s.,;:!?)])/g;
+
+function temLink(texto: string) {
+  return new RegExp(URL_REGEX.source).test(texto);
+}
+
+// Quebra o texto em pedaços; os de índice ímpar são URLs (grupo de captura do split).
+function renderComLinks(texto: string) {
+  return texto.split(URL_REGEX).map((parte, i) => {
+    if (i % 2 === 1) {
+      const href = parte.startsWith("http") ? parte : `https://${parte}`;
+      return (
+        <a
+          key={i}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="text-[#6fc23b] underline underline-offset-2"
+        >
+          {parte}
+        </a>
+      );
+    }
+    return <span key={i}>{parte}</span>;
+  });
 }
 
 // Migra o formato antigo (conteúdo solto + checklist separada) para o corpo
@@ -49,10 +70,9 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
   const [sujo, setSujo] = useState(false);
   const [salvando, startTransition] = useTransition();
   const [focoPendente, setFocoPendente] = useState<string | null>(null);
-  // Bloco de link atualmente em modo de edição (input) — enquanto null/diferente
-  // do id, um bloco cujo texto é uma URL é exibido como link clicável em vez
-  // de campo editável.
-  const [editandoLinkId, setEditandoLinkId] = useState<string | null>(null);
+  // Bloco em edição: linhas com link só viram <input> editável quando estão
+  // em foco; fora disso mostram o texto numa linha só, com o link clicável.
+  const [editandoId, setEditandoId] = useState<string | null>(null);
   const inputsRef = useRef<Record<string, HTMLInputElement | null>>({});
 
   useEffect(() => {
@@ -60,6 +80,11 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
     inputsRef.current[focoPendente]?.focus();
     setFocoPendente(null);
   }, [focoPendente]);
+
+  function focar(id: string) {
+    setEditandoId(id);
+    setFocoPendente(id);
+  }
 
   function salvar(nextTitulo = titulo, nextBlocos = blocos) {
     const fd = new FormData();
@@ -93,13 +118,13 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
       next.splice(idx + 1, 0, novo);
       return next;
     });
-    setFocoPendente(novo.id);
+    focar(novo.id);
   }
 
   function adicionarBloco(tipo: "texto" | "item") {
     const novo: Bloco = { id: uid(), tipo, texto: "", concluido: false };
     setBlocos((prev) => [...prev, novo]);
-    setFocoPendente(novo.id);
+    focar(novo.id);
   }
 
   function removerBloco(id: string) {
@@ -118,19 +143,25 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
       e.preventDefault();
       const anterior = blocos[index - 1];
       setBlocos((prev) => prev.filter((b) => b.id !== bloco.id));
-      setFocoPendente(anterior.id);
+      focar(anterior.id);
     }
   }
 
+  const classeTexto = (bloco: Bloco) =>
+    `flex-1 min-w-0 bg-transparent text-[13.5px] ${
+      bloco.concluido ? "text-slate-500 line-through" : "text-white"
+    }`;
+
   return (
-    <div className="space-y-4 w-full">
-      {/* Header — voltar + fixar/arquivar/excluir */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 max-w-2xl">
+      {/* Header — mesmo padrão das demais páginas (título 22px em negrito,
+          alinhado com px-1), com voltar à esquerda e ações à direita */}
+      <div className="flex items-center justify-between px-1">
         <Link
           href="/notas"
-          className="flex items-center gap-1 text-[13px] font-semibold text-ink-secondary hover:text-ink-primary transition-colors"
+          className="flex items-center gap-1 text-[22px] font-bold text-ink-primary tracking-tight"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-5 w-5 text-ink-secondary" />
           Notas
         </Link>
 
@@ -141,13 +172,13 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
             <button
               type="submit"
               title={nota.fixada ? "Desafixar" : "Fixar"}
-              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${
+              className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-colors ${
                 nota.fixada
                   ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
-                  : "bg-surface border-surface-border/50 text-ink-tertiary hover:text-ink-primary"
+                  : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
               }`}
             >
-              <Pin className="h-3.5 w-3.5" />
+              <Pin className="h-4 w-4" />
             </button>
           </form>
 
@@ -157,9 +188,9 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
             <button
               type="submit"
               title={nota.status === "ativa" ? "Arquivar" : "Restaurar"}
-              className="w-8 h-8 rounded-full bg-surface border border-surface-border/50 flex items-center justify-center text-ink-tertiary hover:text-amber-400 transition-colors"
+              className="w-9 h-9 rounded-xl bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary hover:text-amber-400 transition-colors"
             >
-              {nota.status === "ativa" ? <Archive className="h-3.5 w-3.5" /> : <ArchiveRestore className="h-3.5 w-3.5" />}
+              {nota.status === "ativa" ? <Archive className="h-4 w-4" /> : <ArchiveRestore className="h-4 w-4" />}
             </button>
           </form>
 
@@ -168,15 +199,15 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
             <button
               type="submit"
               title="Excluir"
-              className="w-8 h-8 rounded-full bg-surface border border-surface-border/50 flex items-center justify-center text-ink-tertiary hover:text-rose-400 transition-colors"
+              className="w-9 h-9 rounded-xl bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary hover:text-rose-400 transition-colors"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-4 w-4" />
             </button>
           </form>
         </div>
       </div>
 
-      <p className="text-[11px] text-ink-tertiary px-0.5">
+      <p className="text-[11px] text-ink-tertiary px-1">
         {dateBR((nota.updated_at || nota.created_at)?.slice(0, 10))}
         {salvando && " · salvando..."}
       </p>
@@ -194,64 +225,53 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
           separação entre "conteúdo" e "itens" */}
       <div className="space-y-0.5 -mt-1">
         {blocos.map((bloco, index) => {
-          const linkAtivo = ehLink(bloco.texto) && editandoLinkId !== bloco.id;
+          const mostrarLink = temLink(bloco.texto) && editandoId !== bloco.id;
+
           return (
-          <div key={bloco.id} className={`flex items-center py-1 group ${bloco.tipo === "texto" ? "" : "gap-2.5"}`}>
-            {bloco.tipo !== "texto" && (
+            <div key={bloco.id} className={`flex items-center py-1 group ${bloco.tipo === "texto" ? "" : "gap-2.5"}`}>
+              {bloco.tipo !== "texto" && (
+                <button
+                  type="button"
+                  onClick={() => alternarConcluido(bloco.id)}
+                  className={bloco.concluido ? "text-[#5DA832] shrink-0" : "text-slate-600 hover:text-slate-400 shrink-0"}
+                >
+                  {bloco.concluido ? <CheckSquare className="h-[18px] w-[18px]" /> : <Square className="h-[18px] w-[18px]" />}
+                </button>
+              )}
+
+              {mostrarLink ? (
+                // Modo leitura: uma linha só, link clicável, reticências no excesso.
+                // Tocar fora do link entra no modo edição.
+                <div
+                  onClick={() => focar(bloco.id)}
+                  className={`${classeTexto(bloco)} truncate whitespace-nowrap cursor-text`}
+                >
+                  {renderComLinks(bloco.texto)}
+                </div>
+              ) : (
+                <input
+                  ref={(el) => { inputsRef.current[bloco.id] = el; }}
+                  value={bloco.texto}
+                  onChange={(e) => atualizarTexto(bloco.id, e.target.value)}
+                  onFocus={() => setEditandoId(bloco.id)}
+                  onBlur={() => {
+                    setEditandoId((atual) => (atual === bloco.id ? null : atual));
+                    if (sujo) salvar();
+                  }}
+                  onKeyDown={(e) => aoTeclar(e, bloco, index)}
+                  placeholder={bloco.tipo === "texto" ? "" : "Item"}
+                  className={`${classeTexto(bloco)} outline-none border-none placeholder:text-slate-600`}
+                />
+              )}
+
               <button
                 type="button"
-                onClick={() => alternarConcluido(bloco.id)}
-                className={bloco.concluido ? "text-[#5DA832] shrink-0" : "text-slate-600 hover:text-slate-400 shrink-0"}
+                onClick={() => removerBloco(bloco.id)}
+                className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-rose-400 transition-opacity shrink-0 ml-2.5"
               >
-                {bloco.concluido ? <CheckSquare className="h-[18px] w-[18px]" /> : <Square className="h-[18px] w-[18px]" />}
+                <X className="h-3.5 w-3.5" />
               </button>
-            )}
-            {linkAtivo ? (
-              <a
-                href={bloco.texto.trim()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex-1 min-w-0 break-all text-[13.5px] underline decoration-[#5DA832]/40 underline-offset-2 hover:decoration-[#5DA832] ${
-                  bloco.concluido ? "text-slate-500 line-through" : "text-[#6fc23b]"
-                }`}
-              >
-                {bloco.texto}
-              </a>
-            ) : (
-              <input
-                ref={(el) => { inputsRef.current[bloco.id] = el; }}
-                value={bloco.texto}
-                onChange={(e) => atualizarTexto(bloco.id, e.target.value)}
-                onBlur={() => {
-                  if (sujo) salvar();
-                  // Volta a exibir como link (se for o caso) assim que o campo perde o foco
-                  setEditandoLinkId(null);
-                }}
-                onKeyDown={(e) => aoTeclar(e, bloco, index)}
-                placeholder={bloco.tipo === "texto" ? "" : "Item"}
-                className={`flex-1 min-w-0 bg-transparent text-[13.5px] outline-none border-none placeholder:text-slate-600 ${
-                  bloco.concluido ? "text-slate-500 line-through" : "text-white"
-                }`}
-              />
-            )}
-            {linkAtivo && (
-              <button
-                type="button"
-                onClick={() => { setEditandoLinkId(bloco.id); setFocoPendente(bloco.id); }}
-                className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-slate-300 transition-opacity shrink-0 ml-2.5"
-                title="Editar link"
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => removerBloco(bloco.id)}
-              className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-rose-400 transition-opacity shrink-0 ml-2.5"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </div>
+            </div>
           );
         })}
 
