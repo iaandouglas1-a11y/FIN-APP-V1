@@ -4,7 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
   ArrowUpRight,
-  StickyNote,
+  Wallet,
   MoreHorizontal,
   Plus,
 } from "lucide-react";
@@ -23,15 +23,14 @@ interface BottomNavProps {
   onQuickAddClick: () => void;
 }
 
-// Itens principais exibidos na barra inferior (Faturas e Contas foram para o
-// menu "Mais" pra abrir espaço pro botão de ação rápida central e pro atalho
-// de Notas).
+// Itens fixos exibidos na barra inferior. A sequência é intencional: início,
+// movimentos, ação rápida, bancos e acesso ao drawer de módulos.
 const primaryItems: BottomNavItem[] = [
   { href: "/dashboard", label: "Início", icon: LayoutDashboard },
   { href: "/movimentacoes", label: "Movimentos", icon: ArrowUpRight },
 ];
 const trailingItems: BottomNavItem[] = [
-  { href: "/notas", label: "Notas", icon: StickyNote },
+  { href: "/contas", label: "Bancos", icon: Wallet },
 ];
 
 function NavItem({ item, isActive }: { item: BottomNavItem; isActive: boolean }) {
@@ -60,7 +59,7 @@ function NavItem({ item, isActive }: { item: BottomNavItem; isActive: boolean })
 export function BottomNav({ onMoreClick, onQuickAddClick }: BottomNavProps) {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname?.startsWith(`${href}/`);
-  const isMoreActive = ["/faturas", "/orcamento", "/dividas", "/investimentos", "/contas", "/honorarios", "/clientes", "/categorias"].some(isActive);
+  const isMoreActive = ["/investimentos", "/orcamento", "/faturas", "/dividas", "/honorarios", "/clientes", "/notas", "/categorias"].some(isActive);
 
   return (
     <nav className="md:hidden fixed z-50 w-full px-4 bottom-[max(10px,env(safe-area-inset-bottom))]">

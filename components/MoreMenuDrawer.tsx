@@ -2,7 +2,7 @@
 
 import {
   Receipt, Users, HandCoins, TrendingDown,
-  TrendingUp, Tags, Wallet, PiggyBank,
+  TrendingUp, Tags, PiggyBank, StickyNote,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -15,32 +15,31 @@ interface MoreMenuDrawerProps {
   onClose: () => void;
 }
 
-// Módulos secundários acessíveis pelo botão "Mais" — agrupados por seção
-// (Financeiro / Prática Profissional / Sistema), grade 4 colunas dentro de
-// cada grupo, cada item com IconChip colorido (consistente com os esboços de tela).
+// Módulos secundários acessíveis pelo botão "Mais", agrupados na ordem definida
+// para o produto. Bancos permanece como atalho fixo na barra inferior.
 type SecondaryNavItem = { href: string; label: string; icon: any; tone: IconTone };
 
 const secondaryNavGroups: { label: string; items: SecondaryNavItem[] }[] = [
   {
     label: "Financeiro",
     items: [
-      { href: "/contas", label: "Contas", icon: Wallet, tone: "blue" },
-      { href: "/faturas", label: "Faturas", icon: Receipt, tone: "amber" },
+      { href: "/investimentos", label: "Investimentos", icon: TrendingUp, tone: "purple" },
       { href: "/orcamento", label: "Orçamento", icon: PiggyBank, tone: "green" },
+      { href: "/faturas", label: "Faturas", icon: Receipt, tone: "amber" },
       { href: "/dividas", label: "Dívidas", icon: TrendingDown, tone: "red" },
-      { href: "/investimentos", label: "Investim.", icon: TrendingUp, tone: "purple" },
     ],
   },
   {
-    label: "Prática profissional",
+    label: "Profissional",
     items: [
       { href: "/honorarios", label: "Honorários", icon: HandCoins, tone: "green" },
       { href: "/clientes", label: "Clientes", icon: Users, tone: "blue" },
     ],
   },
   {
-    label: "Sistema",
+    label: "Sistema e diversos",
     items: [
+      { href: "/notas", label: "Notas", icon: StickyNote, tone: "blue" },
       { href: "/categorias", label: "Categorias", icon: Tags, tone: "amber" },
     ],
   },
