@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import {
   ChevronLeft, Pin, Trash2, Archive, ArchiveRestore,
   Plus, X, Check, Square, CheckSquare, Type,
@@ -86,7 +87,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
     setFocoPendente(id);
   }
 
-  function salvar(nextTitulo = titulo, nextBlocos = blocos) {
+  function salvar(nextTitulo = titulo, nextBlocos = blocos, feedback = false) {
     const fd = new FormData();
     fd.set("id", nota.id);
     fd.set("titulo", nextTitulo);
@@ -94,6 +95,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
     startTransition(async () => {
       await saveNota(fd);
       setSujo(false);
+      if (feedback) toast.success("Nota salva com sucesso");
     });
   }
 
@@ -299,7 +301,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
       <div className="pt-3 border-t border-surface-border/40 flex justify-end">
         <button
           type="button"
-          onClick={() => salvar()}
+          onClick={() => salvar(titulo, blocos, true)}
           disabled={salvando}
           className="inline-flex items-center gap-1.5 h-11 px-4 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] disabled:opacity-40 disabled:cursor-not-allowed text-[#0A0A0A] text-xs font-semibold transition-all duration-200"
         >

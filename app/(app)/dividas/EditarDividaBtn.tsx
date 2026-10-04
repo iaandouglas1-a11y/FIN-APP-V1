@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Pencil, X, Save } from "lucide-react";
+import { toast } from "sonner";
 import { saveDivida } from "@/app/(app)/actions_dividas";
 import { Input, Select, Button, FormGroup } from "@/components/ui";
 
@@ -46,7 +47,14 @@ export default function EditarDividaBtn({ divida, categorias }: Props) {
           </button>
         </div>
 
-        <form action={saveDivida} className="p-6 space-y-4">
+        <form
+          action={async (formData) => {
+            await saveDivida(formData);
+            setIsEditing(false);
+            toast.success("Dívida salva com sucesso");
+          }}
+          className="p-6 space-y-4"
+        >
           <input type="hidden" name="id" value={divida.id} />
           
           <div className="grid grid-cols-2 gap-4">

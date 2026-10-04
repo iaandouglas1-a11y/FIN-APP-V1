@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Pencil, X } from "lucide-react";
+import { toast } from "sonner";
 import { FormGroup, Input, Select } from "@/components/ui";
 
 const supabase = createClient(
@@ -49,6 +50,7 @@ export function EditarFinancialForm({ items, onClose, onSaved }: Props) {
     setLoading(false);
 
     if (!e1 && !e2) {
+      toast.success("Alterações salvas com sucesso");
       onSaved?.();
     } else {
       console.error("Erro update dual:", e1 || e2);

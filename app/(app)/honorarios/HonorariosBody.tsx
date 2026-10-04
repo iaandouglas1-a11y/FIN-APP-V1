@@ -291,12 +291,12 @@ export default function HonorariosBody({
               const s = statusColors[h.status as keyof typeof statusColors];
 
               return (
-                <div key={h.id} className="bg-surface/50 border border-surface-border/40 rounded-[18px] p-4 sm:p-5">
-                  <h3 className="font-semibold text-white text-[15px] leading-snug break-words">{h.clienteNome}</h3>
+                <div key={h.id} className="bg-surface/50 border border-surface-border/40 rounded-[18px] p-4 sm:p-5 -mx-2 sm:-mx-3">
+                  <h3 className="font-semibold text-white text-[17px] sm:text-lg leading-snug break-words">{h.clienteNome}</h3>
 
                   <div className="mt-3 flex items-end justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="num text-xl sm:text-2xl font-semibold tracking-tight text-white">{currency(Number(h.valor))}</p>
+                      <p className="num text-[15px] sm:text-base font-semibold tracking-tight text-white">{currency(Number(h.valor))}</p>
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap text-xs text-slate-500">
                         <span>{h.vencimentoLabel} · Honorário {h.competenciaLabel}</span>
                       </div>
@@ -305,10 +305,6 @@ export default function HonorariosBody({
                       {s.label}
                     </span>
                   </div>
-                  {h.observacao && (
-                    <p className="text-xs text-slate-500 mt-2">{h.observacao}</p>
-                  )}
-
                   {/* Ações */}
                   <div className="flex items-center gap-2.5 mt-4 pt-3.5 border-t border-surface-border/30">
                     {h.status !== "pago" && (
@@ -338,7 +334,7 @@ export default function HonorariosBody({
                         type="submit"
                         aria-label={`Excluir honorário de ${h.clienteNome}`}
                         title="Excluir honorário"
-                        className="h-10 w-10 inline-flex items-center justify-center rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-200"
+                        className="h-9 w-9 inline-flex items-center justify-center rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-200"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

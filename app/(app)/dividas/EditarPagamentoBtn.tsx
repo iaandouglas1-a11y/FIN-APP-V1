@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Pencil, X, Save } from "lucide-react";
+import { toast } from "sonner";
 import { savePagamento } from "@/app/(app)/actions_dividas";
 import { Input, Select, Button, FormGroup } from "@/components/ui";
 
@@ -47,7 +48,14 @@ export default function EditarPagamentoBtn({ pagamento, contas, categorias }: Pr
           </button>
         </div>
 
-        <form action={savePagamento} className="p-6 space-y-4">
+        <form
+          action={async (formData) => {
+            await savePagamento(formData);
+            setIsEditing(false);
+            toast.success("Pagamento salvo com sucesso");
+          }}
+          className="p-6 space-y-4"
+        >
           <input type="hidden" name="id" value={pagamento.id} />
           
           <div className="grid grid-cols-2 gap-4">

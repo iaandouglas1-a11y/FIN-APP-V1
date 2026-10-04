@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { createClient } from "@supabase/supabase-js"
+import { toast } from "sonner"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -57,6 +58,7 @@ async function handleSave() {
 
   if (!e1 && !e2) {
     setOpen(false)
+    toast.success("Alterações salvas com sucesso")
   } else {
     console.error("Erro update dual:", e1 || e2)
   }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Pencil, Copy, X, Check } from "lucide-react";
+import { toast } from "sonner";
 import { saveMovimentacao } from "@/app/(app)/actions";
 import { duplicarMovimentacao } from "@/app/(app)/actions_movimentacoes";
 import { FormGroup, Input, Select } from "@/components/ui";
@@ -60,7 +61,14 @@ export default function EditarMovimentacaoBtn({ mov, categorias, contas, cartoes
           </button>
         </div>
 
-        <form action={saveMovimentacao} className="p-6 space-y-3">
+        <form
+          action={async (formData) => {
+            await saveMovimentacao(formData);
+            setAberto(false);
+            toast.success("Movimentação salva com sucesso");
+          }}
+          className="p-6 space-y-3"
+        >
           <input type="hidden" name="id" value={mov.id} />
 
           <div className="grid grid-cols-2 gap-3">

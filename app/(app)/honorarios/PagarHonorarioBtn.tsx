@@ -76,7 +76,7 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
         <button
           type="button"
           onClick={() => setAberto(true)}
-          className="h-10 flex items-center gap-1.5 px-4 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-semibold transition-all duration-200 active:scale-95"
+          className="h-9 flex items-center gap-1.5 px-4 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-semibold transition-all duration-200 active:scale-95"
         >
           <HandCoins className="h-3.5 w-3.5" />
           Receber

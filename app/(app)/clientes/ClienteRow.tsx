@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Trash2, ChevronDown, ChevronUp, Eye, EyeOff, RotateCcw, UserX, Pencil, X, Save } from "lucide-react";
+import { toast } from "sonner";
 import type { Cliente } from "@/types/database";
 import { FormGroup, Input } from "@/components/ui";
 
@@ -65,6 +66,7 @@ export default function ClienteRow({
               action={async (formData) => {
                 await saveCliente(formData);
                 setEditando(false);
+                toast.success("Cliente salvo com sucesso");
               }}
               className="space-y-2 mt-3"
             >

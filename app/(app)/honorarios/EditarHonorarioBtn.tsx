@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Pencil, X, Save } from "lucide-react";
+import { toast } from "sonner";
 import { saveHonorario } from "@/app/(app)/actions_honorarios";
 import { Input, Select, Button, FormGroup } from "@/components/ui";
 
@@ -27,7 +28,7 @@ export default function EditarHonorarioBtn({ honorario, clientes }: Props) {
         onClick={() => setIsEditing(true)}
         aria-label={`Editar honorário de ${honorario.id}`}
         title="Editar honorário"
-        className="h-10 w-10 inline-flex items-center justify-center text-slate-500 hover:text-[#5DA832] hover:bg-[#5DA832]/10 rounded-xl transition-colors"
+        className="h-9 w-9 inline-flex items-center justify-center text-slate-500 hover:text-[#5DA832] hover:bg-[#5DA832]/10 rounded-xl transition-colors"
       >
         <Pencil className="h-4 w-4" />
       </button>
@@ -47,7 +48,14 @@ export default function EditarHonorarioBtn({ honorario, clientes }: Props) {
           </button>
         </div>
 
-        <form action={saveHonorario} className="p-6 space-y-4">
+        <form
+          action={async (formData) => {
+            await saveHonorario(formData);
+            setIsEditing(false);
+            toast.success("Honorário salvo com sucesso");
+          }}
+          className="p-6 space-y-4"
+        >
           <input type="hidden" name="id" value={honorario.id} />
 
           <FormGroup label="Cliente">

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp, TrendingUp, TrendingDown, Trash2, Pencil } from "lucide-react";
+import { toast } from "sonner";
 import { currency, dateBR } from "@/lib/format";
 import { deleteMovimento, deleteInvestimento, atualizarValorAtual } from "@/app/(app)/actions_investimentos";
 import { IconChip, Badge } from "@/components/ui";
@@ -113,7 +114,14 @@ export default function InvestimentoAccordion({ id, nome, tipo, subcategoria, ti
                 Atualizar valor atual
               </button>
             ) : (
-              <form action={atualizarValorAtual} className="flex items-center gap-2">
+              <form
+                action={async (formData) => {
+                  await atualizarValorAtual(formData);
+                  setEditando(false);
+                  toast.success("Investimento salvo com sucesso");
+                }}
+                className="flex items-center gap-2"
+              >
                 <input type="hidden" name="id" value={id} />
                 <input
                   type="number"

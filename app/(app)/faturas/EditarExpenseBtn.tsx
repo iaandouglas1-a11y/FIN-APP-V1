@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Pencil, Copy, Trash2, X, Check } from "lucide-react";
+import { toast } from "sonner";
 import { saveMovimentacao, deleteMovimentacao } from "@/app/(app)/actions";
 import { duplicarMovimentacao } from "@/app/(app)/actions_movimentacoes";
 import { FormGroup, Input, Select } from "@/components/ui";
@@ -54,7 +55,14 @@ export default function EditarExpenseBtn({ exp, categorias, contas, cartoes, fat
 
   return (
     <div className="mt-2 p-3 bg-[#141414]/80 border border-[#5DA832]/20 rounded-xl space-y-2">
-      <form action={saveMovimentacao} className="space-y-2">
+      <form
+        action={async (formData) => {
+          await saveMovimentacao(formData);
+          setModo(null);
+          toast.success("Despesa salva com sucesso");
+        }}
+        className="space-y-2"
+      >
         <input type="hidden" name="id" value={exp.id} />
         <input type="hidden" name="tipo" value="despesa" />
         <input type="hidden" name="status" value={exp.status ?? "realizado"} />

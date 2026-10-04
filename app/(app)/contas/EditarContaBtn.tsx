@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Pencil, Check, X } from "lucide-react";
+import { toast } from "sonner";
 import { saveConta } from "@/app/(app)/actions";
 import { Input, FormGroup, Select } from "@/components/ui";
 
@@ -28,7 +29,14 @@ export default function EditarContaBtn({ id, nome, tipo }: Props) {
   }
 
   return (
-    <form action={saveConta} className="space-y-2 pt-2 border-t border-surface-border/40">
+    <form
+      action={async (formData) => {
+        await saveConta(formData);
+        setAberto(false);
+        toast.success("Conta salva com sucesso");
+      }}
+      className="space-y-2 pt-2 border-t border-surface-border/40"
+    >
       <input type="hidden" name="id" value={id} />
 
       <FormGroup label="Nome">

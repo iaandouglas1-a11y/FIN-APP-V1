@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Pencil, X, Save } from "lucide-react";
+import { toast } from "sonner";
 import { saveOrcamentoItem } from "@/app/(app)/actions_orcamento";
 import { Input, Select, Button, FormGroup } from "@/components/ui";
 
@@ -52,6 +53,7 @@ export default function EditarOrcamentoItemBtn({ item, categorias, competencia }
           action={async (formData) => {
             await saveOrcamentoItem(formData);
             setIsEditing(false);
+            toast.success("Item de orçamento salvo com sucesso");
           }}
           className="p-6 space-y-4"
         >
