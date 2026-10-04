@@ -76,10 +76,10 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
         <button
           type="button"
           onClick={() => setAberto(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all duration-200 active:scale-95"
+          className="h-10 flex items-center gap-1.5 px-4 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-semibold transition-all duration-200 active:scale-95"
         >
           <HandCoins className="h-3.5 w-3.5" />
-          Marcar como pago
+          Receber
         </button>
       ) : (
         <div className="w-full sm:w-auto p-3 rounded-xl bg-[#141414] border border-[#5DA832]/40 space-y-2">

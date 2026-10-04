@@ -40,6 +40,7 @@ export default async function HonorariosPage() {
       ...h,
       clienteNome: clienteInfo?.nome ?? "Cliente removido",
       competenciaLabel: formatCompetencia(h.competencia),
+      vencimentoLabel: formatCompetencia(h.vencimento),
       isAtrasado,
       isPendente,
       status: h.pago ? "pago" : isAtrasado ? "atrasado" : "pendente",

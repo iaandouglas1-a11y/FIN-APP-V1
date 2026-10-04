@@ -25,10 +25,11 @@ export default function EditarHonorarioBtn({ honorario, clientes }: Props) {
       <button
         type="button"
         onClick={() => setIsEditing(true)}
-        className="p-1.5 text-slate-600 hover:text-[#5DA832] rounded transition-colors"
+        aria-label={`Editar honorário de ${honorario.id}`}
         title="Editar honorário"
+        className="h-10 w-10 inline-flex items-center justify-center text-slate-500 hover:text-[#5DA832] hover:bg-[#5DA832]/10 rounded-xl transition-colors"
       >
-        <Pencil className="h-3.5 w-3.5" />
+        <Pencil className="h-4 w-4" />
       </button>
     );
   }

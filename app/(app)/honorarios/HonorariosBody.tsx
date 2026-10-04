@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Plus, X, User, Pencil, Trash2 } from "lucide-react";
+import { Plus, X, Trash2 } from "lucide-react";
 import { Card, FormGroup, Input, Select } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { saveHonorario, deleteHonorario } from "@/app/(app)/actions_honorarios";
@@ -291,28 +291,26 @@ export default function HonorariosBody({
               const s = statusColors[h.status as keyof typeof statusColors];
 
               return (
-                <div key={h.id} className="bg-surface/50 border border-surface-border/40 rounded-xl p-4">
-                  <div className="flex items-start gap-3 mb-2">
-                    <div className={`h-10 w-10 rounded-xl ${s.bg} flex items-center justify-center shrink-0 ${s.text}`}>
-                      <User className="h-5 w-5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-white text-sm">{h.clienteNome}</h3>
-                      <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        <span className="text-xs text-slate-500">{h.competenciaLabel}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded font-semibold ${s.bg} ${s.text}`}>
-                          {s.label}
-                        </span>
+                <div key={h.id} className="bg-surface/50 border border-surface-border/40 rounded-[18px] p-4 sm:p-5">
+                  <h3 className="font-semibold text-white text-[15px] leading-snug break-words">{h.clienteNome}</h3>
+
+                  <div className="mt-3 flex items-end justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="num text-xl sm:text-2xl font-semibold tracking-tight text-white">{currency(Number(h.valor))}</p>
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap text-xs text-slate-500">
+                        <span>{h.vencimentoLabel} · Honorário {h.competenciaLabel}</span>
                       </div>
-                      {h.observacao && (
-                        <p className="text-xs text-slate-500 mt-1">{h.observacao}</p>
-                      )}
                     </div>
-                    <p className="text-sm font-semibold text-white shrink-0">{currency(Number(h.valor))}</p>
+                    <span className={`shrink-0 text-xs px-2.5 py-1 rounded-lg font-semibold ${s.bg} ${s.text}`}>
+                      {s.label}
+                    </span>
                   </div>
+                  {h.observacao && (
+                    <p className="text-xs text-slate-500 mt-2">{h.observacao}</p>
+                  )}
 
                   {/* Ações */}
-                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-surface-border/30">
+                  <div className="flex items-center gap-2.5 mt-4 pt-3.5 border-t border-surface-border/30">
                     {h.status !== "pago" && (
                       <PagarHonorarioBtn
                         honorarioId={h.id}
@@ -338,10 +336,11 @@ export default function HonorariosBody({
                       <input type="hidden" name="id" value={h.id} />
                       <button
                         type="submit"
-                        className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-200"
+                        aria-label={`Excluir honorário de ${h.clienteNome}`}
+                        title="Excluir honorário"
+                        className="h-10 w-10 inline-flex items-center justify-center rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-200"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        Excluir
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </form>
                   </div>
