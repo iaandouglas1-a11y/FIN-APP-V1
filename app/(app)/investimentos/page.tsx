@@ -145,17 +145,17 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
       {/* Hero: patrimônio + rentabilidade — reflete o período filtrado quando houver */}
       <div className="glass-card p-6 flex items-end justify-between gap-4">
         <div>
-          <div className="text-[11px] font-bold uppercase tracking-widest text-ink-secondary">Patrimônio investido</div>
-          <div className="num text-[32px] leading-tight font-extrabold tracking-tight text-ink-primary mt-1.5">{currency(patrimonio)}</div>
+          <div className="text-[11px] font-semibold text-ink-secondary">Patrimônio investido</div>
+          <div className="num text-[32px] leading-tight font-semibold tracking-tight text-ink-primary mt-1.5">{currency(patrimonio)}</div>
           {filtroAtivo && (
-            <div className="text-[10px] text-ink-tertiary mt-1">
+            <div className="text-[11px] text-ink-tertiary mt-1">
               {saldoPeriodo !== null ? `Saldo registrado até ${dateBR(dataCorte!)}` : "Nenhum saldo registrado até este período"}
             </div>
           )}
         </div>
         <div className="text-right shrink-0">
-          <div className="text-[10px] font-bold uppercase tracking-wide text-ink-secondary">Rentabilidade</div>
-          <div className={`num text-base font-extrabold mt-1 ${positivo ? "text-[#6fc23b]" : "text-[#f87171]"}`}>
+          <div className="text-[11px] font-semibold text-ink-secondary">Rentabilidade</div>
+          <div className={`num text-base font-semibold mt-1 ${positivo ? "text-[#8FCB5E]" : "text-[#f87171]"}`}>
             {positivo ? "+" : ""}{rentabilidade.toFixed(2)}%
           </div>
         </div>
@@ -179,7 +179,7 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
                 href={`/investimentos?inicio=${r.inicio}&fim=${r.fim}`}
                 className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
                   isActive
-                    ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                    ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#8FCB5E]"
                     : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
                 }`}
               >
@@ -204,11 +204,11 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
             <Filter className="h-3.5 w-3.5" />
           </summary>
           <form className="absolute right-0 top-10 z-20 w-64 p-3.5 rounded-xl bg-surface border border-surface-border shadow-navy space-y-2.5">
-            <p className="text-[10px] font-bold uppercase tracking-wide text-ink-tertiary">Período personalizado</p>
+            <p className="text-[11px] font-semibold text-ink-tertiary">Período personalizado</p>
             <div className="flex items-center gap-1.5">
-              <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-9 flex-1 min-w-0 text-xs" />
-              <span className="text-slate-600 text-[10px] shrink-0">até</span>
-              <Input type="date" name="fim" defaultValue={sp.fim} className="h-9 flex-1 min-w-0 text-xs" />
+              <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-11 flex-1 min-w-0 text-xs" />
+              <span className="text-slate-600 text-[11px] shrink-0">até</span>
+              <Input type="date" name="fim" defaultValue={sp.fim} className="h-11 flex-1 min-w-0 text-xs" />
             </div>
             <Button type="submit" variant="secondary" className="w-full h-8 text-xs">Aplicar</Button>
           </form>
@@ -222,7 +222,7 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
       {distribuicao.length > 0 && (
         <Card className="border-surface-border/60 p-4">
           <div className="mb-4 pb-3 border-b border-surface-border/50">
-            <h2 className="text-[15px] font-bold text-white">Distribuição da carteira</h2>
+            <h2 className="text-[15px] font-semibold text-white">Distribuição da carteira</h2>
             <p className="text-xs text-ink-tertiary mt-1">Renda fixa x renda variável por valor atual</p>
           </div>
           <CategoryPie data={distribuicao} />
@@ -232,7 +232,7 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
       {/* Gráfico de evolução do patrimônio — exige ao menos 2 meses registrados */}
       <Card className="border-surface-border/60 p-4">
         <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">Evolução do patrimônio</h2>
+          <h2 className="text-[15px] font-semibold text-white">Evolução do patrimônio</h2>
           <p className="text-xs text-ink-tertiary mt-1">Saldo total registrado por mês</p>
         </div>
         {evolutionData.length < 2 ? (
@@ -249,7 +249,7 @@ export default async function InvestimentosPage({ searchParams }: { searchParams
       {/* Carteira */}
       <Card className="border-surface-border/60 p-4">
         <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">Carteira</h2>
+          <h2 className="text-[15px] font-semibold text-white">Carteira</h2>
           <p className="text-xs text-ink-tertiary mt-1">
             {investimentos.length} {investimentos.length === 1 ? "investimento cadastrado" : "investimentos cadastrados"}
           </p>

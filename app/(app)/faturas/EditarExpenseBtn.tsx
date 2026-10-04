@@ -53,7 +53,7 @@ export default function EditarExpenseBtn({ exp, categorias, contas, cartoes, fat
   }
 
   return (
-    <div className="mt-2 p-3 bg-[#161616]/80 border border-[#5DA832]/20 rounded-lg space-y-2">
+    <div className="mt-2 p-3 bg-[#141414]/80 border border-[#5DA832]/20 rounded-xl space-y-2">
       <form action={saveMovimentacao} className="space-y-2">
         <input type="hidden" name="id" value={exp.id} />
         <input type="hidden" name="tipo" value="despesa" />
@@ -70,8 +70,8 @@ export default function EditarExpenseBtn({ exp, categorias, contas, cartoes, fat
           </FormGroup>
           <FormGroup label="Valor">
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">R$</span>
-              <Input name="valor" type="number" step="0.01" defaultValue={exp.valor} required className="pl-8 text-sm font-bold" />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-xs">R$</span>
+              <Input name="valor" type="number" step="0.01" defaultValue={exp.valor} required className="pl-8 text-sm font-semibold" />
             </div>
           </FormGroup>
         </div>
@@ -94,11 +94,11 @@ export default function EditarExpenseBtn({ exp, categorias, contas, cartoes, fat
 
         <div className="flex gap-2">
           <button type="submit"
-            className="flex-1 h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all">
+            className="flex-1 h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all">
             <Check className="h-3.5 w-3.5" /> Salvar
           </button>
           <button type="button" onClick={() => setModo(null)}
-            className="h-9 px-3 inline-flex items-center justify-center rounded-lg border border-surface-border/40 text-slate-500 hover:text-slate-300 text-xs transition-all">
+            className="h-11 px-3 inline-flex items-center justify-center rounded-xl border border-surface-border/40 text-slate-500 hover:text-slate-300 text-xs transition-all">
             <X className="h-3.5 w-3.5" />
           </button>
         </div>

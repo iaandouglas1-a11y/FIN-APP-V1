@@ -10,9 +10,9 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          navy:    "#161616",
-          "navy-light": "#202020",
-          "navy-dark":  "#121212",
+          navy:    "#141414",
+          "navy-light": "#1C1C1C",
+          "navy-dark":  "#0A0A0A",
           green:   "#5DA832",
           "green-light": "#6fc23b",
           "green-dark":  "#4a8828",
@@ -20,9 +20,9 @@ const config: Config = {
         /* Design System 2.0 — superfícies em camadas (bg → surface → surface-2)
            em vez de "glass" com blur em tudo. Ver DESIGN-SYSTEM.md. */
         surface: {
-          DEFAULT: "#161616", // surface
-          2:       "#202020", // surface-2 (elevado / hover)
-          border:  "#2E2E2E",
+          DEFAULT: "#141414", // surface
+          2:       "#1C1C1C", // surface-2 (elevado / hover)
+          border:  "#2A2A2A",
         },
         bg: {
           DEFAULT: "#0A0A0A",
@@ -30,11 +30,11 @@ const config: Config = {
         ink: {
           primary:   "#F5F7FA",
           secondary: "#94A3B8",
-          tertiary:  "#64748B",
+          tertiary:  "#7C8AA0",
         },
         danger: "#F04438",
         warning: "#F5A524",
-        info: "#3E8FF0",
+        info: "#94A3B8",
         /* slate-500 padrão (#64748b) tem apenas ~3.7:1 de contraste sobre o
            fundo #121212 do app — abaixo do mínimo AA (4.5:1) para texto
            pequeno. É usada em quase 100 lugares (labels, legendas, descrições).
@@ -42,10 +42,12 @@ const config: Config = {
         slate: {
           500: "#8b98ac",
         },
+        emerald: { 400: "#8FCB5E", 500: "#5DA832" },
+        rose: { 400: "#F87171", 500: "#F04438", 600: "#DC3A2E" },
       },
       borderRadius: {
-        card: "16px",
-        sheet: "24px",
+        card: "20px",
+        sheet: "28px",
       },
       boxShadow: {
         soft:      "0 8px 24px rgba(22,22,22,.12)",

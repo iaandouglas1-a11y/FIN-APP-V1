@@ -15,7 +15,7 @@ export default function ContaQuickForm() {
         onClick={() => setAberto((v) => !v)}
         className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-[13px] font-semibold border transition-all duration-200 ${
           aberto
-            ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]"
+            ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#8FCB5E]"
             : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
         }`}
       >
@@ -26,7 +26,7 @@ export default function ContaQuickForm() {
       {aberto && (
         <div className="border border-[#5DA832]/30 rounded-xl p-4 bg-[#5DA832]/5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+            <div className="flex items-center gap-2 text-[#5DA832] font-semibold text-xs">
               <Plus className="h-4 w-4" />
               <span>Nova conta</span>
             </div>
@@ -52,7 +52,7 @@ export default function ContaQuickForm() {
 
             <button
               type="submit"
-              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-bold transition-all duration-200"
+              className="w-full h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-semibold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
               Criar conta

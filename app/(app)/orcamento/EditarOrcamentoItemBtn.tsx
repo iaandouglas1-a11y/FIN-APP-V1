@@ -37,9 +37,9 @@ export default function EditarOrcamentoItemBtn({ item, categorias, competencia }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-[#161616] border border-surface-border w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#161616]/50">
-          <h3 className="font-bold text-white flex items-center gap-2">
+      <div className="bg-[#141414] border border-surface-border w-full max-w-md rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#141414]/50">
+          <h3 className="font-semibold text-white flex items-center gap-2">
             <Pencil className="h-4 w-4 text-[#5DA832]" />
             Editar item
           </h3>
@@ -60,15 +60,15 @@ export default function EditarOrcamentoItemBtn({ item, categorias, competencia }
           <input type="hidden" name="competencia" value={competencia.slice(0, 7)} />
 
           <FormGroup label="Descrição">
-            <Input name="descricao" defaultValue={item.descricao} required className="h-9" />
+            <Input name="descricao" defaultValue={item.descricao} required className="h-11" />
           </FormGroup>
 
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="Valor">
-              <Input name="valor" type="number" step="0.01" min="0.01" defaultValue={item.valor} required className="h-9" />
+              <Input name="valor" type="number" step="0.01" min="0.01" defaultValue={item.valor} required className="h-11" />
             </FormGroup>
             <FormGroup label="Recorrência">
-              <Select name="subtipo" defaultValue={item.subtipo} required className="h-9">
+              <Select name="subtipo" defaultValue={item.subtipo} required className="h-11">
                 <option value="fixo">Fixo</option>
                 <option value="variavel">Variável</option>
               </Select>
@@ -77,10 +77,10 @@ export default function EditarOrcamentoItemBtn({ item, categorias, competencia }
 
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="Dia de referência">
-              <Input name="dia_referencia" type="number" min="1" max="31" step="1" defaultValue={item.dia_referencia} required className="h-9" />
+              <Input name="dia_referencia" type="number" min="1" max="31" step="1" defaultValue={item.dia_referencia} required className="h-11" />
             </FormGroup>
             <FormGroup label="Categoria">
-              <Select name="categoria_id" defaultValue={item.categoria_id ?? ""} className="h-9">
+              <Select name="categoria_id" defaultValue={item.categoria_id ?? ""} className="h-11">
                 <option value="">Sem categoria</option>
                 {categorias.map((c) => (
                   <option key={c.id} value={c.id}>{c.nome}</option>

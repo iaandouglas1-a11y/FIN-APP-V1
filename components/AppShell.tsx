@@ -8,7 +8,7 @@ import {
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 import Link from "next/link";
-import Image from "next/image";
+import { OnfinLogo, OnfinTile } from "./OnfinLogo";
 import { BottomNav } from "./BottomNav";
 import { MoreMenuDrawer } from "./MoreMenuDrawer";
 import { QuickActionSheet } from "./QuickActionSheet";
@@ -55,16 +55,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           "flex items-center gap-3 group cursor-pointer",
           !isSidebarOpen && "md:justify-center md:gap-0"
         )}>
-          <div className="h-9 w-10 rounded-xl overflow-hidden shrink-0">
-            <Image src="/icon-512.png" alt="On Finanças" width={40} height={40} className="rounded-xl" />
-          </div>
-          <div className={clsx(
-            "transition-all duration-300 overflow-hidden",
-            !isSidebarOpen && "md:w-0 md:opacity-0"
-          )}>
-            <span className="text-base font-bold text-white tracking-tight">On Finanças</span>
-            <p className="text-[10px] text-[#5DA832]/80 font-medium">Gestão Financeira</p>
-          </div>
+          {isSidebarOpen ? (
+            <OnfinLogo variant="horizontal" className="h-9 w-auto" />
+          ) : (
+            <OnfinTile size={40} />
+          )}
         </div>
       </div>
 
@@ -72,7 +67,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {navItems.map((group) => (
           <div key={group.group}>
             <p className={clsx(
-              "text-[10px] font-black uppercase tracking-[0.15em] text-[#5DA832]/50 mb-3 px-3 transition-all duration-300",
+              "text-[11px] font-semibold text-[#5DA832]/50 mb-3 px-3 transition-all duration-300",
               !isSidebarOpen && "md:opacity-0 md:w-0"
             )}>
               {group.group}
@@ -89,7 +84,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                       "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group/nav relative overflow-hidden",
                       !isSidebarOpen && "md:justify-center md:px-0 md:gap-0",
                       isActive
-                        ? "bg-[#5DA832]/15 text-[#6fc23b] border border-[#5DA832]/30"
+                        ? "bg-[#5DA832]/15 text-[#8FCB5E] border border-[#5DA832]/30"
                         : "text-slate-400 hover:bg-surface-2/60 hover:text-slate-200 border border-transparent hover:border-surface-border/40"
                     )}
                     title={!isSidebarOpen ? item.label : undefined}

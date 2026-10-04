@@ -110,15 +110,15 @@ export default async function OrcamentoPage({ searchParams }: { searchParams: Pr
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between px-1">
-        <h1 className="text-[22px] font-bold text-ink-primary tracking-tight">Orçamento</h1>
+        <h1 className="text-[22px] font-semibold text-ink-primary tracking-tight">Orçamento</h1>
 
         <details className="relative shrink-0">
           <summary className="list-none cursor-pointer w-8 h-8 rounded-full bg-surface border border-surface-border/50 flex items-center justify-center text-ink-tertiary hover:text-ink-primary transition-colors">
             <Filter className="h-3.5 w-3.5" />
           </summary>
           <form className="absolute right-0 top-10 z-20 w-64 p-3.5 rounded-xl bg-surface border border-surface-border shadow-navy space-y-2.5">
-            <p className="text-[10px] font-bold uppercase tracking-wide text-ink-tertiary">Ir para o mês</p>
-            <Input type="month" name="mes" defaultValue={competencia.slice(0, 7)} className="h-9 text-xs" />
+            <p className="text-[11px] font-semibold text-ink-tertiary">Ir para o mês</p>
+            <Input type="month" name="mes" defaultValue={competencia.slice(0, 7)} className="h-11 text-xs" />
             <Button type="submit" variant="secondary" className="w-full h-8 text-xs">Aplicar</Button>
           </form>
         </details>
@@ -132,7 +132,7 @@ export default async function OrcamentoPage({ searchParams }: { searchParams: Pr
         >
           <ChevronLeft className="h-3.5 w-3.5" />
         </a>
-        <div className="flex-1 text-center px-3 py-1.5 rounded-full text-[12.5px] font-semibold border bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]">
+        <div className="flex-1 text-center px-3 py-1.5 rounded-full text-[12.5px] font-semibold border bg-[#5DA832]/15 border-[#5DA832]/35 text-[#8FCB5E]">
           {labelCompetencia(competencia)}
         </div>
         <a

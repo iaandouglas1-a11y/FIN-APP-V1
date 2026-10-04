@@ -35,9 +35,9 @@ export default function EditarHonorarioBtn({ honorario, clientes }: Props) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-[#161616] border border-surface-border w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#161616]/50">
-          <h3 className="font-bold text-white flex items-center gap-2">
+      <div className="bg-[#141414] border border-surface-border w-full max-w-md rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#141414]/50">
+          <h3 className="font-semibold text-white flex items-center gap-2">
             <Pencil className="h-4 w-4 text-[#5DA832]" />
             Editar Honorário
           </h3>
@@ -50,7 +50,7 @@ export default function EditarHonorarioBtn({ honorario, clientes }: Props) {
           <input type="hidden" name="id" value={honorario.id} />
 
           <FormGroup label="Cliente">
-            <Select name="cliente_id" defaultValue={honorario.cliente_id} required className="h-9">
+            <Select name="cliente_id" defaultValue={honorario.cliente_id} required className="h-11">
               {clientes.map((c) => (
                 <option key={c.id} value={c.id}>{c.nome}</option>
               ))}
@@ -64,20 +64,20 @@ export default function EditarHonorarioBtn({ honorario, clientes }: Props) {
                 type="month"
                 defaultValue={honorario.competencia.slice(0, 7)}
                 required
-                className="h-9"
+                className="h-11"
               />
             </FormGroup>
             <FormGroup label="Valor">
-              <Input name="valor" type="number" step="0.01" min="0" defaultValue={honorario.valor} required className="h-9" />
+              <Input name="valor" type="number" step="0.01" min="0" defaultValue={honorario.valor} required className="h-11" />
             </FormGroup>
           </div>
 
           <FormGroup label="Vencimento">
-            <Input name="vencimento" type="date" defaultValue={honorario.vencimento} required className="h-9" />
+            <Input name="vencimento" type="date" defaultValue={honorario.vencimento} required className="h-11" />
           </FormGroup>
 
           <FormGroup label="Observação">
-            <Input name="observacao" defaultValue={honorario.observacao || ""} placeholder="Ex: Honorário contábil..." className="h-9" />
+            <Input name="observacao" defaultValue={honorario.observacao || ""} placeholder="Ex: Honorário contábil..." className="h-11" />
           </FormGroup>
 
           <div className="pt-4 flex gap-3">

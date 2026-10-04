@@ -13,7 +13,7 @@ interface QuickActionSheetProps {
 const actions: { label: string; href: string; icon: any; tone: IconTone }[] = [
   { label: "Nova receita", href: "/movimentacoes?tipo=receita#lancamento", icon: ArrowUpRight, tone: "green" },
   { label: "Nova despesa", href: "/movimentacoes?tipo=despesa#lancamento", icon: ArrowDownLeft, tone: "red" },
-  { label: "Transferir entre contas", href: "/movimentacoes?acao=transferencia#lancamento", icon: Repeat, tone: "blue" },
+  { label: "Transferir entre contas", href: "/movimentacoes?acao=transferencia#lancamento", icon: Repeat, tone: "gray" },
   { label: "Pagar fatura", href: "/faturas", icon: Receipt, tone: "amber" },
 ];
 

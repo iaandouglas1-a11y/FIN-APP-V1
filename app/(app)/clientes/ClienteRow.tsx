@@ -30,7 +30,7 @@ export default function ClienteRow({
         className="w-full flex items-center gap-3 px-4 py-3 hover:bg-surface-2/30 transition-colors duration-150 text-left"
       >
         {/* Avatar */}
-        <div className={`h-8 w-8 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 ${
+        <div className={`h-8 w-8 rounded-xl flex items-center justify-center font-semibold text-sm shrink-0 ${
           ativo ? "bg-[#5DA832]/15 text-[#5DA832]" : "bg-slate-700/20 text-slate-500"
         }`}>
           {cliente.nome.charAt(0).toUpperCase()}
@@ -87,7 +87,7 @@ export default function ClienteRow({
               <div className="flex gap-2 pt-1">
                 <button
                   type="submit"
-                  className="flex-1 h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-xs font-bold transition-all duration-200"
+                  className="flex-1 h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-xs font-semibold transition-all duration-200"
                 >
                   <Save className="h-3.5 w-3.5" />
                   Salvar
@@ -95,7 +95,7 @@ export default function ClienteRow({
                 <button
                   type="button"
                   onClick={() => setEditando(false)}
-                  className="h-9 px-3 inline-flex items-center justify-center rounded-lg border border-surface-border/40 text-slate-500 hover:text-slate-300 text-xs transition-all duration-200"
+                  className="h-11 px-3 inline-flex items-center justify-center rounded-xl border border-surface-border/40 text-slate-500 hover:text-slate-300 text-xs transition-all duration-200"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -106,25 +106,25 @@ export default function ClienteRow({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
 
                 {/* CPF */}
-                <div className="bg-surface/80 rounded-lg p-3 border border-surface-border/40">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">CPF</p>
+                <div className="bg-surface/80 rounded-xl p-3 border border-surface-border/40">
+                  <p className="text-[11px] font-semibold text-slate-500 mb-1">CPF</p>
                   <p className="text-sm text-slate-200 font-medium">
                     {cliente.cpf || <span className="text-slate-600 italic">Não informado</span>}
                   </p>
                 </div>
 
                 {/* CNPJ */}
-                <div className="bg-surface/80 rounded-lg p-3 border border-surface-border/40">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">CNPJ</p>
+                <div className="bg-surface/80 rounded-xl p-3 border border-surface-border/40">
+                  <p className="text-[11px] font-semibold text-slate-500 mb-1">CNPJ</p>
                   <p className="text-sm text-slate-200 font-medium">
                     {cliente.cnpj || <span className="text-slate-600 italic">Não informado</span>}
                   </p>
                 </div>
 
                 {/* Senha Gov */}
-                <div className="bg-surface/80 rounded-lg p-3 border border-surface-border/40">
+                <div className="bg-surface/80 rounded-xl p-3 border border-surface-border/40">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Senha Gov</p>
+                    <p className="text-[11px] font-semibold text-slate-500">Senha Gov</p>
                     {cliente.senha_gov && (
                       <button
                         type="button"
@@ -138,7 +138,7 @@ export default function ClienteRow({
                       </button>
                     )}
                   </div>
-                  <p className="text-sm text-slate-200 font-medium font-mono tracking-wider">
+                  <p className="text-sm text-slate-200 font-medium font-mono">
                     {cliente.senha_gov
                       ? mostrarSenha
                         ? cliente.senha_gov
@@ -154,7 +154,7 @@ export default function ClienteRow({
                 <button
                   type="button"
                   onClick={() => setEditando(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-500 hover:text-[#5DA832] hover:bg-[#5DA832]/10 rounded-lg border border-transparent hover:border-[#5DA832]/20 transition-all duration-200"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-500 hover:text-[#5DA832] hover:bg-[#5DA832]/10 rounded-xl border border-transparent hover:border-[#5DA832]/20 transition-all duration-200"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                   Editar
@@ -164,7 +164,7 @@ export default function ClienteRow({
                   <input type="hidden" name="ativo" value={(!ativo).toString()} />
                   <button
                     type="submit"
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg border transition-all duration-200 ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-xl border transition-all duration-200 ${
                       ativo
                         ? "text-slate-500 border-transparent hover:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/20"
                         : "text-[#5DA832] border-[#5DA832]/30 bg-[#5DA832]/10 hover:bg-[#5DA832]/15"
@@ -178,7 +178,7 @@ export default function ClienteRow({
                   <input type="hidden" name="id" value={cliente.id} />
                   <button
                     type="submit"
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg border border-transparent hover:border-rose-500/20 transition-all duration-200"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl border border-transparent hover:border-rose-500/20 transition-all duration-200"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                     Excluir

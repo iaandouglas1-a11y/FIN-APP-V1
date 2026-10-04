@@ -25,7 +25,7 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
   if (pago) {
     return (
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#5DA832]/10 border border-[#5DA832]/30 text-[#5DA832] text-xs font-semibold">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#5DA832]/10 border border-[#5DA832]/30 text-[#5DA832] text-xs font-semibold">
           <CheckCircle className="h-3.5 w-3.5 shrink-0" />
           <span>Pago</span>
           {pagoEm && (
@@ -39,19 +39,19 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
           <button
             type="button"
             onClick={() => setCancelando(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all duration-200"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all duration-200"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             Cancelar baixa
           </button>
         ) : (
-          <div className="flex items-center gap-2 p-1.5 rounded-xl bg-[#161616] border border-amber-500/40">
+          <div className="flex items-center gap-2 p-1.5 rounded-xl bg-[#141414] border border-amber-500/40">
             <span className="text-xs text-amber-400 px-1">Confirmar?</span>
             <form action={cancelarPagamentoHonorario}>
               <input type="hidden" name="id" value={honorarioId} />
               <button
                 type="submit"
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-xs font-semibold transition-all duration-200"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-xs font-semibold transition-all duration-200"
               >
                 Sim, cancelar
               </button>
@@ -59,7 +59,7 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
             <button
               type="button"
               onClick={() => setCancelando(false)}
-              className="p-1 text-slate-500 hover:text-slate-300 rounded-lg transition-colors"
+              className="p-1 text-slate-500 hover:text-slate-300 rounded-xl transition-colors"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -76,15 +76,15 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
         <button
           type="button"
           onClick={() => setAberto(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all duration-200 active:scale-95"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all duration-200 active:scale-95"
         >
           <HandCoins className="h-3.5 w-3.5" />
           Marcar como pago
         </button>
       ) : (
-        <div className="w-full sm:w-auto p-3 rounded-xl bg-[#161616] border border-[#5DA832]/40 space-y-2">
+        <div className="w-full sm:w-auto p-3 rounded-xl bg-[#141414] border border-[#5DA832]/40 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#5DA832]/70">
+            <span className="text-[11px] font-semibold text-[#5DA832]/70">
               Receber {currency(valor)}
             </span>
             <button
@@ -98,7 +98,7 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-[9px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Data</label>
+              <label className="text-[11px] font-semibold text-slate-500 mb-1 block">Data</label>
               <input
                 type="date"
                 value={dataPagamento}
@@ -108,7 +108,7 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
               />
             </div>
             <div>
-              <label className="text-[9px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Conta</label>
+              <label className="text-[11px] font-semibold text-slate-500 mb-1 block">Conta</label>
               <select
                 value={contaSelecionada}
                 onChange={(e) => setContaSelecionada(e.target.value)}
@@ -130,7 +130,7 @@ export default function PagarHonorarioBtn({ honorarioId, clienteNome, valor, pag
             <input type="hidden" name="data_pagamento" value={dataPagamento} />
             <button
               type="submit"
-              className="flex items-center justify-center gap-1.5 w-full px-2.5 py-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all duration-200 whitespace-nowrap"
+              className="flex items-center justify-center gap-1.5 w-full px-2.5 py-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all duration-200 whitespace-nowrap"
             >
               <CheckCircle className="h-3.5 w-3.5" />
               Confirmar recebimento

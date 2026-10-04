@@ -23,7 +23,7 @@ export default function PagarFaturaBtn({ faturaId, cartaoId, total, pago, pagoEm
   if (pago) {
     return (
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-        <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#5DA832]/10 border border-[#5DA832]/30 text-[#5DA832] text-sm font-semibold">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5DA832]/10 border border-[#5DA832]/30 text-[#5DA832] text-sm font-semibold">
           <CheckCircle className="h-4 w-4 shrink-0" />
           <span>Fatura paga</span>
           {pagoEm && (
@@ -38,19 +38,19 @@ export default function PagarFaturaBtn({ faturaId, cartaoId, total, pago, pagoEm
           <button
             type="button"
             onClick={() => setCancelando(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all duration-200"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all duration-200"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             Cancelar baixa
           </button>
         ) : (
-          <div className="flex items-center gap-2 p-2 rounded-xl bg-[#161616] border border-amber-500/40">
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-[#141414] border border-amber-500/40">
             <span className="text-xs text-amber-400 px-2">Confirmar cancelamento?</span>
             <form action={cancelarPagamentoFatura}>
               <input type="hidden" name="fatura_id" value={faturaId} />
               <button
                 type="submit"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-xs font-semibold transition-all duration-200"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-xs font-semibold transition-all duration-200"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 Sim, cancelar
@@ -59,7 +59,7 @@ export default function PagarFaturaBtn({ faturaId, cartaoId, total, pago, pagoEm
             <button
               type="button"
               onClick={() => setCancelando(false)}
-              className="p-1.5 text-slate-500 hover:text-slate-300 rounded-lg transition-colors"
+              className="p-1.5 text-slate-500 hover:text-slate-300 rounded-xl transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
@@ -76,17 +76,17 @@ export default function PagarFaturaBtn({ faturaId, cartaoId, total, pago, pagoEm
         <button
           type="button"
           onClick={() => setAberto(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-semibold transition-all duration-200 active:scale-95"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-semibold transition-all duration-200 active:scale-95"
         >
           <CreditCard className="h-4 w-4" />
           Pagar Fatura
         </button>
       ) : (
-        <div className="flex items-center gap-2 p-2 rounded-xl bg-[#161616] border border-[#5DA832]/40">
+        <div className="flex items-center gap-2 p-2 rounded-xl bg-[#141414] border border-[#5DA832]/40">
           <select
             value={contaSelecionada}
             onChange={(e) => setContaSelecionada(e.target.value)}
-            className="select-modern h-9 text-sm flex-1 min-w-0"
+            className="select-modern h-11 text-sm flex-1 min-w-0"
           >
             {contas.map((c) => (
               <option key={c.id} value={c.id}>{c.nome}</option>
@@ -100,7 +100,7 @@ export default function PagarFaturaBtn({ faturaId, cartaoId, total, pago, pagoEm
             <input type="hidden" name="total"     value={total} />
             <button
               type="submit"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all duration-200 whitespace-nowrap"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-all duration-200 whitespace-nowrap"
             >
               <CheckCircle className="h-3.5 w-3.5" />
               Confirmar {currency(total)}
@@ -110,7 +110,7 @@ export default function PagarFaturaBtn({ faturaId, cartaoId, total, pago, pagoEm
           <button
             type="button"
             onClick={() => setAberto(false)}
-            className="p-2 text-slate-500 hover:text-slate-300 rounded-lg transition-colors"
+            className="p-2 text-slate-500 hover:text-slate-300 rounded-xl transition-colors"
           >
             <X className="h-4 w-4" />
           </button>

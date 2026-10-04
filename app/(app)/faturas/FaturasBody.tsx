@@ -52,7 +52,7 @@ export default function FaturasBody({
         onClick={() => setPainelAberto((v) => !v)}
         className={`w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-[13px] font-semibold border transition-all duration-200 ${
           painelAberto
-            ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]"
+            ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#8FCB5E]"
             : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
         }`}
       >
@@ -63,7 +63,7 @@ export default function FaturasBody({
       {painelAberto && (
         <div className="border border-[#5DA832]/30 rounded-xl p-4 bg-[#5DA832]/5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+            <div className="flex items-center gap-2 text-[#5DA832] font-semibold text-xs">
               <Plus className="h-4 w-4" />
               <span>Nova fatura</span>
             </div>
@@ -107,7 +107,7 @@ export default function FaturasBody({
 
             <button
               type="submit"
-              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-bold transition-all duration-200"
+              className="w-full h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-semibold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
               Criar
@@ -121,8 +121,8 @@ export default function FaturasBody({
         <button
           type="button"
           onClick={() => setAba("aberto")}
-          className={`flex-1 text-center py-2 rounded-lg text-[12.5px] font-semibold transition-all duration-200 ${
-            aba === "aberto" ? "bg-[#5DA832]/20 text-[#6fc23b]" : "text-ink-tertiary hover:text-ink-secondary"
+          className={`flex-1 text-center py-2 rounded-xl text-[12.5px] font-semibold transition-all duration-200 ${
+            aba === "aberto" ? "bg-[#5DA832]/20 text-[#8FCB5E]" : "text-ink-tertiary hover:text-ink-secondary"
           }`}
         >
           Em aberto
@@ -130,8 +130,8 @@ export default function FaturasBody({
         <button
           type="button"
           onClick={() => setAba("pago")}
-          className={`flex-1 text-center py-2 rounded-lg text-[12.5px] font-semibold transition-all duration-200 ${
-            aba === "pago" ? "bg-[#5DA832]/20 text-[#6fc23b]" : "text-ink-tertiary hover:text-ink-secondary"
+          className={`flex-1 text-center py-2 rounded-xl text-[12.5px] font-semibold transition-all duration-200 ${
+            aba === "pago" ? "bg-[#5DA832]/20 text-[#8FCB5E]" : "text-ink-tertiary hover:text-ink-secondary"
           }`}
         >
           Pagas
@@ -140,7 +140,7 @@ export default function FaturasBody({
 
       <Card className="border-surface-border/60 p-4">
         <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">
+          <h2 className="text-[15px] font-semibold text-white">
             {aba === "aberto" ? "Faturas em aberto" : "Faturas pagas"}
           </h2>
           <p className="text-xs text-ink-tertiary mt-1">

@@ -9,7 +9,7 @@ export default async function CategoriasPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-[22px] font-bold text-ink-primary tracking-tight px-1">Categorias</h1>
+      <h1 className="text-[22px] font-semibold text-ink-primary tracking-tight px-1">Categorias</h1>
       <CategoriasBody despesas={despesas} receitas={receitas} />
     </div>
   );

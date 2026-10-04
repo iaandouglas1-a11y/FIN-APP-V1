@@ -71,19 +71,19 @@ export default function DividasBody({
     <>
       {/* Métricas — 3 pills */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-surface/50 border border-surface-border/40 rounded-lg p-3.5">
-          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Total devido</p>
-          <p className="text-lg font-bold text-rose-400">{currency(totalDevido)}</p>
+        <div className="bg-surface/50 border border-surface-border/40 rounded-xl p-3.5">
+          <p className="text-[11px] font-semibold text-slate-500 mb-1">Total devido</p>
+          <p className="text-lg font-semibold text-rose-400">{currency(totalDevido)}</p>
         </div>
-        <div className="bg-surface/50 border border-surface-border/40 rounded-lg p-3.5">
-          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Total pago</p>
-          <p className="text-lg font-bold text-emerald-400">{currency(totalPago)}</p>
+        <div className="bg-surface/50 border border-surface-border/40 rounded-xl p-3.5">
+          <p className="text-[11px] font-semibold text-slate-500 mb-1">Total pago</p>
+          <p className="text-lg font-semibold text-emerald-400">{currency(totalPago)}</p>
         </div>
       </div>
 
-      <div className="bg-surface/50 border border-surface-border/40 rounded-lg p-3.5">
-        <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Saldo em aberto</p>
-        <p className="text-lg font-bold text-amber-400">{currency(saldoAtual)}</p>
+      <div className="bg-surface/50 border border-surface-border/40 rounded-xl p-3.5">
+        <p className="text-[11px] font-semibold text-slate-500 mb-1">Saldo em aberto</p>
+        <p className="text-lg font-semibold text-amber-400">{currency(saldoAtual)}</p>
       </div>
 
       {/* Botões — Nova dívida | Novo pagamento */}
@@ -94,8 +94,8 @@ export default function DividasBody({
         <button
           type="button"
           onClick={() => setAba("aberto")}
-          className={`flex-1 text-center py-2 rounded-lg text-[12.5px] font-semibold transition-all duration-200 ${
-            aba === "aberto" ? "bg-[#5DA832]/20 text-[#6fc23b]" : "text-ink-tertiary hover:text-ink-secondary"
+          className={`flex-1 text-center py-2 rounded-xl text-[12.5px] font-semibold transition-all duration-200 ${
+            aba === "aberto" ? "bg-[#5DA832]/20 text-[#8FCB5E]" : "text-ink-tertiary hover:text-ink-secondary"
           }`}
         >
           Em aberto ({dividasAbertas.length})
@@ -103,8 +103,8 @@ export default function DividasBody({
         <button
           type="button"
           onClick={() => setAba("liquidado")}
-          className={`flex-1 text-center py-2 rounded-lg text-[12.5px] font-semibold transition-all duration-200 ${
-            aba === "liquidado" ? "bg-[#5DA832]/20 text-[#6fc23b]" : "text-ink-tertiary hover:text-ink-secondary"
+          className={`flex-1 text-center py-2 rounded-xl text-[12.5px] font-semibold transition-all duration-200 ${
+            aba === "liquidado" ? "bg-[#5DA832]/20 text-[#8FCB5E]" : "text-ink-tertiary hover:text-ink-secondary"
           }`}
         >
           Liquidadas ({dividasLiquidadas.length})
@@ -114,7 +114,7 @@ export default function DividasBody({
       {/* Lista de dívidas */}
       <Card className="border-surface-border/60 p-4">
         <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">
+          <h2 className="text-[15px] font-semibold text-white">
             {aba === "aberto" ? "Dívidas em aberto" : "Dívidas liquidadas"}
           </h2>
           <p className="text-xs text-ink-tertiary mt-1">
@@ -146,7 +146,7 @@ export default function DividasBody({
       {/* Fluxo de Pagamentos */}
       <Card className="border-surface-border/60 p-4">
         <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">Fluxo de pagamentos</h2>
+          <h2 className="text-[15px] font-semibold text-white">Fluxo de pagamentos</h2>
           <p className="text-xs text-ink-tertiary mt-1">Pagamentos registrados por data</p>
         </div>
 
@@ -157,7 +157,7 @@ export default function DividasBody({
             onClick={() => setFiltroFluxo("este_mes")}
             className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
               filtroFluxo === "este_mes"
-                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#8FCB5E]"
                 : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
             }`}
           >
@@ -168,7 +168,7 @@ export default function DividasBody({
             onClick={() => setFiltroFluxo("mes_anterior")}
             className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
               filtroFluxo === "mes_anterior"
-                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#8FCB5E]"
                 : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
             }`}
           >
@@ -179,7 +179,7 @@ export default function DividasBody({
             onClick={() => setFiltroFluxo("2_meses")}
             className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
               filtroFluxo === "2_meses"
-                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#8FCB5E]"
                 : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
             }`}
           >
@@ -215,7 +215,7 @@ export default function DividasBody({
               </svg>
             </summary>
             <form className="absolute right-0 top-10 z-20 w-72 p-3.5 rounded-xl bg-surface border border-surface-border space-y-2.5">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-ink-tertiary">Período personalizado</p>
+              <p className="text-[11px] font-semibold text-ink-tertiary">Período personalizado</p>
               <div className="flex items-center gap-1.5">
                 <input
                   type="date"
@@ -224,9 +224,9 @@ export default function DividasBody({
                     setDataInicio(e.target.value);
                     setFiltroFluxo("personalizado");
                   }}
-                  className="h-9 flex-1 min-w-0 text-xs px-2 rounded-lg bg-surface-2 border border-surface-border/40 text-white"
+                  className="h-11 flex-1 min-w-0 text-xs px-2 rounded-xl bg-surface-2 border border-surface-border/40 text-white"
                 />
-                <span className="text-slate-600 text-[10px] shrink-0">até</span>
+                <span className="text-slate-600 text-[11px] shrink-0">até</span>
                 <input
                   type="date"
                   value={dataFim}
@@ -234,7 +234,7 @@ export default function DividasBody({
                     setDataFim(e.target.value);
                     setFiltroFluxo("personalizado");
                   }}
-                  className="h-9 flex-1 min-w-0 text-xs px-2 rounded-lg bg-surface-2 border border-surface-border/40 text-white"
+                  className="h-11 flex-1 min-w-0 text-xs px-2 rounded-xl bg-surface-2 border border-surface-border/40 text-white"
                 />
               </div>
             </form>

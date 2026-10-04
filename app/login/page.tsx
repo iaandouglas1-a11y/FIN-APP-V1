@@ -1,7 +1,7 @@
 import { login, signup } from "@/app/(auth)/actions";
 import { Button, Input } from "@/components/ui";
 import { ArrowRight } from "lucide-react";
-import Image from "next/image";
+import { OnfinLogo } from "@/components/OnfinLogo";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;
@@ -11,17 +11,15 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <div className="w-full max-w-sm mx-auto">
         {/* Marca — logo centralizado, sem cards decorativos competindo com o formulário */}
         <div className="flex flex-col items-center mb-10">
-          <div className="h-16 w-16 rounded-[20px] overflow-hidden mb-5 shadow-glow">
-            <Image src="/icon-512.png" alt="On Finanças" width={64} height={64} className="rounded-[20px]" />
-          </div>
-          <h1 className="text-xl font-extrabold text-ink-primary tracking-tight">On Finanças</h1>
-          <p className="text-[12.5px] text-ink-tertiary mt-1">Gestão financeira &amp; contábil</p>
+          <OnfinLogo variant="stacked" className="h-28 w-auto mb-4" title="Onfin" />
+          <h1 className="sr-only">Onfin</h1>
+          <p className="text-sm text-ink-secondary">Gestão financeira &amp; contábil</p>
         </div>
 
         {params.error && (
           <div className="mb-5 p-3.5 rounded-xl bg-danger/[0.12] border border-danger/25 flex items-start gap-2.5">
             <div className="h-4 w-4 rounded-full bg-danger/25 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-[#f87171] text-[10px] font-bold">!</span>
+              <span className="text-[#f87171] text-[11px] font-semibold">!</span>
             </div>
             <p className="text-[13px] text-[#f87171]">{params.error}</p>
           </div>
@@ -29,14 +27,14 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
         <form className="space-y-5">
           <div>
-            <label className="text-[10.5px] font-bold uppercase tracking-wide text-ink-tertiary mb-1.5 block">
+            <label className="text-[11px] font-semibold text-ink-tertiary mb-1.5 block">
               E-mail
             </label>
             <Input name="email" type="email" placeholder="seu@email.com" required className="h-12 text-[15px]" />
           </div>
 
           <div>
-            <label className="text-[10.5px] font-bold uppercase tracking-wide text-ink-tertiary mb-1.5 block">
+            <label className="text-[11px] font-semibold text-ink-tertiary mb-1.5 block">
               Senha
             </label>
             <Input name="password" type="password" placeholder="••••••••" minLength={6} required className="h-12 text-[15px]" />
@@ -44,7 +42,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
           <Button
             formAction={login}
-            className="w-full h-[52px] text-[15px] font-bold mt-2 flex items-center justify-center gap-2 rounded-2xl"
+            className="w-full h-[52px] text-[15px] font-semibold mt-2 flex items-center justify-center gap-2 rounded-2xl"
           >
             Entrar
             <ArrowRight className="h-4 w-4" />

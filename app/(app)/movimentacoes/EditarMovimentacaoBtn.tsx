@@ -49,9 +49,9 @@ export default function EditarMovimentacaoBtn({ mov, categorias, contas, cartoes
   // não tinha efeito nenhum e o form era espremido pra fora da área visível.
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-[#161616] border border-[#5DA832]/40 w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
-        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#5DA832]/10 sticky top-0 bg-[#161616]">
-          <h3 className="font-bold text-white flex items-center gap-2 text-sm">
+      <div className="bg-[#141414] border border-[#5DA832]/40 w-full max-w-sm rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#5DA832]/10 sticky top-0 bg-[#141414]">
+          <h3 className="font-semibold text-white flex items-center gap-2 text-sm">
             <Pencil className="h-4 w-4 text-[#5DA832]" />
             Editar movimentação
           </h3>
@@ -72,8 +72,8 @@ export default function EditarMovimentacaoBtn({ mov, categorias, contas, cartoes
             </FormGroup>
             <FormGroup label="Valor">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">R$</span>
-                <Input name="valor" type="number" step="0.01" defaultValue={mov.valor} required className="pl-8 text-sm font-bold" />
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-xs">R$</span>
+                <Input name="valor" type="number" step="0.01" defaultValue={mov.valor} required className="pl-8 text-sm font-semibold" />
               </div>
             </FormGroup>
           </div>
@@ -121,13 +121,13 @@ export default function EditarMovimentacaoBtn({ mov, categorias, contas, cartoes
             <button
               type="button"
               onClick={() => setAberto(false)}
-              className="flex-1 h-9 rounded-lg border border-surface-border text-slate-400 hover:bg-surface-2/60 hover:text-white transition-all text-sm font-semibold"
+              className="flex-1 h-11 rounded-xl border border-surface-border text-slate-400 hover:bg-surface-2/60 hover:text-white transition-all text-sm font-semibold"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="flex-1 h-9 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#5DA832]/20"
+              className="flex-1 h-11 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#5DA832]/20"
             >
               <Check className="h-4 w-4" />
               Salvar alterações

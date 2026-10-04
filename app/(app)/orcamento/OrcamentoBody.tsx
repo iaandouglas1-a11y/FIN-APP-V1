@@ -83,11 +83,11 @@ function LancamentoRow({
         <div className="text-[14px] font-semibold text-ink-primary truncate">{nomeCategoria}</div>
         <div className="text-[11.5px] text-ink-tertiary mt-0.5 truncate">{lancamento.descricao}</div>
         <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-          <span className="text-[9px] font-bold uppercase tracking-wide text-ink-tertiary bg-surface-2 rounded-full px-2 py-0.5">
+          <span className="text-[11px] font-semibold text-ink-tertiary bg-surface-2 rounded-full px-2 py-0.5">
             Dia {lancamento.dia_referencia}
           </span>
           {isParcela && (
-            <span className="text-[9px] font-bold uppercase tracking-wide text-[#c084fc] bg-[#8b5cf6]/10 rounded-full px-2 py-0.5">
+            <span className="text-[11px] font-semibold text-[#c084fc] bg-[#8b5cf6]/10 rounded-full px-2 py-0.5">
               Parcela {lancamento.parcelaAtual}/{lancamento.parcelasTotal}
             </span>
           )}
@@ -100,7 +100,7 @@ function LancamentoRow({
             <EditarOrcamentoParcelaBtn parcela={lancamento} categorias={categorias} />
             <form action={deleteOrcamentoParcela}>
               <input type="hidden" name="id" value={lancamento.id} />
-              <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors">
+              <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-xl transition-colors">
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
             </form>
@@ -110,7 +110,7 @@ function LancamentoRow({
             <EditarOrcamentoItemBtn item={lancamento} categorias={categorias} competencia={competencia} />
             <form action={deleteOrcamentoItem}>
               <input type="hidden" name="id" value={lancamento.id} />
-              <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors">
+              <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-xl transition-colors">
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
             </form>
@@ -139,7 +139,7 @@ function QuinzenaCard({
   return (
     <Card className="border-surface-border/60 p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-[15px] font-bold text-white">{titulo}</h2>
+        <h2 className="text-[15px] font-semibold text-white">{titulo}</h2>
         <AmountText value={subtotal} signed />
       </div>
       <p className="text-xs text-ink-tertiary mt-1 mb-3">{subtitulo}</p>
@@ -177,7 +177,7 @@ export default function OrcamentoBody({
     <>
       {/* Hero: saldo projetado do orçamento — mês inteiro */}
       <div className="glass-card p-6">
-        <div className="text-[11px] font-bold uppercase tracking-widest text-ink-secondary">Saldo do orçamento</div>
+        <div className="text-[11px] font-semibold text-ink-secondary">Saldo do orçamento</div>
         <AmountText value={saldo} size="hero" className="block mt-1.5" />
       </div>
 
@@ -210,7 +210,7 @@ export default function OrcamentoBody({
       {/* Compras parceladas — visão de progresso, independente da quinzena */}
       <Card className="border-surface-border/60 p-4">
         <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">Compras parceladas</h2>
+          <h2 className="text-[15px] font-semibold text-white">Compras parceladas</h2>
           <p className="text-xs text-ink-tertiary mt-1">
             {parcelasAtivas.length} {parcelasAtivas.length === 1 ? "ativa" : "ativas"} neste mês
           </p>
@@ -232,7 +232,7 @@ export default function OrcamentoBody({
                     <EditarOrcamentoParcelaBtn parcela={p} categorias={categorias} />
                     <form action={deleteOrcamentoParcela}>
                       <input type="hidden" name="id" value={p.id} />
-                      <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors">
+                      <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-xl transition-colors">
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </form>
@@ -249,7 +249,7 @@ export default function OrcamentoBody({
       {distribuicao.length > 0 && (
         <Card className="border-surface-border/60 p-4">
           <div className="mb-4 pb-3 border-b border-surface-border/50">
-            <h2 className="text-[15px] font-bold text-white">Distribuição do orçamento</h2>
+            <h2 className="text-[15px] font-semibold text-white">Distribuição do orçamento</h2>
             <p className="text-xs text-ink-tertiary mt-1">Por categoria, incluindo parcelas ativas</p>
           </div>
           <CategoryPie data={distribuicao} />
@@ -259,7 +259,7 @@ export default function OrcamentoBody({
       {/* Orçado x realizado */}
       <Card className="border-surface-border/60 p-4">
         <div className="mb-4 pb-3 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">Orçado x realizado</h2>
+          <h2 className="text-[15px] font-semibold text-white">Orçado x realizado</h2>
           <p className="text-xs text-ink-tertiary mt-1">Comparado com as movimentações já lançadas no mês</p>
         </div>
         {comparativo.length === 0 ? (
@@ -270,7 +270,7 @@ export default function OrcamentoBody({
               <div key={c.categoriaId} className="py-3">
                 <div className="flex items-center justify-between gap-2 text-[12.5px]">
                   <span className="text-ink-primary font-medium truncate">{c.nome}</span>
-                  <span className={c.pct > 100 ? "text-[#f87171] font-bold shrink-0" : "text-ink-tertiary shrink-0"}>
+                  <span className={c.pct > 100 ? "text-[#f87171] font-semibold shrink-0" : "text-ink-tertiary shrink-0"}>
                     {currency(c.realizado)} de {currency(c.orcado)}
                   </span>
                 </div>
@@ -315,7 +315,7 @@ export default function OrcamentoBody({
             <input type="hidden" name="competencia" value={competencia} />
             <button
               type="submit"
-              className="px-3 py-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-colors"
+              className="px-3 py-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-xs font-semibold transition-colors"
             >
               Confirmar
             </button>

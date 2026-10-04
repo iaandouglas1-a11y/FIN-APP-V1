@@ -28,7 +28,7 @@ export default function DesfazerPagamentoBtn({ pagamentoId, tipo }: Props) {
         <button
           type="submit"
           disabled={loading}
-          className="text-[10px] px-2 py-0.5 bg-rose-500 text-white rounded hover:bg-rose-600 transition-colors font-bold disabled:opacity-50"
+          className="text-[11px] px-2 py-0.5 bg-rose-500 text-white rounded hover:bg-rose-600 transition-colors font-semibold disabled:opacity-50"
         >
           {loading ? "..." : "Confirmar"}
         </button>
@@ -36,7 +36,7 @@ export default function DesfazerPagamentoBtn({ pagamentoId, tipo }: Props) {
           type="button"
           disabled={loading}
           onClick={() => setConfirmando(false)}
-          className="text-[10px] px-2 py-0.5 bg-slate-700 text-slate-300 rounded hover:bg-slate-600 transition-colors disabled:opacity-50"
+          className="text-[11px] px-2 py-0.5 bg-slate-700 text-slate-300 rounded hover:bg-slate-600 transition-colors disabled:opacity-50"
         >
           Não
         </button>

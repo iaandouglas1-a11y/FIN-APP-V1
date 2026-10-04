@@ -25,23 +25,23 @@ const secondaryNavGroups: { label: string; items: SecondaryNavItem[] }[] = [
     label: "Financeiro",
     items: [
       { href: "/contas", label: "Contas", icon: Wallet, tone: "gray" },
-      { href: "/faturas", label: "Faturas", icon: Receipt, tone: "red" },
+      { href: "/faturas", label: "Faturas", icon: Receipt, tone: "gray" },
       { href: "/orcamento", label: "Orçamento", icon: PiggyBank, tone: "green" },
-      { href: "/dividas", label: "Dívidas", icon: TrendingDown, tone: "amber" },
-      { href: "/investimentos", label: "Investim.", icon: TrendingUp, tone: "purple" },
+      { href: "/dividas", label: "Dívidas", icon: TrendingDown, tone: "gray" },
+      { href: "/investimentos", label: "Investim.", icon: TrendingUp, tone: "gray" },
     ],
   },
   {
     label: "Prática profissional",
     items: [
       { href: "/honorarios", label: "Honorários", icon: HandCoins, tone: "green" },
-      { href: "/clientes", label: "Clientes", icon: Users, tone: "blue" },
+      { href: "/clientes", label: "Clientes", icon: Users, tone: "gray" },
     ],
   },
   {
     label: "Sistema",
     items: [
-      { href: "/categorias", label: "Categorias", icon: Tags, tone: "amber" },
+      { href: "/categorias", label: "Categorias", icon: Tags, tone: "gray" },
     ],
   },
 ];
@@ -58,7 +58,7 @@ export function MoreMenuDrawer({ open, onClose }: MoreMenuDrawerProps) {
       <div className="space-y-5 pb-2">
         {secondaryNavGroups.map((group) => (
           <div key={group.label}>
-            <p className="text-[10px] font-bold uppercase tracking-wide text-ink-secondary mb-3 px-0.5">
+            <p className="text-[11px] font-semibold text-ink-secondary mb-3 px-0.5">
               {group.label}
             </p>
             <div className="grid grid-cols-4 gap-y-5 gap-x-2">
@@ -74,8 +74,8 @@ export function MoreMenuDrawer({ open, onClose }: MoreMenuDrawerProps) {
                   >
                     <IconChip icon={Icon} tone={item.tone} size={48} iconSize={19} rounded="rounded-2xl" />
                     <span className={clsx(
-                      "text-[10.5px] font-semibold text-center leading-tight",
-                      isActive ? "text-[#6fc23b]" : "text-ink-secondary"
+                      "text-[11px] font-semibold text-center leading-tight",
+                      isActive ? "text-[#8FCB5E]" : "text-ink-secondary"
                     )}>
                       {item.label}
                     </span>

@@ -50,7 +50,7 @@ function NavItem({ item, isActive }: { item: BottomNavItem; isActive: boolean })
           <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#5DA832]" />
         )}
       </div>
-      <span className={clsx("text-[9.5px] font-semibold leading-none", isActive ? "text-[#5DA832]" : "text-ink-tertiary")}>
+      <span className={clsx("text-[11px] font-semibold leading-none", isActive ? "text-[#5DA832]" : "text-ink-tertiary")}>
         {item.label}
       </span>
     </Link>
@@ -64,7 +64,7 @@ export function BottomNav({ onMoreClick, onQuickAddClick }: BottomNavProps) {
 
   return (
     <nav className="md:hidden fixed z-50 w-full px-4 bottom-[max(10px,env(safe-area-inset-bottom))]">
-      <div className="max-w-md mx-auto bg-surface/[0.98] backdrop-blur-xl border border-surface-border/60 rounded-[22px] shadow-sheet">
+      <div className="max-w-md mx-auto bg-surface/[0.98] backdrop-blur-xl border border-surface-border/60 rounded-[24px] shadow-sheet">
         <div className="flex items-center justify-around px-2 pt-2.5 pb-2.5">
           {primaryItems.map((item) => (
             <NavItem key={item.href} item={item} isActive={isActive(item.href)} />
@@ -73,7 +73,7 @@ export function BottomNav({ onMoreClick, onQuickAddClick }: BottomNavProps) {
           {/* FAB central — ação rápida */}
           <button
             onClick={onQuickAddClick}
-            className="w-11 h-11 rounded-full bg-[#5DA832] flex items-center justify-center shadow-fab active:scale-90 transition-transform -mt-1"
+            className="w-12 h-12 rounded-full bg-[#5DA832] hover:bg-[#6fc23b] flex items-center justify-center shadow-fab active:scale-90 transition-all -mt-4 border-4 border-bg"
             aria-label="Ação rápida"
           >
             <Plus className="w-[22px] h-[22px] text-[#0A0A0A]" strokeWidth={2.5} />
@@ -97,7 +97,7 @@ export function BottomNav({ onMoreClick, onQuickAddClick }: BottomNavProps) {
                 <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#5DA832]" />
               )}
             </div>
-            <span className={clsx("text-[9.5px] font-semibold leading-none", isMoreActive ? "text-[#5DA832]" : "text-ink-tertiary")}>
+            <span className={clsx("text-[11px] font-semibold leading-none", isMoreActive ? "text-[#5DA832]" : "text-ink-tertiary")}>
               Mais
             </span>
           </button>

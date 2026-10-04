@@ -36,9 +36,9 @@ export default function EditarOrcamentoParcelaBtn({ parcela, categorias }: Props
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-[#161616] border border-surface-border w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#161616]/50">
-          <h3 className="font-bold text-white flex items-center gap-2">
+      <div className="bg-[#141414] border border-surface-border w-full max-w-md rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#141414]/50">
+          <h3 className="font-semibold text-white flex items-center gap-2">
             <Pencil className="h-4 w-4 text-[#5DA832]" />
             Editar compra parcelada
           </h3>
@@ -57,29 +57,29 @@ export default function EditarOrcamentoParcelaBtn({ parcela, categorias }: Props
           <input type="hidden" name="id" value={parcela.id} />
 
           <FormGroup label="Descrição">
-            <Input name="descricao" defaultValue={parcela.descricao} required className="h-9" />
+            <Input name="descricao" defaultValue={parcela.descricao} required className="h-11" />
           </FormGroup>
 
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="Valor da parcela">
-              <Input name="valor_parcela" type="number" step="0.01" min="0.01" defaultValue={parcela.valor_parcela} required className="h-9" />
+              <Input name="valor_parcela" type="number" step="0.01" min="0.01" defaultValue={parcela.valor_parcela} required className="h-11" />
             </FormGroup>
             <FormGroup label="Nº de parcelas">
-              <Input name="parcelas_total" type="number" step="1" min="2" defaultValue={parcela.parcelas_total} required className="h-9" />
+              <Input name="parcelas_total" type="number" step="1" min="2" defaultValue={parcela.parcelas_total} required className="h-11" />
             </FormGroup>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="1ª parcela">
-              <Input name="data_primeira_parcela" type="month" defaultValue={parcela.data_primeira_parcela.slice(0, 7)} required className="h-9" />
+              <Input name="data_primeira_parcela" type="month" defaultValue={parcela.data_primeira_parcela.slice(0, 7)} required className="h-11" />
             </FormGroup>
             <FormGroup label="Dia de referência">
-              <Input name="dia_referencia" type="number" min="1" max="31" step="1" defaultValue={parcela.dia_referencia} required className="h-9" />
+              <Input name="dia_referencia" type="number" min="1" max="31" step="1" defaultValue={parcela.dia_referencia} required className="h-11" />
             </FormGroup>
           </div>
 
           <FormGroup label="Categoria">
-            <Select name="categoria_id" defaultValue={parcela.categoria_id ?? ""} className="h-9">
+            <Select name="categoria_id" defaultValue={parcela.categoria_id ?? ""} className="h-11">
               <option value="">Sem categoria</option>
               {categorias.map((c) => (
                 <option key={c.id} value={c.id}>{c.nome}</option>

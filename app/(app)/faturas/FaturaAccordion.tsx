@@ -58,7 +58,7 @@ export default function FaturaAccordion({
         <div className="flex items-center gap-4">
 
           {/* LOGO OU ÍCONE */}
-          <div className={`h-10 w-10 rounded-lg overflow-hidden ${
+          <div className={`h-10 w-10 rounded-xl overflow-hidden ${
             cartaoLogo
               ? ""
               : "bg-gradient-to-br from-[#5DA832]/30 to-[#5DA832]/10 flex items-center justify-center"
@@ -82,7 +82,7 @@ export default function FaturaAccordion({
         {/* STATUS + VALOR */}
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <p className={`text-sm font-bold ${
+            <p className={`text-sm font-semibold ${
               pago ? "text-emerald-400"
               : isOverdue ? "text-rose-400"
               : isDue ? "text-amber-400"
@@ -124,7 +124,7 @@ export default function FaturaAccordion({
             <p className="text-sm text-slate-600 italic">Nenhuma movimentação nesta fatura.</p>
           ) : (
             <div className="space-y-1">
-              <div className="grid grid-cols-[1fr_auto] text-[10px] font-bold uppercase tracking-widest text-slate-600 pb-1 border-b border-surface-border/40 px-1">
+              <div className="grid grid-cols-[1fr_auto] text-[11px] font-semibold text-slate-600 pb-1 border-b border-surface-border/40 px-1">
                 <span>Descrição</span>
                 <span className="text-right">Valor</span>
               </div>
@@ -146,7 +146,7 @@ export default function FaturaAccordion({
                   </div>
                 </div>
               ))}
-              <div className="flex justify-between text-sm font-bold pt-2 border-t border-surface-border/40 px-1 mt-1">
+              <div className="flex justify-between text-sm font-semibold pt-2 border-t border-surface-border/40 px-1 mt-1">
                 <span className="text-slate-400">Total</span>
                 <span className="text-white">{currency(total)}</span>
               </div>

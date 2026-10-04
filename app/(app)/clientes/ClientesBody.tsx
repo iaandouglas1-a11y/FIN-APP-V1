@@ -28,7 +28,7 @@ export default function ClientesBody({ ativos, inativos }: Props) {
         onClick={() => setPainelAberto((v) => !v)}
         className={`w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-[13px] font-semibold border transition-all duration-200 ${
           painelAberto
-            ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]"
+            ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#8FCB5E]"
             : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
         }`}
       >
@@ -39,7 +39,7 @@ export default function ClientesBody({ ativos, inativos }: Props) {
       {painelAberto && (
         <div className="border border-[#5DA832]/30 rounded-xl p-4 bg-[#5DA832]/5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+            <div className="flex items-center gap-2 text-[#5DA832] font-semibold text-xs">
               <Plus className="h-4 w-4" />
               <span>Novo cliente</span>
             </div>
@@ -76,7 +76,7 @@ export default function ClientesBody({ ativos, inativos }: Props) {
 
             <button
               type="submit"
-              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-bold transition-all duration-200"
+              className="w-full h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-semibold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
               Cadastrar cliente
@@ -90,8 +90,8 @@ export default function ClientesBody({ ativos, inativos }: Props) {
         <button
           type="button"
           onClick={() => setAba("ativos")}
-          className={`flex-1 text-center py-2 rounded-lg text-[12.5px] font-semibold transition-all duration-200 ${
-            aba === "ativos" ? "bg-[#5DA832]/20 text-[#6fc23b]" : "text-ink-tertiary hover:text-ink-secondary"
+          className={`flex-1 text-center py-2 rounded-xl text-[12.5px] font-semibold transition-all duration-200 ${
+            aba === "ativos" ? "bg-[#5DA832]/20 text-[#8FCB5E]" : "text-ink-tertiary hover:text-ink-secondary"
           }`}
         >
           Ativos ({ativos.length})
@@ -99,8 +99,8 @@ export default function ClientesBody({ ativos, inativos }: Props) {
         <button
           type="button"
           onClick={() => setAba("inativos")}
-          className={`flex-1 text-center py-2 rounded-lg text-[12.5px] font-semibold transition-all duration-200 ${
-            aba === "inativos" ? "bg-[#5DA832]/20 text-[#6fc23b]" : "text-ink-tertiary hover:text-ink-secondary"
+          className={`flex-1 text-center py-2 rounded-xl text-[12.5px] font-semibold transition-all duration-200 ${
+            aba === "inativos" ? "bg-[#5DA832]/20 text-[#8FCB5E]" : "text-ink-tertiary hover:text-ink-secondary"
           }`}
         >
           Inativos ({inativos.length})
@@ -110,7 +110,7 @@ export default function ClientesBody({ ativos, inativos }: Props) {
       {/* Card único — mesmo padrão visual de "Dívidas em aberto" */}
       <Card className="p-0 overflow-hidden">
         <div className="px-4 py-3.5 border-b border-surface-border/50">
-          <h2 className="text-[15px] font-bold text-white">{titulo}</h2>
+          <h2 className="text-[15px] font-semibold text-white">{titulo}</h2>
           <p className="text-xs text-ink-tertiary mt-1">
             {count} {count === 1 ? "cliente" : "clientes"}
           </p>

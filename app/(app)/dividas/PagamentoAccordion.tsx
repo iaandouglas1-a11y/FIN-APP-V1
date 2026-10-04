@@ -41,13 +41,13 @@ export default function PagamentoAccordion({ pagamento: p, categoriaNome, contas
       >
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-semibold text-ink-primary truncate">{p.descricao}</p>
-          <p className="text-[10.5px] text-ink-tertiary truncate mt-0.5">{dateBR(p.data)}</p>
+          <p className="text-[11px] text-ink-tertiary truncate mt-0.5">{dateBR(p.data)}</p>
         </div>
-        <p className="num text-[13.5px] font-bold text-ink-primary whitespace-nowrap shrink-0">{currency(Number(p.valor))}</p>
+        <p className="num text-[13.5px] font-semibold text-ink-primary whitespace-nowrap shrink-0">{currency(Number(p.valor))}</p>
         {p.tipo === "realizado" ? (
-          <Badge variant="success" className="text-[9.5px] shrink-0">✓</Badge>
+          <Badge variant="success" className="text-[11px] shrink-0">✓</Badge>
         ) : (
-          <Badge variant="warning" className="text-[9.5px] shrink-0">Orçado</Badge>
+          <Badge variant="warning" className="text-[11px] shrink-0">Orçado</Badge>
         )}
         {open ? <ChevronUp className="h-4 w-4 text-slate-500 shrink-0" /> : <ChevronDown className="h-4 w-4 text-slate-500 shrink-0" />}
       </div>
@@ -84,7 +84,7 @@ export default function PagamentoAccordion({ pagamento: p, categoriaNome, contas
             />
             <form action={deletePagamento}>
               <input type="hidden" name="id" value={p.id} />
-              <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors" title="Excluir">
+              <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-xl transition-colors" title="Excluir">
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
             </form>

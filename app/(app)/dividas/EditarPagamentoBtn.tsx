@@ -26,7 +26,7 @@ export default function EditarPagamentoBtn({ pagamento, contas, categorias }: Pr
     return (
       <button
         onClick={() => setIsEditing(true)}
-        className="p-1.5 text-slate-600 hover:text-[#5DA832] rounded-lg transition-colors"
+        className="p-1.5 text-slate-600 hover:text-[#5DA832] rounded-xl transition-colors"
         title="Editar"
       >
         <Pencil className="h-3.5 w-3.5" />
@@ -36,9 +36,9 @@ export default function EditarPagamentoBtn({ pagamento, contas, categorias }: Pr
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-[#161616] border border-surface-border w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#161616]/50">
-          <h3 className="font-bold text-white flex items-center gap-2">
+      <div className="bg-[#141414] border border-surface-border w-full max-w-md rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#141414]/50">
+          <h3 className="font-semibold text-white flex items-center gap-2">
             <Pencil className="h-4 w-4 text-[#5DA832]" />
             Editar Pagamento
           </h3>
@@ -52,26 +52,26 @@ export default function EditarPagamentoBtn({ pagamento, contas, categorias }: Pr
           
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="Data">
-              <Input name="data" type="date" defaultValue={pagamento.data} required className="h-9" />
+              <Input name="data" type="date" defaultValue={pagamento.data} required className="h-11" />
             </FormGroup>
             <FormGroup label="Valor">
-              <Input name="valor" type="number" step="0.01" min="0.01" defaultValue={pagamento.valor} required className="h-9" />
+              <Input name="valor" type="number" step="0.01" min="0.01" defaultValue={pagamento.valor} required className="h-11" />
             </FormGroup>
           </div>
 
           <FormGroup label="Descrição">
-            <Input name="descricao" defaultValue={pagamento.descricao} required className="h-9" />
+            <Input name="descricao" defaultValue={pagamento.descricao} required className="h-11" />
           </FormGroup>
 
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="Tipo">
-              <Select name="tipo" defaultValue={pagamento.tipo} required className="h-9">
+              <Select name="tipo" defaultValue={pagamento.tipo} required className="h-11">
                 <option value="orcado">Orçado</option>
                 <option value="realizado">Realizado</option>
               </Select>
             </FormGroup>
             <FormGroup label="Conta">
-              <Select name="conta_id" defaultValue={pagamento.conta_id || ""} className="h-9">
+              <Select name="conta_id" defaultValue={pagamento.conta_id || ""} className="h-11">
                 <option value="">Nenhuma</option>
                 {contas.map((c) => (
                   <option key={c.id} value={c.id}>{c.nome}</option>
@@ -81,7 +81,7 @@ export default function EditarPagamentoBtn({ pagamento, contas, categorias }: Pr
           </div>
 
           <FormGroup label="Categoria">
-            <Select name="categoria_id" defaultValue={pagamento.categoria_id || ""} className="h-9">
+            <Select name="categoria_id" defaultValue={pagamento.categoria_id || ""} className="h-11">
               <option value="">Sem categoria</option>
               {categorias.map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.nome}</option>

@@ -35,8 +35,8 @@ function DiaReferenciaField({ value, onChange }: { value: string; onChange: (v: 
         <button
           type="button"
           onClick={() => onChange("1")}
-          className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors ${
-            value === "1" ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]" : "bg-surface-2/60 border-surface-border/50 text-ink-tertiary"
+          className={`px-2.5 py-1.5 rounded-xl text-[11px] font-semibold border transition-colors ${
+            value === "1" ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#8FCB5E]" : "bg-surface-2/60 border-surface-border/50 text-ink-tertiary"
           }`}
         >
           Dia 1
@@ -44,8 +44,8 @@ function DiaReferenciaField({ value, onChange }: { value: string; onChange: (v: 
         <button
           type="button"
           onClick={() => onChange("15")}
-          className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors ${
-            value === "15" ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]" : "bg-surface-2/60 border-surface-border/50 text-ink-tertiary"
+          className={`px-2.5 py-1.5 rounded-xl text-[11px] font-semibold border transition-colors ${
+            value === "15" ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#8FCB5E]" : "bg-surface-2/60 border-surface-border/50 text-ink-tertiary"
           }`}
         >
           Dia 15
@@ -110,7 +110,7 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
           onClick={() => setAberto((v) => (v === "receita" ? null : "receita"))}
           className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-[13px] font-semibold border transition-all duration-200 ${
             aberto === "receita"
-              ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]"
+              ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#8FCB5E]"
               : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
           }`}
         >
@@ -122,7 +122,7 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
           onClick={() => setAberto((v) => (v === "gasto" ? null : "gasto"))}
           className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-[13px] font-semibold border transition-all duration-200 ${
             aberto === "gasto"
-              ? "bg-info/15 border-info/40 text-[#60a5fa]"
+              ? "bg-info/15 border-info/40 text-[#CBD5E1]"
               : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
           }`}
         >
@@ -135,7 +135,7 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
       {aberto === "receita" && (
         <div className="border border-[#5DA832]/30 rounded-xl p-4 bg-[#5DA832]/5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+            <div className="flex items-center gap-2 text-[#5DA832] font-semibold text-xs">
               <Plus className="h-4 w-4" />
               <span>Nova receita</span>
             </div>
@@ -182,7 +182,7 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
             </FormGroup>
             <button
               type="submit"
-              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-bold transition-all duration-200"
+              className="w-full h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-semibold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
               Adicionar
@@ -195,7 +195,7 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
       {aberto === "gasto" && (
         <div className="border border-info/30 rounded-xl p-4 bg-info/5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#60a5fa] font-bold uppercase text-xs tracking-widest">
+            <div className="flex items-center gap-2 text-[#CBD5E1] font-semibold text-xs">
               <Plus className="h-4 w-4" />
               <span>Novo gasto</span>
             </div>
@@ -274,7 +274,7 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
               <button
                 type="button"
                 onClick={() => setValorGasto(sugestao.toFixed(2))}
-                className="w-full text-left text-[11px] text-[#60a5fa] hover:underline"
+                className="w-full text-left text-[11px] text-[#CBD5E1] hover:underline"
               >
                 Média dos últimos 3 meses: {currency(sugestao)} — usar este valor
               </button>
@@ -288,7 +288,7 @@ export default function OrcamentoQuickForms({ competencia, categorias }: Props) 
 
             <button
               type="submit"
-              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-info hover:brightness-110 text-white text-sm font-semibold transition-all duration-200"
+              className="w-full h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-info hover:brightness-110 text-white text-sm font-semibold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
               Adicionar

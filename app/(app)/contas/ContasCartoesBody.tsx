@@ -51,7 +51,7 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
           onClick={() => setPainelAberto((v) => (v === "editar" ? null : "editar"))}
           className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-[13px] font-semibold border transition-all duration-200 ${
             painelAberto === "editar"
-              ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]"
+              ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#8FCB5E]"
               : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
           }`}
         >
@@ -63,7 +63,7 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
           onClick={() => setPainelAberto((v) => (v === "adicionar" ? null : "adicionar"))}
           className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-[13px] font-semibold border transition-all duration-200 ${
             painelAberto === "adicionar"
-              ? "bg-info/15 border-info/40 text-[#60a5fa]"
+              ? "bg-info/15 border-info/40 text-[#CBD5E1]"
               : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
           }`}
         >
@@ -88,7 +88,7 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
       {painelAberto === "adicionar" && (
         <div className="border border-[#5DA832]/30 rounded-xl p-4 bg-[#5DA832]/5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+            <div className="flex items-center gap-2 text-[#5DA832] font-semibold text-xs">
               <Plus className="h-4 w-4" />
               <span>Nova conta ou cartão</span>
             </div>
@@ -112,7 +112,7 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
       {/* Contas */}
       <Card className="p-0 overflow-hidden border-surface-border/60">
         <div className="px-4 pt-4 pb-3 mb-1 border-b border-surface-border/40">
-          <h2 className="text-[15px] font-bold text-white">Contas</h2>
+          <h2 className="text-[15px] font-semibold text-white">Contas</h2>
           <p className="text-xs text-ink-tertiary mt-1">
             {contas.length} {contas.length === 1 ? "conta cadastrada" : "contas cadastradas"}
           </p>
@@ -142,7 +142,7 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
       {/* Cartões */}
       <Card className="p-0 overflow-hidden border-surface-border/60">
         <div className="px-4 pt-4 pb-3 mb-1 border-b border-surface-border/40">
-          <h2 className="text-[15px] font-bold text-white">Cartões</h2>
+          <h2 className="text-[15px] font-semibold text-white">Cartões</h2>
           <p className="text-xs text-ink-tertiary mt-1">
             {cartoes.length} {cartoes.length === 1 ? "cartão cadastrado" : "cartões cadastrados"}
           </p>

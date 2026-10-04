@@ -35,7 +35,7 @@ function renderComLinks(texto: string) {
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="text-[#6fc23b] underline underline-offset-2"
+          className="text-[#8FCB5E] underline underline-offset-2"
         >
           {parte}
         </a>
@@ -159,7 +159,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
       <div className="flex items-center justify-between px-1">
         <Link
           href="/notas"
-          className="flex items-center gap-1 text-[22px] font-bold text-ink-primary tracking-tight"
+          className="flex items-center gap-1 text-[22px] font-semibold text-ink-primary tracking-tight"
         >
           <ChevronLeft className="h-5 w-5 text-ink-secondary" />
           Notas
@@ -172,9 +172,9 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
             <button
               type="submit"
               title={nota.fixada ? "Desafixar" : "Fixar"}
-              className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-colors ${
+              className={`w-9 h-11 rounded-xl border flex items-center justify-center transition-colors ${
                 nota.fixada
-                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#8FCB5E]"
                   : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
               }`}
             >
@@ -188,7 +188,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
             <button
               type="submit"
               title={nota.status === "ativa" ? "Arquivar" : "Restaurar"}
-              className="w-9 h-9 rounded-xl bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary hover:text-amber-400 transition-colors"
+              className="w-9 h-11 rounded-xl bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary hover:text-amber-400 transition-colors"
             >
               {nota.status === "ativa" ? <Archive className="h-4 w-4" /> : <ArchiveRestore className="h-4 w-4" />}
             </button>
@@ -199,7 +199,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
             <button
               type="submit"
               title="Excluir"
-              className="w-9 h-9 rounded-xl bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary hover:text-rose-400 transition-colors"
+              className="w-9 h-11 rounded-xl bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary hover:text-rose-400 transition-colors"
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -218,7 +218,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
         onChange={(e) => { setTitulo(e.target.value); setSujo(true); }}
         onBlur={() => sujo && salvar()}
         placeholder="Título"
-        className="w-full bg-transparent text-[19px] font-bold text-white placeholder:text-slate-600 outline-none border-none"
+        className="w-full bg-transparent text-[19px] font-semibold text-white placeholder:text-slate-600 outline-none border-none"
       />
 
       {/* Corpo único — texto livre e checklist na mesma sequência, sem
@@ -301,7 +301,7 @@ export default function NotaEditorBody({ nota }: { nota: Nota }) {
           type="button"
           onClick={() => salvar()}
           disabled={salvando}
-          className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] disabled:opacity-40 disabled:cursor-not-allowed text-[#0A0A0A] text-xs font-bold transition-all duration-200"
+          className="inline-flex items-center gap-1.5 h-11 px-4 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] disabled:opacity-40 disabled:cursor-not-allowed text-[#0A0A0A] text-xs font-semibold transition-all duration-200"
         >
           <Check className="h-3.5 w-3.5" />
           {salvando ? "Salvando..." : "Salvar"}

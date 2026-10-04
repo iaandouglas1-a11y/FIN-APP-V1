@@ -51,7 +51,7 @@ export default async function FaturasPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-[22px] font-bold text-ink-primary tracking-tight px-1">Faturas</h1>
+      <h1 className="text-[22px] font-semibold text-ink-primary tracking-tight px-1">Faturas</h1>
 
       <FaturasBody
         cartoes={cartoesResumo}

@@ -54,9 +54,9 @@ export default function DividaAccordion({ divida, categorias, categoriaNome, ton
           <div className="text-[14px] font-semibold text-ink-primary truncate">{divida.descricao}</div>
           <div className="flex items-center gap-1.5 flex-wrap mt-1">
             {liquidada ? (
-              <Badge variant="success" className="text-[10px]">✓ Liquidado</Badge>
+              <Badge variant="success" className="text-[11px]">✓ Liquidado</Badge>
             ) : (
-              <Badge variant={pct > 0 ? "warning" : "error"} className="text-[10px]">
+              <Badge variant={pct > 0 ? "warning" : "error"} className="text-[11px]">
                 {pct > 0 ? `Parcial · ${Math.round(pct)}% pago` : "Pendente"}
               </Badge>
             )}
@@ -77,9 +77,9 @@ export default function DividaAccordion({ divida, categorias, categoriaNome, ton
 
           {!liquidada && (
             <>
-              <ProgressBar pct={pct} color={pct > 60 ? "#5DA832" : pct > 0 ? "#F5A524" : "#2E2E2E"} />
+              <ProgressBar pct={pct} color={pct > 60 ? "#5DA832" : pct > 0 ? "#F5A524" : "#2A2A2A"} />
               {pagos > 0 && (
-                <p className="text-[10.5px] text-ink-tertiary mt-1.5">
+                <p className="text-[11px] text-ink-tertiary mt-1.5">
                   {currency(pagos)} pagos de {currency(Number(divida.valor))}
                 </p>
               )}
@@ -107,7 +107,7 @@ export default function DividaAccordion({ divida, categorias, categoriaNome, ton
               <EditarDividaBtn divida={divida as any} categorias={categorias} />
               <form action={deleteDivida}>
                 <input type="hidden" name="id" value={divida.id} />
-                <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors">
+                <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-xl transition-colors">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </form>

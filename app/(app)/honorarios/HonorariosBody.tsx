@@ -79,24 +79,24 @@ export default function HonorariosBody({
     <>
       {/* Métricas — 2x2 grid */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-surface/50 border border-surface-border/40 rounded-lg p-3.5">
-          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Total do mês</p>
-          <p className="text-lg font-bold text-white">{currency(totalMes)}</p>
+        <div className="bg-surface/50 border border-surface-border/40 rounded-xl p-3.5">
+          <p className="text-[11px] font-semibold text-slate-500 mb-1">Total do mês</p>
+          <p className="text-lg font-semibold text-white">{currency(totalMes)}</p>
         </div>
-        <div className="bg-surface/50 border border-surface-border/40 rounded-lg p-3.5">
-          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Recebido</p>
-          <p className="text-lg font-bold text-emerald-400">{currency(recebidoMes)}</p>
+        <div className="bg-surface/50 border border-surface-border/40 rounded-xl p-3.5">
+          <p className="text-[11px] font-semibold text-slate-500 mb-1">Recebido</p>
+          <p className="text-lg font-semibold text-emerald-400">{currency(recebidoMes)}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-surface/50 border border-surface-border/40 rounded-lg p-3.5">
-          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Pendente</p>
-          <p className="text-lg font-bold text-amber-400">{currency(pendenteMes)}</p>
+        <div className="bg-surface/50 border border-surface-border/40 rounded-xl p-3.5">
+          <p className="text-[11px] font-semibold text-slate-500 mb-1">Pendente</p>
+          <p className="text-lg font-semibold text-amber-400">{currency(pendenteMes)}</p>
         </div>
-        <div className="bg-surface/50 border border-surface-border/40 rounded-lg p-3.5">
-          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Atrasado</p>
-          <p className="text-lg font-bold text-rose-400">{currency(totalAtrasado)}</p>
+        <div className="bg-surface/50 border border-surface-border/40 rounded-xl p-3.5">
+          <p className="text-[11px] font-semibold text-slate-500 mb-1">Atrasado</p>
+          <p className="text-lg font-semibold text-rose-400">{currency(totalAtrasado)}</p>
         </div>
       </div>
 
@@ -106,7 +106,7 @@ export default function HonorariosBody({
         onClick={() => setPainelAberto((v) => !v)}
         className={`w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-[13px] font-semibold border transition-all duration-200 ${
           painelAberto
-            ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]"
+            ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#8FCB5E]"
             : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
         }`}
       >
@@ -117,7 +117,7 @@ export default function HonorariosBody({
       {painelAberto && (
         <div className="border border-[#5DA832]/30 rounded-xl p-4 bg-[#5DA832]/5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+            <div className="flex items-center gap-2 text-[#5DA832] font-semibold text-xs">
               <Plus className="h-4 w-4" />
               <span>Lançar honorário</span>
             </div>
@@ -180,7 +180,7 @@ export default function HonorariosBody({
 
             <button
               type="submit"
-              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-bold transition-all duration-200"
+              className="w-full h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-semibold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
               Lançar
@@ -193,10 +193,10 @@ export default function HonorariosBody({
       <Card className="border-surface-border/60 p-4">
         <div className="mb-4 pb-3 border-b border-surface-border/50 flex items-center justify-between">
           <div>
-            <h2 className="text-[15px] font-bold text-white">Honorários Lançados</h2>
+            <h2 className="text-[15px] font-semibold text-white">Honorários Lançados</h2>
             <p className="text-xs text-ink-tertiary mt-1">{honorariosFiltrados.length} lançamentos</p>
           </div>
-          <span className="text-xs font-semibold border border-[#5DA832]/40 bg-[#5DA832]/10 text-[#6fc23b] px-2.5 py-1 rounded-full">
+          <span className="text-xs font-semibold border border-[#5DA832]/40 bg-[#5DA832]/10 text-[#8FCB5E] px-2.5 py-1 rounded-full">
             {honorariosFiltrados.length} lançamentos
           </span>
         </div>
@@ -209,7 +209,7 @@ export default function HonorariosBody({
               onClick={() => setFiltroData("este_mes")}
               className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
                 filtroData === "este_mes"
-                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#8FCB5E]"
                   : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
               }`}
             >
@@ -220,7 +220,7 @@ export default function HonorariosBody({
               onClick={() => setFiltroData("mes_anterior")}
               className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
                 filtroData === "mes_anterior"
-                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#8FCB5E]"
                   : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
               }`}
             >
@@ -231,7 +231,7 @@ export default function HonorariosBody({
               onClick={() => setFiltroData("3_meses")}
               className={`shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap ${
                 filtroData === "3_meses"
-                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#8FCB5E]"
                   : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
               }`}
             >
@@ -242,7 +242,7 @@ export default function HonorariosBody({
               onClick={() => setFiltroData("personalizado")}
               className={`shrink-0 flex items-center justify-center h-7 w-7 rounded-full text-[11.5px] font-semibold transition-all duration-200 border ${
                 filtroData === "personalizado"
-                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                  ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#8FCB5E]"
                   : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
               }`}
               title="Filtro personalizado"
@@ -257,21 +257,21 @@ export default function HonorariosBody({
           {filtroData === "personalizado" && (
             <div className="flex gap-2 items-end">
               <div className="flex-1">
-                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">De</label>
+                <label className="text-[11px] font-semibold text-slate-500 mb-1 block">De</label>
                 <input
                   type="date"
                   value={dataInicio}
                   onChange={(e) => setDataInicio(e.target.value)}
-                  className="w-full h-8 px-2 rounded-lg bg-surface border border-surface-border/40 text-white text-xs"
+                  className="w-full h-8 px-2 rounded-xl bg-surface border border-surface-border/40 text-white text-xs"
                 />
               </div>
               <div className="flex-1">
-                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">Até</label>
+                <label className="text-[11px] font-semibold text-slate-500 mb-1 block">Até</label>
                 <input
                   type="date"
                   value={dataFim}
                   onChange={(e) => setDataFim(e.target.value)}
-                  className="w-full h-8 px-2 rounded-lg bg-surface border border-surface-border/40 text-white text-xs"
+                  className="w-full h-8 px-2 rounded-xl bg-surface border border-surface-border/40 text-white text-xs"
                 />
               </div>
             </div>
@@ -291,13 +291,13 @@ export default function HonorariosBody({
               const s = statusColors[h.status as keyof typeof statusColors];
 
               return (
-                <div key={h.id} className="bg-surface/50 border border-surface-border/40 rounded-lg p-4">
+                <div key={h.id} className="bg-surface/50 border border-surface-border/40 rounded-xl p-4">
                   <div className="flex items-start gap-3 mb-2">
-                    <div className={`h-10 w-10 rounded-lg ${s.bg} flex items-center justify-center shrink-0 ${s.text}`}>
+                    <div className={`h-10 w-10 rounded-xl ${s.bg} flex items-center justify-center shrink-0 ${s.text}`}>
                       <User className="h-5 w-5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-white text-sm">{h.clienteNome}</h3>
+                      <h3 className="font-semibold text-white text-sm">{h.clienteNome}</h3>
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
                         <span className="text-xs text-slate-500">{h.competenciaLabel}</span>
                         <span className={`text-xs px-2 py-0.5 rounded font-semibold ${s.bg} ${s.text}`}>
@@ -308,7 +308,7 @@ export default function HonorariosBody({
                         <p className="text-xs text-slate-500 mt-1">{h.observacao}</p>
                       )}
                     </div>
-                    <p className="text-sm font-bold text-white shrink-0">{currency(Number(h.valor))}</p>
+                    <p className="text-sm font-semibold text-white shrink-0">{currency(Number(h.valor))}</p>
                   </div>
 
                   {/* Ações */}
@@ -338,7 +338,7 @@ export default function HonorariosBody({
                       <input type="hidden" name="id" value={h.id} />
                       <button
                         type="submit"
-                        className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-200"
+                        className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-200"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                         Excluir

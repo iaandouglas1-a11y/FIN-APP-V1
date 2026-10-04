@@ -77,8 +77,8 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
       <FiltroDataPersist pagina="movimentacoes" basePath="/movimentacoes" inicio={sp.inicio} fim={sp.fim} />
 
       <div className="flex items-center justify-between px-1">
-        <h1 className="text-[22px] font-bold text-ink-primary tracking-tight">Movimentações</h1>
-        <a href="#filtros" className="icon-btn w-9 h-9 rounded-xl bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary">
+        <h1 className="text-[22px] font-semibold text-ink-primary tracking-tight">Movimentações</h1>
+        <a href="#filtros" className="icon-btn w-9 h-11 rounded-xl bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary">
           <Search className="h-4 w-4" />
         </a>
       </div>
@@ -92,7 +92,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
               key={t.value}
               href={withParam(sp, "tipo", t.value)}
               className={clsx(
-                "flex-1 text-center py-2 text-[12.5px] font-semibold rounded-lg transition-all duration-150",
+                "flex-1 text-center py-2 text-[12.5px] font-semibold rounded-xl transition-all duration-150",
                 active ? "bg-[#5DA832] text-[#0A0A0A]" : "text-ink-secondary hover:text-ink-primary"
               )}
             >
@@ -105,11 +105,11 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
       {/* Stat pills do período filtrado */}
       <div className="flex gap-3">
         <div className="surface-2 bg-surface px-3.5 py-3 flex-1">
-          <div className="text-[10px] font-bold uppercase tracking-wide text-ink-secondary">Entradas</div>
+          <div className="text-[11px] font-semibold text-ink-secondary">Entradas</div>
           <AmountText value={receitasTotal} tone="green" size="lg" className="block mt-1" />
         </div>
         <div className="surface-2 bg-surface px-3.5 py-3 flex-1">
-          <div className="text-[10px] font-bold uppercase tracking-wide text-ink-secondary">Saídas</div>
+          <div className="text-[11px] font-semibold text-ink-secondary">Saídas</div>
           <AmountText value={despesasTotal} tone="red" size="lg" className="block mt-1" />
         </div>
       </div>
@@ -137,7 +137,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                 className={clsx(
                   "shrink-0 text-center px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all duration-200 border whitespace-nowrap",
                   isActive
-                    ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#6fc23b]"
+                    ? "bg-[#5DA832]/15 border-[#5DA832]/35 text-[#8FCB5E]"
                     : "bg-transparent border-surface-border/50 text-ink-tertiary hover:text-ink-secondary hover:bg-surface-2/40"
                 )}
               >
@@ -162,14 +162,14 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
             <Filter className="h-3.5 w-3.5" />
           </summary>
           <form className="absolute right-0 top-10 z-20 w-72 p-3.5 rounded-xl bg-surface border border-surface-border shadow-navy space-y-2.5">
-            <p className="text-[10px] font-bold uppercase tracking-wide text-ink-tertiary">Período personalizado</p>
+            <p className="text-[11px] font-semibold text-ink-tertiary">Período personalizado</p>
             <div className="flex items-center gap-1.5">
-              <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-9 flex-1 min-w-0 text-xs" />
-              <span className="text-slate-600 text-[10px] shrink-0">até</span>
-              <Input type="date" name="fim" defaultValue={sp.fim} className="h-9 flex-1 min-w-0 text-xs" />
+              <Input type="date" name="inicio" defaultValue={sp.inicio} className="h-11 flex-1 min-w-0 text-xs" />
+              <span className="text-slate-600 text-[11px] shrink-0">até</span>
+              <Input type="date" name="fim" defaultValue={sp.fim} className="h-11 flex-1 min-w-0 text-xs" />
             </div>
             <input type="hidden" name="tipo" value={sp.tipo ?? ""} />
-            <Select name="categoria" defaultValue={sp.categoria ?? ""} className="h-9 text-xs w-full">
+            <Select name="categoria" defaultValue={sp.categoria ?? ""} className="h-11 text-xs w-full">
               <option value="">Todas categorias</option>
               {categorias.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </Select>
@@ -192,7 +192,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
           {datas.map((data) => (
             <div key={data}>
               <div className="flex items-center justify-between px-1 mb-2">
-                <span className="text-[11px] font-bold uppercase tracking-wide text-ink-tertiary">{dateBR(data)}</span>
+                <span className="text-[11px] font-semibold text-ink-tertiary">{dateBR(data)}</span>
                 <span className="text-[11px] text-ink-tertiary">
                   {grupos[data].length} {grupos[data].length === 1 ? "lançamento" : "lançamentos"}
                 </span>
@@ -228,7 +228,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                         />
                         <form action={deleteMovimentacao}>
                           <input type="hidden" name="id" value={m.id} />
-                          <button className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors">
+                          <button className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-xl transition-colors">
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
                         </form>

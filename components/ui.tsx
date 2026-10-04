@@ -39,7 +39,7 @@ export function MetricCard({
       <div className="flex items-start justify-between mb-4">
         <div className="min-w-0">
           <p className="text-sm font-medium opacity-70 truncate">{title}</p>
-          <p className="num mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight truncate">{value}</p>
+          <p className="num mt-3 text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight truncate">{value}</p>
           {change && (
             <p className={clsx("text-xs font-semibold mt-2", trend === "up" ? "text-emerald-400" : "text-rose-400")}>
               {trend === "up" ? "↑" : "↓"} {change}
@@ -196,7 +196,7 @@ export function PageHeader({
   return (
     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
       <div className="min-w-0">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">{title}</h1>
+        <h1 className="text-[22px] sm:text-3xl font-semibold tracking-tight text-ink-primary">{title}</h1>
         {description && <p className="text-slate-400 mt-2 text-sm sm:text-base">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
@@ -204,22 +204,26 @@ export function PageHeader({
   );
 }
 
-export function EmptyState({ 
-  icon: Icon, 
-  title, 
-  description, 
-  action 
-}: { 
-  icon?: React.ReactNode; 
-  title: string; 
-  description?: string; 
-  action?: React.ReactNode 
+export function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  action
+}: {
+  icon?: React.ReactNode;
+  title: string;
+  description?: string;
+  action?: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4">
-      {Icon && <div className="mb-4 text-slate-600">{Icon}</div>}
-      <h3 className="text-lg font-semibold text-slate-300 mb-2">{title}</h3>
-      {description && <p className="text-slate-500 text-sm mb-6 text-center max-w-sm">{description}</p>}
+    <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+      {Icon && (
+        <div className="mb-4 w-14 h-14 rounded-[18px] bg-[#5DA832]/[0.14] text-[#8FCB5E] flex items-center justify-center [&>svg]:h-6 [&>svg]:w-6">
+          {Icon}
+        </div>
+      )}
+      <h3 className="text-base font-semibold text-ink-primary mb-1">{title}</h3>
+      {description && <p className="text-ink-secondary text-sm mb-5 max-w-xs">{description}</p>}
       {action && <div>{action}</div>}
     </div>
   );
@@ -231,7 +235,7 @@ export function Divider() {
 
 export function Skeleton({ className }: { className?: string }) {
   return (
-    <div className={clsx("bg-surface-2/60 rounded-lg animate-pulse", className)} />
+    <div className={clsx("bg-surface-2/60 rounded-xl animate-pulse", className)} />
   );
 }
 
@@ -239,7 +243,7 @@ export function Tooltip({ text, children }: { text: string; children: React.Reac
   return (
     <div className="group relative inline-block">
       {children}
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-surface text-slate-200 text-xs px-3 py-1 rounded-lg whitespace-nowrap border border-surface-border/60 z-50">
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-surface text-slate-200 text-xs px-3 py-1 rounded-xl whitespace-nowrap border border-surface-border/60 z-50">
         {text}
       </div>
     </div>
@@ -252,12 +256,13 @@ export function Tooltip({ text, children }: { text: string; children: React.Reac
    ════════════════════════════════════════════════════════════════════ */
 
 const TONE_COLORS: Record<string, { bg: string; fg: string }> = {
-  green:  { bg: "rgba(93,168,50,0.14)",  fg: "#6fc23b" },
-  red:    { bg: "rgba(240,68,56,0.14)",  fg: "#f87171" },
-  amber:  { bg: "rgba(245,165,36,0.14)", fg: "#f5a524" },
-  blue:   { bg: "rgba(62,143,240,0.14)", fg: "#60a5fa" },
-  purple: { bg: "rgba(168,109,240,0.16)",fg: "#c084fc" },
-  gray:   { bg: "#202020",               fg: "#94A3B8" },
+  green:  { bg: "rgba(93,168,50,0.14)",   fg: "#8FCB5E" },
+  red:    { bg: "rgba(248,113,113,0.14)", fg: "#F87171" },
+  amber:  { bg: "rgba(245,165,36,0.14)",  fg: "#F5A524" },
+  // blue/purple deixam de ser cores de ícone: viram neutro (cor só com significado)
+  blue:   { bg: "rgba(255,255,255,0.08)", fg: "#CBD5E1" },
+  purple: { bg: "rgba(255,255,255,0.08)", fg: "#CBD5E1" },
+  gray:   { bg: "rgba(255,255,255,0.08)", fg: "#94A3B8" },
 };
 export type IconTone = keyof typeof TONE_COLORS;
 
@@ -302,15 +307,15 @@ export function AmountText({
 }) {
   const resolvedTone = tone ?? (signed ? (value >= 0 ? "green" : "red") : "neutral");
   const toneClass =
-    resolvedTone === "green" ? "text-[#6fc23b]" :
+    resolvedTone === "green" ? "text-[#8FCB5E]" :
     resolvedTone === "red" ? "text-[#f87171]" :
     resolvedTone === "amber" ? "text-[#f5a524]" :
     "text-ink-primary";
   const sizeClass = {
     sm: "text-sm font-semibold",
-    md: "text-[15px] font-bold",
-    lg: "text-2xl font-extrabold",
-    hero: "text-[38px] leading-tight font-extrabold tracking-tight",
+    md: "text-[15px] font-semibold",
+    lg: "text-2xl font-semibold",
+    hero: "text-[38px] leading-tight font-semibold tracking-tight",
   }[size];
   const prefix = signed ? (value >= 0 ? "+ " : "- ") : "";
   // Math.abs só se aplica quando `signed`, pois aí o sinal já é comunicado pelo
@@ -371,8 +376,8 @@ export function ListRow({
       </div>
       {typeof value === "string" ? (
         <span className={clsx(
-          "num text-[14.5px] font-bold shrink-0",
-          valueTone === "green" && "text-[#6fc23b]",
+          "num text-[14.5px] font-semibold shrink-0",
+          valueTone === "green" && "text-[#8FCB5E]",
           valueTone === "red" && "text-[#f87171]",
           !valueTone && "text-ink-primary"
         )}>{value}</span>
@@ -402,14 +407,14 @@ export function StatPill({
   tone?: "green" | "red" | "amber" | "neutral";
 }) {
   const toneClass =
-    tone === "green" ? "text-[#6fc23b]" :
+    tone === "green" ? "text-[#8FCB5E]" :
     tone === "red" ? "text-[#f87171]" :
     tone === "amber" ? "text-[#f5a524]" :
     "text-ink-primary";
   return (
     <div className="surface-2 bg-surface px-3.5 py-3 flex-1 min-w-0">
-      <div className="text-[10px] font-bold uppercase tracking-wide text-ink-secondary truncate">{label}</div>
-      <div className={clsx("num text-[15px] sm:text-lg font-extrabold mt-1 leading-tight break-words", toneClass)}>{value}</div>
+      <div className="text-[11px] font-semibold text-ink-secondary truncate">{label}</div>
+      <div className={clsx("num text-[15px] sm:text-lg font-semibold mt-1 leading-tight break-words", toneClass)}>{value}</div>
     </div>
   );
 }
@@ -432,7 +437,7 @@ export function SegmentedControl<T extends string>({
           type="button"
           onClick={() => onChange(opt.value)}
           className={clsx(
-            "flex-1 text-center py-2 text-[12.5px] font-semibold rounded-lg transition-all duration-150",
+            "flex-1 text-center py-2 text-[12.5px] font-semibold rounded-xl transition-all duration-150",
             value === opt.value ? "bg-[#5DA832] text-[#0A0A0A]" : "text-ink-secondary hover:text-ink-primary"
           )}
         >
@@ -460,7 +465,7 @@ export function QuickAction({ icon: Icon, label, href, onClick }: { icon: Lucide
       <div className="w-[52px] h-[52px] rounded-2xl bg-surface border border-surface-border/60 flex items-center justify-center text-ink-primary active:scale-95 active:bg-surface-2 transition-all">
         <Icon size={20} strokeWidth={2} />
       </div>
-      <span className="text-[10.5px] font-semibold text-ink-secondary text-center">{label}</span>
+      <span className="text-[11px] font-semibold text-ink-secondary text-center">{label}</span>
     </div>
   );
   if (href) return <Link href={href}>{inner}</Link>;
@@ -515,7 +520,7 @@ export function BottomSheet({
         <div className="pt-3 pb-2 flex justify-center">
           <div className="w-9 h-1 rounded-full bg-surface-border" />
         </div>
-        {title && <h4 className="px-5 pb-3 text-[15px] font-bold text-ink-primary">{title}</h4>}
+        {title && <h4 className="px-5 pb-3 text-[15px] font-semibold text-ink-primary">{title}</h4>}
         <div className="px-5 pb-2">{children}</div>
       </div>
     </div>

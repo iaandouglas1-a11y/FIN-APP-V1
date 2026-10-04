@@ -44,7 +44,7 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
           onClick={() => toggle("investimento")}
           className={`flex flex-col items-center justify-center gap-1 px-2 py-2.5 rounded-xl text-[11.5px] font-semibold border text-center leading-tight transition-all duration-200 ${
             aberto === "investimento"
-              ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#6fc23b]"
+              ? "bg-[#5DA832]/15 border-[#5DA832]/40 text-[#8FCB5E]"
               : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
           }`}
         >
@@ -56,7 +56,7 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
           onClick={() => toggle("movimento")}
           className={`flex flex-col items-center justify-center gap-1 px-2 py-2.5 rounded-xl text-[11.5px] font-semibold border text-center leading-tight transition-all duration-200 ${
             aberto === "movimento"
-              ? "bg-info/15 border-info/40 text-[#60a5fa]"
+              ? "bg-info/15 border-info/40 text-[#CBD5E1]"
               : "bg-surface border-surface-border/60 text-ink-secondary hover:text-ink-primary"
           }`}
         >
@@ -81,7 +81,7 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
       {aberto === "investimento" && (
         <div className="border border-[#5DA832]/30 rounded-xl p-4 bg-[#5DA832]/5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#5DA832] font-bold uppercase text-xs tracking-widest">
+            <div className="flex items-center gap-2 text-[#5DA832] font-semibold text-xs">
               <Plus className="h-4 w-4" />
               <span>Novo investimento</span>
             </div>
@@ -92,14 +92,14 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
 
           <form action={saveInvestimento} className="space-y-2">
             <FormGroup label="Nome">
-              <Input name="nome" placeholder="Ex: CDB Nubank, PETR4..." required className="h-9 text-sm w-full" />
+              <Input name="nome" placeholder="Ex: CDB Nubank, PETR4..." required className="h-11 text-sm w-full" />
             </FormGroup>
             <div className="grid grid-cols-2 gap-2">
               <FormGroup label="Tipo">
                 <Select
                   name="tipo"
                   required
-                  className="h-9 text-sm w-full"
+                  className="h-11 text-sm w-full"
                   value={tipoInv}
                   onChange={(e) => setTipoInv(e.target.value as "renda_fixa" | "renda_variavel")}
                 >
@@ -108,7 +108,7 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
                 </Select>
               </FormGroup>
               <FormGroup label="Subcategoria">
-                <Select name="subcategoria" className="h-9 text-sm w-full" defaultValue="">
+                <Select name="subcategoria" className="h-11 text-sm w-full" defaultValue="">
                   <option value="">Sem subcategoria</option>
                   {SUBCATEGORIAS[tipoInv].map((s) => <option key={s} value={s}>{s}</option>)}
                 </Select>
@@ -116,21 +116,21 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
             </div>
             <div className="grid grid-cols-2 gap-2">
               <FormGroup label="Ticker">
-                <Input name="ticker" placeholder="PETR4" className="h-9 text-sm font-mono w-full" />
+                <Input name="ticker" placeholder="PETR4" className="h-11 text-sm font-mono w-full" />
               </FormGroup>
               <FormGroup label="Conta">
-                <Select name="conta_id" className="h-9 text-sm w-full">
+                <Select name="conta_id" className="h-11 text-sm w-full">
                   <option value="">Nenhuma</option>
                   {contas.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
                 </Select>
               </FormGroup>
             </div>
             <FormGroup label="Valor Atual">
-              <Input name="valor_atual" type="number" step="0.01" min="0" placeholder="0,00" className="h-9 text-sm w-full" />
+              <Input name="valor_atual" type="number" step="0.01" min="0" placeholder="0,00" className="h-11 text-sm w-full" />
             </FormGroup>
             <button
               type="submit"
-              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-bold transition-all duration-200"
+              className="w-full h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] text-sm font-semibold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
               Adicionar
@@ -143,7 +143,7 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
       {aberto === "movimento" && (
         <div className="border border-info/30 rounded-xl p-4 bg-info/5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#60a5fa] font-bold uppercase text-xs tracking-widest">
+            <div className="flex items-center gap-2 text-[#CBD5E1] font-semibold text-xs">
               <Repeat className="h-4 w-4" />
               <span>Registrar Aporte / Resgate</span>
             </div>
@@ -154,39 +154,39 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
 
           <form action={saveMovimento} className="space-y-2">
             <FormGroup label="Investimento">
-              <Select name="investimento_id" required className="h-9 text-sm w-full">
+              <Select name="investimento_id" required className="h-11 text-sm w-full">
                 <option value="">Selecione...</option>
                 {investimentos.map((i) => <option key={i.id} value={i.id}>{i.nome}</option>)}
               </Select>
             </FormGroup>
             <div className="grid grid-cols-2 gap-2">
               <FormGroup label="Tipo">
-                <Select name="tipo" required className="h-9 text-sm w-full">
+                <Select name="tipo" required className="h-11 text-sm w-full">
                   <option value="aporte">Aporte</option>
                   <option value="resgate">Resgate</option>
                 </Select>
               </FormGroup>
               <FormGroup label="Valor">
-                <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="h-9 text-sm w-full" />
+                <Input name="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required className="h-11 text-sm w-full" />
               </FormGroup>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <FormGroup label="Data">
-                <Input name="data" type="date" required className="h-9 w-full text-sm" />
+                <Input name="data" type="date" required className="h-11 w-full text-sm" />
               </FormGroup>
               <FormGroup label="Conta">
-                <Select name="conta_id" className="h-9 text-sm w-full">
+                <Select name="conta_id" className="h-11 text-sm w-full">
                   <option value="">Nenhuma</option>
                   {contas.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
                 </Select>
               </FormGroup>
             </div>
             <FormGroup label="Descrição">
-              <Input name="descricao" placeholder="Opcional..." className="h-9 text-sm w-full" />
+              <Input name="descricao" placeholder="Opcional..." className="h-11 text-sm w-full" />
             </FormGroup>
             <button
               type="submit"
-              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-info hover:brightness-110 text-white text-sm font-semibold transition-all duration-200"
+              className="w-full h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-info hover:brightness-110 text-white text-sm font-semibold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
               Registrar
@@ -199,7 +199,7 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
       {aberto === "saldo" && (
         <div className="border border-warning/30 rounded-xl p-4 bg-warning/5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#f5a524] font-bold uppercase text-xs tracking-widest">
+            <div className="flex items-center gap-2 text-[#f5a524] font-semibold text-xs">
               <TrendingUp className="h-4 w-4" />
               <span>Atualizar Saldo Mensal</span>
             </div>
@@ -210,24 +210,24 @@ export default function InvestimentoQuickForms({ contas, investimentos, mesAtual
 
           <form action={saveSaldoMensal} className="space-y-2">
             <FormGroup label="Investimento">
-              <Select name="investimento_id" required className="h-9 text-sm w-full">
+              <Select name="investimento_id" required className="h-11 text-sm w-full">
                 <option value="">Selecione...</option>
                 {investimentos.map((i) => <option key={i.id} value={i.id}>{i.nome}</option>)}
               </Select>
             </FormGroup>
             <div className="grid grid-cols-2 gap-2">
               <FormGroup label="Mês">
-                <Select name="mes" required className="h-9 text-sm w-full" defaultValue={mesAtual}>
+                <Select name="mes" required className="h-11 text-sm w-full" defaultValue={mesAtual}>
                   {meses.map((m) => <option key={m.val} value={m.val}>{m.label}</option>)}
                 </Select>
               </FormGroup>
               <FormGroup label="Saldo">
-                <Input name="saldo" type="number" step="0.01" min="0" placeholder="0,00" required className="h-9 text-sm w-full" />
+                <Input name="saldo" type="number" step="0.01" min="0" placeholder="0,00" required className="h-11 text-sm w-full" />
               </FormGroup>
             </div>
             <button
               type="submit"
-              className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg bg-warning hover:brightness-110 text-[#0A0A0A] text-sm font-bold transition-all duration-200"
+              className="w-full h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-warning hover:brightness-110 text-[#0A0A0A] text-sm font-semibold transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
               Salvar

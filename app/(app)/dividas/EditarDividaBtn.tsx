@@ -35,9 +35,9 @@ export default function EditarDividaBtn({ divida, categorias }: Props) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-[#161616] border border-surface-border w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#161616]/50">
-          <h3 className="font-bold text-white flex items-center gap-2">
+      <div className="bg-[#141414] border border-surface-border w-full max-w-md rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="px-6 py-4 border-b border-surface-border flex items-center justify-between bg-[#141414]/50">
+          <h3 className="font-semibold text-white flex items-center gap-2">
             <Pencil className="h-4 w-4 text-[#5DA832]" />
             Editar Dívida
           </h3>
@@ -51,24 +51,24 @@ export default function EditarDividaBtn({ divida, categorias }: Props) {
           
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="Data">
-              <Input name="data" type="date" defaultValue={divida.data} required className="h-9" />
+              <Input name="data" type="date" defaultValue={divida.data} required className="h-11" />
             </FormGroup>
             <FormGroup label="Valor Total">
-              <Input name="valor" type="number" step="0.01" min="0.01" defaultValue={divida.valor} required className="h-9" />
+              <Input name="valor" type="number" step="0.01" min="0.01" defaultValue={divida.valor} required className="h-11" />
             </FormGroup>
           </div>
 
           <FormGroup label="Descrição">
-            <Input name="descricao" defaultValue={divida.descricao} required className="h-9" />
+            <Input name="descricao" defaultValue={divida.descricao} required className="h-11" />
           </FormGroup>
 
           <FormGroup label="Observação">
-            <Input name="observacao" defaultValue={divida.observacao || ""} className="h-9" />
+            <Input name="observacao" defaultValue={divida.observacao || ""} className="h-11" />
           </FormGroup>
 
           <div className="grid grid-cols-2 gap-4">
             <FormGroup label="Categoria">
-              <Select name="categoria_id" defaultValue={divida.categoria_id || ""} className="h-9">
+              <Select name="categoria_id" defaultValue={divida.categoria_id || ""} className="h-11">
                 <option value="">Sem categoria</option>
                 {categorias.map((cat) => (
                   <option key={cat.id} value={cat.id}>{cat.nome}</option>
@@ -76,7 +76,7 @@ export default function EditarDividaBtn({ divida, categorias }: Props) {
               </Select>
             </FormGroup>
             <FormGroup label="Situação">
-              <Select name="situacao" defaultValue={divida.situacao} className="h-9">
+              <Select name="situacao" defaultValue={divida.situacao} className="h-11">
                 <option value="pendente">Pendente</option>
                 <option value="parcial">Parcial</option>
                 <option value="liquidado">Liquidado</option>

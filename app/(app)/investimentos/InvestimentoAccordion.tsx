@@ -52,26 +52,26 @@ export default function InvestimentoAccordion({ id, nome, tipo, subcategoria, ti
         />
 
         <div className="min-w-0 flex-1">
-          <p className="text-[14px] font-bold text-ink-primary truncate">{nome}</p>
+          <p className="text-[14px] font-semibold text-ink-primary truncate">{nome}</p>
           <div className="flex items-center gap-1.5 flex-wrap mt-1">
-            <Badge variant={tipo === "renda_fixa" ? "info" : "success"} className="text-[10px]">
+            <Badge variant={tipo === "renda_fixa" ? "info" : "success"} className="text-[11px]">
               {subcategoria || (tipo === "renda_fixa" ? "Renda Fixa" : "Renda Variável")}
             </Badge>
-            {ticker && <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-2 text-slate-400 font-mono">{ticker}</span>}
+            {ticker && <span className="text-[11px] px-1.5 py-0.5 rounded bg-surface-2 text-slate-400 font-mono">{ticker}</span>}
             {contaNome && <span className="text-[11px] text-ink-tertiary">{contaNome}</span>}
           </div>
         </div>
 
         <div className="flex items-center gap-1 shrink-0">
           <div className="text-right mr-1">
-            <p className="num text-[14px] font-bold text-ink-primary whitespace-nowrap">{currency(valorAtual)}</p>
-            <p className={`text-[11.5px] font-semibold whitespace-nowrap ${positivo ? "text-[#6fc23b]" : "text-[#f87171]"}`}>
+            <p className="num text-[14px] font-semibold text-ink-primary whitespace-nowrap">{currency(valorAtual)}</p>
+            <p className={`text-[11.5px] font-semibold whitespace-nowrap ${positivo ? "text-[#8FCB5E]" : "text-[#f87171]"}`}>
               {positivo ? "+" : ""}{rentabilidade.toFixed(2)}%
             </p>
           </div>
           <form action={deleteInvestimento} onClick={(e) => e.stopPropagation()}>
             <input type="hidden" name="id" value={id} />
-            <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors" title="Excluir investimento">
+            <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-xl transition-colors" title="Excluir investimento">
               <Trash2 className="h-3.5 w-3.5" />
             </button>
           </form>
@@ -85,17 +85,17 @@ export default function InvestimentoAccordion({ id, nome, tipo, subcategoria, ti
 
           {/* Métricas */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-bg/60 rounded-lg p-3 border border-surface-border/40">
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Total Aportado</p>
-              <p className="text-sm font-bold text-white">{currency(totalAportado)}</p>
+            <div className="bg-bg/60 rounded-xl p-3 border border-surface-border/40">
+              <p className="text-[11px] text-slate-500 mb-1">Total Aportado</p>
+              <p className="text-sm font-semibold text-white">{currency(totalAportado)}</p>
             </div>
-            <div className="bg-bg/60 rounded-lg p-3 border border-surface-border/40">
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Valor Investido</p>
-              <p className="text-sm font-bold text-white">{currency(valorInvestido)}</p>
+            <div className="bg-bg/60 rounded-xl p-3 border border-surface-border/40">
+              <p className="text-[11px] text-slate-500 mb-1">Valor Investido</p>
+              <p className="text-sm font-semibold text-white">{currency(valorInvestido)}</p>
             </div>
-            <div className={`rounded-lg p-3 border ${positivo ? "bg-[#5DA832]/5 border-[#5DA832]/20" : "bg-rose-500/5 border-rose-500/20"}`}>
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Rentabilidade</p>
-              <p className={`text-sm font-bold ${positivo ? "text-[#5DA832]" : "text-rose-400"}`}>
+            <div className={`rounded-xl p-3 border ${positivo ? "bg-[#5DA832]/5 border-[#5DA832]/20" : "bg-rose-500/5 border-rose-500/20"}`}>
+              <p className="text-[11px] text-slate-500 mb-1">Rentabilidade</p>
+              <p className={`text-sm font-semibold ${positivo ? "text-[#5DA832]" : "text-rose-400"}`}>
                 {positivo ? "+" : ""}{currency(valorAtual - valorInvestido)}
               </p>
             </div>
@@ -124,7 +124,7 @@ export default function InvestimentoAccordion({ id, nome, tipo, subcategoria, ti
                   min="0"
                   className="input-modern h-8 w-36 text-sm"
                 />
-                <button type="submit" className="px-3 py-1.5 rounded-lg bg-[#5DA832] text-white text-xs font-semibold hover:bg-[#6fc23b] transition-colors">
+                <button type="submit" className="px-3 py-1.5 rounded-xl bg-[#5DA832] text-white text-xs font-semibold hover:bg-[#6fc23b] transition-colors">
                   Salvar
                 </button>
                 <button type="button" onClick={() => setEditando(false)} className="text-xs text-slate-500 hover:text-slate-300">
@@ -136,13 +136,13 @@ export default function InvestimentoAccordion({ id, nome, tipo, subcategoria, ti
 
           {/* Histórico de movimentos */}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Histórico</p>
+            <p className="text-[11px] font-semibold text-slate-500 mb-2">Histórico</p>
             {movimentos.length === 0 ? (
               <p className="text-xs text-slate-600 italic">Nenhum aporte ou resgate registrado.</p>
             ) : (
               <div className="space-y-1">
                 {movimentos.map(m => (
-                  <div key={m.id} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-2/40 group/mov">
+                  <div key={m.id} className="flex items-center gap-3 px-3 py-2 rounded-xl bg-surface-2/40 group/mov">
                     <div className={`h-5 w-5 rounded flex items-center justify-center shrink-0 ${
                       m.tipo === "aporte" ? "bg-[#5DA832]/15 text-[#5DA832]" : "bg-rose-500/15 text-rose-400"
                     }`}>

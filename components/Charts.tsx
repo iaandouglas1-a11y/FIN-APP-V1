@@ -21,8 +21,8 @@ import {
 // ======================
 // CONFIG
 // ======================
-const colors = ["#5DA832", "#10b981", "#f43f5e", "#f59e0b", "#8b5cf6", "#06b6d4"];
-const chartGridColor = "#1e293b";
+const colors = ["#5DA832", "#8FCB5E", "#94A3B8", "#4A8828", "#B8E08F", "#64748B", "#F5A524", "#F87171", "#CBD5E1", "#3F6B26"];
+const chartGridColor = "#2A2A2A";
 const chartTextColor = "#94a3b8";
 
 // ======================
@@ -56,7 +56,7 @@ function useIsMobile() {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-surface-2/95 border border-surface-border/60 rounded-lg p-3 shadow-xl">
+      <div className="bg-surface-2/95 border border-surface-border/60 rounded-xl p-3 shadow-xl">
         {label && <p className="text-xs text-slate-400 mb-1">{label}</p>}
 
         {payload.map((entry: any, i: number) => (
@@ -221,8 +221,8 @@ export function EvolutionChart({ data }: any) {
 
         <Legend wrapperStyle={{ color: chartTextColor }} />
 
-        <Line type="monotone" dataKey="receitas" stroke="#10b981" />
-        <Line type="monotone" dataKey="despesas" stroke="#f43f5e" />
+        <Line type="monotone" dataKey="receitas" stroke="#5DA832" strokeWidth={2} dot={false} />
+        <Line type="monotone" dataKey="despesas" stroke="#F87171" strokeWidth={2} dot={false} />
       </LineChart>
     </ResponsiveContainer>
   );
@@ -295,8 +295,8 @@ export function DreChart({ data }: any) {
 
         <Legend wrapperStyle={{ color: chartTextColor }} />
 
-        <Bar dataKey="receitas" fill="#10b981" radius={[6, 6, 0, 0]} />
-        <Bar dataKey="despesas" fill="#f43f5e" radius={[6, 6, 0, 0]} />
+        <Bar dataKey="receitas" fill="#5DA832" radius={[6, 6, 0, 0]} />
+        <Bar dataKey="despesas" fill="#F87171" radius={[6, 6, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -320,7 +320,7 @@ export function WaterfallChart({
   const offsets = [0, saldoInicial, saldoInicial + entradas - saidas, 0];
   const bars    = [saldoInicial, entradas, saidas, saldoFinal];
   // amarelo para saldo inicial/final, verde para entradas, vermelho para saídas
-  const barColors = ["#f59e0b", "#10b981", "#f43f5e", "#f59e0b"];
+  const barColors = ["#94A3B8", "#5DA832", "#F87171", "#94A3B8"];
 
   const data = labels.map((label, i) => ({
     label,
@@ -350,7 +350,7 @@ export function WaterfallChart({
               const bar = payload.find((p: any) => p.dataKey === "bar");
               if (!bar) return null;
               return (
-                <div className="bg-surface-2/95 border border-surface-border/60 rounded-lg p-3 shadow-xl">
+                <div className="bg-surface-2/95 border border-surface-border/60 rounded-xl p-3 shadow-xl">
                   <p className="text-xs text-slate-400 mb-1">{label}</p>
                   <p className="text-sm font-medium" style={{ color: bar.payload.color }}>
                     {formatCurrency(bar.value as number)}

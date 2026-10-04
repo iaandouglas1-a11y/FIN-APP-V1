@@ -9,7 +9,7 @@ export default function ContasLayout({
 }) {
   return (
     <div className="space-y-5">
-      <h1 className="text-[22px] font-bold text-ink-primary tracking-tight px-1">
+      <h1 className="text-[22px] font-semibold text-ink-primary tracking-tight px-1">
         Contas
       </h1>
 
