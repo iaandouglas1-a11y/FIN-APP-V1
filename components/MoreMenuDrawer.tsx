@@ -24,24 +24,24 @@ const secondaryNavGroups: { label: string; items: SecondaryNavItem[] }[] = [
   {
     label: "Financeiro",
     items: [
-      { href: "/contas", label: "Contas", icon: Wallet, tone: "gray" },
-      { href: "/faturas", label: "Faturas", icon: Receipt, tone: "gray" },
+      { href: "/contas", label: "Contas", icon: Wallet, tone: "blue" },
+      { href: "/faturas", label: "Faturas", icon: Receipt, tone: "amber" },
       { href: "/orcamento", label: "Orçamento", icon: PiggyBank, tone: "green" },
-      { href: "/dividas", label: "Dívidas", icon: TrendingDown, tone: "gray" },
-      { href: "/investimentos", label: "Investim.", icon: TrendingUp, tone: "gray" },
+      { href: "/dividas", label: "Dívidas", icon: TrendingDown, tone: "red" },
+      { href: "/investimentos", label: "Investim.", icon: TrendingUp, tone: "purple" },
     ],
   },
   {
     label: "Prática profissional",
     items: [
       { href: "/honorarios", label: "Honorários", icon: HandCoins, tone: "green" },
-      { href: "/clientes", label: "Clientes", icon: Users, tone: "gray" },
+      { href: "/clientes", label: "Clientes", icon: Users, tone: "blue" },
     ],
   },
   {
     label: "Sistema",
     items: [
-      { href: "/categorias", label: "Categorias", icon: Tags, tone: "gray" },
+      { href: "/categorias", label: "Categorias", icon: Tags, tone: "amber" },
     ],
   },
 ];

@@ -73,7 +73,7 @@ export function BottomNav({ onMoreClick, onQuickAddClick }: BottomNavProps) {
           {/* FAB central — ação rápida */}
           <button
             onClick={onQuickAddClick}
-            className="w-12 h-12 rounded-full bg-[#5DA832] hover:bg-[#6fc23b] flex items-center justify-center shadow-fab active:scale-90 transition-all -mt-4 border-4 border-bg"
+            className="w-12 h-12 rounded-full bg-[#5DA832] hover:bg-[#6fc23b] flex items-center justify-center active:scale-90 transition-all -mt-4 border-4 border-bg"
             aria-label="Ação rápida"
           >
             <Plus className="w-[22px] h-[22px] text-[#0A0A0A]" strokeWidth={2.5} />
