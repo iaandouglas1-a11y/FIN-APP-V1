@@ -53,7 +53,7 @@ body {
 @layer components {
 
   /* ── Design System 2.0 — superfícies em camadas ──────────────────────
-     bg (#0A0A0A) → surface (#161616, opaca) → surface-2 (#202020, elevada).
+     bg (#0A0A0A) → surface (#141414, opaca) → surface-2 (#1C1C1C, elevada).
      Blur/glass reservado só pra headers fixos e bottom sheet, não pra
      cards "normais" (isso é o que gerava ruído visual no design anterior). */
   .glass-card {
@@ -82,23 +82,25 @@ body {
 
   /* Botão Primário — verde ON */
   .btn-primary {
-    @apply inline-flex items-center justify-center bg-[#5DA832] hover:bg-[#6fc23b] active:bg-[#4a8828] text-[#0A0A0A] font-bold text-sm px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95 shadow-md disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply min-h-[44px] inline-flex items-center justify-center bg-[#5DA832] hover:bg-[#6fc23b] active:bg-[#4a8828] text-[#0A0A0A] font-bold text-sm px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95 shadow-md disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   /* Botão Secundário */
   .btn-secondary {
-    @apply inline-flex items-center justify-center bg-surface-2/70 hover:bg-surface-2 text-slate-200 font-medium text-sm px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95 border border-surface-border/60 disabled:opacity-50;
+    @apply min-h-[44px] inline-flex items-center justify-center bg-surface-2/70 hover:bg-surface-2 text-slate-200 font-medium text-sm px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95 border border-surface-border/60 disabled:opacity-50;
   }
 
   /* Input & Select base */
   .input-modern, .select-modern {
-    @apply w-full box-border bg-[#121212]/80 border border-[#2E2E2E]/80 focus:border-[#5DA832]/70 focus:ring-2 focus:ring-[#5DA832]/20 rounded-lg transition-all duration-200 outline-none px-3 text-sm text-slate-200 placeholder:text-slate-600;
-    height: 2.25rem !important;
-    min-height: 2.25rem !important;
+    @apply w-full box-border bg-surface border border-surface-border focus:border-[#5DA832] focus:ring-[3px] focus:ring-[#5DA832]/20 rounded-xl transition-all duration-200 outline-none px-3 text-sm text-ink-primary placeholder:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed;
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     box-sizing: border-box !important;
   }
+
+  .input-modern[aria-invalid="true"] { @apply border-[#F87171] ring-[3px] ring-[#F87171]/20; }
 
   .input-modern[type="date"],
   .input-modern[type="month"] {
@@ -154,28 +156,28 @@ body {
 
   /* Label */
   .label-modern {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-slate-500 mb-1.5 block;
+    @apply text-xs font-medium text-ink-secondary mb-1.5 block;
   }
 
   /* Badges — pill, sólido e discreto (fundo com 14% de opacidade) */
   .badge-default {
-    @apply inline-flex items-center px-2.5 py-1 rounded-full bg-surface-2 text-slate-300 text-[11px] font-bold;
+    @apply inline-flex items-center h-6 px-2.5 rounded-full bg-surface-2 text-slate-300 text-xs font-medium;
   }
 
   .badge-success {
-    @apply inline-flex items-center px-2.5 py-1 rounded-full bg-[#5DA832]/[0.14] text-[#6fc23b] text-[11px] font-bold;
+    @apply inline-flex items-center h-6 px-2.5 rounded-full bg-[#5DA832]/[0.14] text-[#8FCB5E] text-xs font-medium;
   }
 
   .badge-error {
-    @apply inline-flex items-center px-2.5 py-1 rounded-full bg-danger/[0.14] text-[#f87171] text-[11px] font-bold;
+    @apply inline-flex items-center h-6 px-2.5 rounded-full bg-danger/[0.14] text-[#f87171] text-xs font-medium;
   }
 
   .badge-warning {
-    @apply inline-flex items-center px-2.5 py-1 rounded-full bg-warning/[0.14] text-[#f5a524] text-[11px] font-bold;
+    @apply inline-flex items-center h-6 px-2.5 rounded-full bg-warning/[0.14] text-[#f5a524] text-xs font-medium;
   }
 
   .badge-info {
-    @apply inline-flex items-center px-2.5 py-1 rounded-full bg-info/[0.14] text-[#60a5fa] text-[11px] font-bold;
+    @apply inline-flex items-center h-6 px-2.5 rounded-full bg-white/[0.08] text-ink-secondary text-xs font-medium;
   }
 
   /* Métrica */
@@ -198,7 +200,7 @@ body {
 
   /* Spinner */
   .spinner-modern {
-    @apply h-7 w-7 animate-spin rounded-full border-2 border-[#202020] border-t-[#5DA832];
+    @apply h-7 w-7 animate-spin rounded-full border-2 border-[#1C1C1C] border-t-[#5DA832];
   }
 
   .transition-smooth {
@@ -222,8 +224,8 @@ body {
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: #0A0A0A; }
-::-webkit-scrollbar-thumb { background: #202020; border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: #2E2E2E; }
+::-webkit-scrollbar-thumb { background: #1C1C1C; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #2A2A2A; }
 
 /* Animações */
 @keyframes glow {

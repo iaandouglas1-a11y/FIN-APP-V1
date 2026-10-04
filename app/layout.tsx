@@ -3,18 +3,26 @@ import { ToastProvider } from "@/components/ToastProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "On Finanças",
-  description: "Gestão Financeira On Contabilidade",
+  title: "Onfin",
+  description: "Gestão financeira On Contabilidade",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "On Finanças",
+    title: "Onfin",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#161616",
+  themeColor: "#141414",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -27,8 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR">
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-title" content="On Finanças" />
-        <link rel="apple-touch-icon" href="/icon-512.png" />
+        <meta name="apple-mobile-web-app-title" content="Onfin" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body>
         <ToastProvider />
