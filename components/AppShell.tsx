@@ -139,6 +139,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           className="app-top-cover md:hidden fixed inset-x-0 top-0 z-40 bg-bg pointer-events-none"
         />
         <div className="app-top-pad flex-1 p-4 md:p-8 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-8">
+          <div className="mb-5 flex items-center justify-between px-1 md:hidden" aria-label="Marca Onfin">
+            <OnfinLogo variant="horizontal" className="h-8 w-auto" />
+          </div>
           <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}
           </div>

@@ -5,7 +5,6 @@ import { totalBalance, invoiceTotal } from "@/lib/finance";
 import { getDashboardData, monthlyDre, getCartoesEFaturas } from "@/lib/queries";
 import { TrendingUp, Filter } from "lucide-react";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
-import { OnfinTile } from "@/components/OnfinLogo";
 
 const MESES_RAPIDOS = [
   { label: "Este mês", offset: 0 },
@@ -59,15 +58,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   return (
     <div className="space-y-6">
       <FiltroDataPersist pagina="dashboard" basePath="/dashboard" inicio={sp.inicio} fim={sp.fim} />
-
-      {/* Cabeçalho mobile — marca + título + período */}
-      <div className="flex items-center gap-3 px-1 md:hidden">
-        <OnfinTile size={40} />
-        <div>
-          <h1 className="text-[22px] font-semibold text-ink-primary tracking-tight leading-tight">Início</h1>
-          <p className="text-xs text-ink-secondary capitalize">{periodoLabel}</p>
-        </div>
-      </div>
 
       {/* ── Hero: saldo consolidado ───────────────────────────────── */}
       <div className="glass-card p-6">
