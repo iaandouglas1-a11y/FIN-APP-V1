@@ -1,6 +1,7 @@
 import { deleteMovimentacao } from "@/app/(app)/actions";
 import { Card, Input, Select, Button, EmptyState, IconChip, AmountText, Surface } from "@/components/ui";
-import { dateBR } from "@/lib/format";
+import { currency, dateBR } from "@/lib/format";
+import { isTransferencia } from "@/lib/finance";
 import { getCartoesEFaturas, getCategorias, getContasWithMovs, getMovimentacoes } from "@/lib/queries";
 import { Trash2, Filter, Inbox, Search, X } from "lucide-react";
 import { getCategoryIcon } from "@/lib/categoryIcons";
@@ -51,14 +52,15 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
     getCartoesEFaturas(),
   ]);
 
-  const receitasTotal = (movs as any[]).filter(m => m.tipo === "receita").reduce((s, m) => s + Number(m.valor), 0);
-  const despesasTotal = (movs as any[]).filter(m => m.tipo === "despesa").reduce((s, m) => s + Number(m.valor), 0);
+  const movsVisiveis = (movs as any[]).filter((m) => !(sp.tipo && isTransferencia(m)));
+  const receitasTotal = movsVisiveis.filter(m => m.tipo === "receita" && !isTransferencia(m)).reduce((s, m) => s + Number(m.valor), 0);
+  const despesasTotal = movsVisiveis.filter(m => m.tipo === "despesa" && !isTransferencia(m)).reduce((s, m) => s + Number(m.valor), 0);
 
   // Apenas faturas em aberto podem receber novos lançamentos — faturas já pagas ficam de fora
   const faturasEmAberto = (cardsData.faturas as any[]).filter((f) => !f.pago);
 
   // Agrupar por data (mais recente primeiro); dentro do dia: receitas antes de despesas
-  const grupos = (movs as any[]).reduce((acc, m) => {
+  const grupos = movsVisiveis.reduce((acc, m) => {
     const d = m.data;
     if (!acc[d]) acc[d] = [];
     acc[d].push(m);
@@ -68,6 +70,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
   datas.forEach(data => {
     grupos[data].sort((a: any, b: any) => {
       if (a.tipo !== b.tipo) return a.tipo === "receita" ? -1 : 1;
+      if (isTransferencia(a) !== isTransferencia(b)) return isTransferencia(a) ? 1 : -1;
       return (a.categorias?.nome ?? "").localeCompare(b.categorias?.nome ?? "", "pt-BR");
     });
   });
@@ -179,7 +182,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
       </div>
 
       {/* Listagem agrupada por dia */}
-      {movs.length === 0 ? (
+      {movsVisiveis.length === 0 ? (
         <Card>
           <EmptyState
             icon={<Inbox className="h-12 w-12" />}
@@ -199,19 +202,20 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
               </div>
               <Surface padded={false} className="divide-y divide-surface-border/50">
                 {grupos[data].map((m: any) => {
+                  const transferencia = isTransferencia(m);
                   const CatIcon = getCategoryIcon(m.categorias?.nome || "");
                   return (
                     <div key={m.id} className="list-row group">
-                      <IconChip icon={CatIcon} tone={m.tipo === "receita" ? "green" : "red"} />
+                      <IconChip icon={CatIcon} tone={transferencia ? "gray" : m.tipo === "receita" ? "green" : "red"} />
                       <div className="min-w-0 flex-1">
                         <div className="text-[14px] font-semibold text-ink-primary truncate">
-                          {m.categorias?.nome || "Sem categoria"}
+                          {transferencia ? "Transferência entre contas" : (m.categorias?.nome || "Sem categoria")}
                         </div>
                         <div className="text-[11.5px] text-ink-tertiary mt-0.5 truncate">
                           {m.descricao || m.contas?.nome || m.cartoes?.nome || "—"}
                         </div>
                       </div>
-                      <AmountText value={m.tipo === "receita" ? Number(m.valor) : -Number(m.valor)} signed tone={m.tipo === "receita" ? "green" : "red"} />
+                      {transferencia ? <span className="num shrink-0 text-[14px] font-semibold text-ink-secondary">↔ {currency(Number(m.valor))}</span> : <AmountText value={m.tipo === "receita" ? Number(m.valor) : -Number(m.valor)} signed tone={m.tipo === "receita" ? "green" : "red"} />}
                       <div className="flex items-center gap-0.5 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity">
                         <EditarMovimentacaoBtn
                           mov={m}

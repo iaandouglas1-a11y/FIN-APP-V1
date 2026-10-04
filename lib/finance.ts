@@ -1,5 +1,10 @@
 import type { Movimentacao } from "@/types/database";
 export function signedValue(mov: Pick<Movimentacao, "tipo" | "valor">) { return mov.tipo === "receita" ? Number(mov.valor) : -Number(mov.valor); }
+export function isTransferencia(mov: { categorias?: { nome?: string | null } | null; descricao?: string | null }) {
+  const categoria = mov.categorias?.nome?.trim().toLocaleLowerCase("pt-BR");
+  const descricao = mov.descricao?.trim() ?? "";
+  return categoria === "transferência" || /transferência entre contas.*\((saída|entrada)\)$/i.test(descricao);
+}
 export function accountBalance(contaId: string, movs: Movimentacao[]) { return movs.filter((m) => m.conta_id === contaId && m.status === "realizado").reduce((sum, m) => sum + signedValue(m), 0); }
 export function totalBalance(movs: Movimentacao[]) { return movs.filter((m) => m.conta_id && m.status === "realizado").reduce((sum, m) => sum + signedValue(m), 0); }
 export function invoiceTotal(faturaId: string, movs: Movimentacao[]) { return movs.filter((m) => m.fatura_id === faturaId && m.tipo === "despesa").reduce((sum, m) => sum + Number(m.valor), 0); }

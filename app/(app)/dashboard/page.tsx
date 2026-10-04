@@ -1,7 +1,7 @@
 import { CategoryPie, EvolutionChart, WaterfallChart } from "@/components/Charts";
 import { Card, Input, Button, AmountText, StatPill, Surface } from "@/components/ui";
 import { currency } from "@/lib/format";
-import { totalBalance, invoiceTotal } from "@/lib/finance";
+import { isTransferencia, totalBalance, invoiceTotal } from "@/lib/finance";
 import { getDashboardData, monthlyDre, getCartoesEFaturas } from "@/lib/queries";
 import { TrendingUp, Filter } from "lucide-react";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
@@ -31,15 +31,16 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     getCartoesEFaturas(),
   ]);
 
-  const receitas = monthMovs.filter((m) => m.tipo === "receita").reduce((s, m) => s + Number(m.valor), 0);
+  const movimentacoesOperacionais = monthMovs.filter((m) => !isTransferencia(m));
+  const receitas = movimentacoesOperacionais.filter((m) => m.tipo === "receita").reduce((s, m) => s + Number(m.valor), 0);
   const totalFaturasAberto = (faturas as any[])
     .filter(f => !f.pago)
     .reduce((sum, f) => sum + invoiceTotal(f.id, faturaMovs), 0);
-  const despesas = monthMovs.filter((m) => m.tipo === "despesa").reduce((s, m) => s + Number(m.valor), 0);
+  const despesas = movimentacoesOperacionais.filter((m) => m.tipo === "despesa").reduce((s, m) => s + Number(m.valor), 0);
   const saldo    = totalBalance(allMovs);
 
   const cat = new Map<string, number>();
-  for (const m of monthMovs as any[]) {
+  for (const m of movimentacoesOperacionais as any[]) {
     if (m.tipo === "despesa") {
       const name = m.categorias?.nome ?? "Sem categoria";
       cat.set(name, (cat.get(name) ?? 0) + Number(m.valor));
@@ -76,7 +77,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       </div>
       <div className="flex gap-3">
         <StatPill label="Faturas em aberto" value={currency(totalFaturasAberto)} tone="amber" />
-        <StatPill label="Transações no período" value={String(monthMovs.length)} />
+        <StatPill label="Lançamentos no período" value={String(movimentacoesOperacionais.length)} />
       </div>
 
       {/* ── Filtro de período — discreto: chips + ícone de calendário p/ período customizado ── */}
@@ -129,11 +130,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           )}
           {recentes.map((m: any) => (
             <div key={m.id} className="list-row">
-              <div className="min-w-0 flex-1">
-                <div className="text-[14px] font-semibold text-ink-primary truncate">{m.categorias?.nome ?? "Sem categoria"}</div>
-                <div className="text-[11.5px] text-ink-tertiary mt-0.5 truncate">{m.descricao || (m.contas?.nome ?? "")}</div>
-              </div>
-              <AmountText value={m.tipo === "receita" ? Number(m.valor) : -Number(m.valor)} signed tone={m.tipo === "receita" ? "green" : "red"} />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[14px] font-semibold text-ink-primary truncate">{isTransferencia(m) ? "Transferência entre contas" : (m.categorias?.nome ?? "Sem categoria")}</div>
+                    <div className="text-[11.5px] text-ink-tertiary mt-0.5 truncate">{m.descricao || (m.contas?.nome ?? "")}</div>
+                  </div>
+                  {isTransferencia(m) ? <span className="num shrink-0 text-[14px] font-semibold text-ink-secondary">↔ {currency(Number(m.valor))}</span> : <AmountText value={m.tipo === "receita" ? Number(m.valor) : -Number(m.valor)} signed tone={m.tipo === "receita" ? "green" : "red"} />}
             </div>
           ))}
         </Surface>

@@ -1,6 +1,6 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
-import { monthBounds } from "@/lib/finance";
+import { isTransferencia, monthBounds } from "@/lib/finance";
 import type { Movimentacao, Conta, Categoria, Cartao, Fatura, FaturaExtendida } from "@/types/database";
 
 export async function getCategorias() { 
@@ -46,7 +46,7 @@ export async function getDashboardData(filters?: { inicio?: string; fim?: string
   const start = filters?.inicio || b.start;
   const end = filters?.fim || b.end;
   const [allMovs, monthMovs] = await Promise.all([
-    s.from("movimentacoes").select("*"), 
+    s.from("movimentacoes").select("*, categorias(nome)"),
     s.from("movimentacoes").select("*, categorias(nome)").gte("data", start).lte("data", end)
   ]); 
   if (allMovs.error) throw allMovs.error; 
@@ -82,6 +82,7 @@ export async function getCartoesEFaturas(filters?: { inicio?: string; fim?: stri
 export function monthlyDre(movs: Movimentacao[]) { 
   const map = new Map<string, { mes: string; receitas: number; despesas: number; resultado: number }>(); 
   for (const m of movs) { 
+    if (isTransferencia(m as any)) continue;
     const mes = m.data.slice(0, 7); 
     const row = map.get(mes) ?? { mes, receitas: 0, despesas: 0, resultado: 0 }; 
     if (m.tipo === "receita") row.receitas += Number(m.valor); 
@@ -222,7 +223,7 @@ export async function getRealizadoPorCategoria(competencia: string) {
 
   const { data, error } = await s
     .from("movimentacoes")
-    .select("categoria_id, valor")
+    .select("categoria_id, valor, categorias(nome)")
     .eq("tipo", "despesa")
     .eq("status", "realizado")
     .gte("data", inicio)
@@ -231,6 +232,7 @@ export async function getRealizadoPorCategoria(competencia: string) {
 
   const map = new Map<string, number>();
   for (const m of (data || []) as any[]) {
+    if (isTransferencia(m)) continue;
     if (!m.categoria_id) continue;
     map.set(m.categoria_id, (map.get(m.categoria_id) || 0) + Number(m.valor));
   }
