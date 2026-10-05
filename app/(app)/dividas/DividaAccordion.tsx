@@ -41,7 +41,8 @@ export default function DividaAccordion({ divida, categorias, categoriaNome, ton
   const CatIcon = categoriaNome ? getCategoryIcon(categoriaNome) : CircleDollarSign;
 
   return (
-    <div className={clsx("surface-2 bg-surface overflow-hidden", liquidada && "opacity-60")}>
+    <div className={clsx("surface-2 bg-surface overflow-hidden flex items-stretch", liquidada && "opacity-60")}>
+      <div className="min-w-0 flex-1">
       <div
         role="button"
         tabIndex={0}
@@ -86,35 +87,31 @@ export default function DividaAccordion({ divida, categorias, categoriaNome, ton
             </>
           )}
 
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-surface-border/40 gap-2">
-            <form action={alterarSituacaoDivida}>
-              <input type="hidden" name="id" value={divida.id} />
-              <input type="hidden" name="situacao" value={divida.situacao} />
-              <button
-                type="submit"
-                className={clsx(
-                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all duration-200 border",
-                  liquidada
-                    ? "bg-[#5DA832]/10 text-[#5DA832] border-[#5DA832]/30"
-                    : "bg-danger/10 text-[#f87171] border-danger/20"
-                )}
-              >
-                {liquidada ? <CheckCircle className="h-3 w-3" /> : <Circle className="h-3 w-3" />}
-                {liquidada ? "Reabrir" : "Marcar como liquidada"}
-              </button>
-            </form>
-            <div className="flex items-center gap-1 shrink-0">
-              <EditarDividaBtn divida={divida as any} categorias={categorias} />
-              <form action={deleteDivida}>
-                <input type="hidden" name="id" value={divida.id} />
-                <button type="submit" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-xl transition-colors">
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </form>
-            </div>
-          </div>
         </div>
       )}
+      </div>
+
+      {/* Ações na extremidade direita do card: liquidar/reabrir, editar e excluir */}
+      <div className="action-col mr-2 my-2">
+        <form action={alterarSituacaoDivida}>
+          <input type="hidden" name="id" value={divida.id} />
+          <input type="hidden" name="situacao" value={divida.situacao} />
+          <button
+            type="submit"
+            title={liquidada ? "Reabrir dívida" : "Marcar como liquidada"}
+            className={clsx("p-1.5 rounded-lg transition-colors", liquidada ? "text-[#5DA832]" : "text-slate-500 hover:text-[#5DA832]")}
+          >
+            {liquidada ? <CheckCircle className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
+          </button>
+        </form>
+        <EditarDividaBtn divida={divida as any} categorias={categorias} />
+        <form action={deleteDivida}>
+          <input type="hidden" name="id" value={divida.id} />
+          <button type="submit" title="Excluir" className="p-1.5 text-slate-600 hover:text-[#f87171] rounded-lg transition-colors">
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

@@ -21,7 +21,7 @@ export default function EditarMovimentacaoBtn({ mov, categorias, contas, cartoes
 
   if (!aberto) {
     return (
-      <div className="flex items-center gap-0.5">
+      <div className="flex flex-col items-center gap-1">
         <button
           type="button"
           onClick={() => setAberto(true)}

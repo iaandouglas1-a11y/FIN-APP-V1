@@ -216,7 +216,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                         </div>
                       </div>
                       {transferencia ? <span className="num shrink-0 text-[14px] font-semibold text-ink-secondary">↔ {currency(Number(m.valor))}</span> : <AmountText value={m.tipo === "receita" ? Number(m.valor) : -Number(m.valor)} signed tone={m.tipo === "receita" ? "green" : "red"} />}
-                      <div className="flex items-center gap-0.5 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity">
+                      <div className="action-col opacity-80 group-hover:opacity-100 transition-opacity">
                         <EditarMovimentacaoBtn
                           mov={m}
                           categorias={categorias}

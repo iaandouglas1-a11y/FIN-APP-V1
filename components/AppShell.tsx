@@ -3,49 +3,43 @@
 import { useState } from "react";
 import {
   LayoutDashboard, ArrowUpRight,
-  Receipt, Wallet, Tags, ChevronRight, Users, TrendingDown, TrendingUp, HandCoins, StickyNote, PiggyBank
+  Receipt, Wallet, Tags, ChevronRight, ChevronLeft, TrendingDown, TrendingUp, StickyNote, PiggyBank, Briefcase
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 import Link from "next/link";
 import { OnfinLogo, OnfinTile } from "./OnfinLogo";
 import { BottomNav } from "./BottomNav";
-import { MoreMenuDrawer } from "./MoreMenuDrawer";
-import { QuickActionSheet } from "./QuickActionSheet";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
-  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const pathname = usePathname();
+  // Módulos abertos por atalho no Dashboard: mostram botão "voltar" no topo (mobile)
+  const isSecondary = ["/dividas", "/faturas", "/notas", "/gestao-pj", "/orcamento"].some(
+    (h) => pathname === h || pathname?.startsWith(`${h}/`)
+  );
 
   const navItems = [
     {
       group: "Principal",
       items: [
         { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-        { href: "/movimentacoes", label: "Movimentações", icon: ArrowUpRight },
+        { href: "/movimentacoes", label: "Extrato", icon: ArrowUpRight },
+        { href: "/contas", label: "Bancos e Contas", icon: Wallet },
+        { href: "/investimentos", label: "Investimentos", icon: TrendingUp },
+        { href: "/categorias", label: "Categorias", icon: Tags },
       ]
     },
     {
       group: "Gestão",
       items: [
-        { href: "/contas", label: "Bancos e Contas", icon: Wallet },
-        { href: "/faturas", label: "Faturas", icon: Receipt },
-        { href: "/orcamento", label: "Orçamento", icon: PiggyBank },
-        { href: "/notas", label: "Notas", icon: StickyNote },
-        { href: "/clientes", label: "Acessos Clientes", icon: Users },
-        { href: "/honorarios", label: "Honorários", icon: HandCoins },
         { href: "/dividas", label: "Dívidas", icon: TrendingDown },
-        { href: "/investimentos", label: "Investimentos", icon: TrendingUp },
+        { href: "/faturas", label: "Faturas", icon: Receipt },
+        { href: "/notas", label: "Notas", icon: StickyNote },
+        { href: "/gestao-pj", label: "Gestão PJ", icon: Briefcase },
+        { href: "/orcamento", label: "Orçamento", icon: PiggyBank },
       ]
     },
-    {
-      group: "Configurações",
-      items: [
-        { href: "/categorias", label: "Categorias", icon: Tags },
-      ]
-    }
   ];
 
   const SidebarContent = () => (
@@ -139,7 +133,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           className="app-top-cover md:hidden fixed inset-x-0 top-0 z-40 bg-bg pointer-events-none"
         />
         <div className="app-top-pad flex-1 p-4 md:p-8 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-8">
-          <div className="mb-5 flex items-center justify-between px-1 md:hidden" aria-label="Marca Onfin">
+          <div className="mb-5 flex items-center gap-3 px-1 md:hidden" aria-label="Marca Onfin">
+            {isSecondary && (
+              <Link
+                href="/dashboard"
+                aria-label="Voltar ao Dashboard"
+                className="w-9 h-9 -ml-1 rounded-full bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary active:scale-95 transition-all"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Link>
+            )}
             <OnfinLogo variant="horizontal" className="h-8 w-auto" />
           </div>
           <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -149,22 +152,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* ── Bottom Navigation (mobile apenas) ── */}
-      <BottomNav
-        onMoreClick={() => setIsMoreMenuOpen(true)}
-        onQuickAddClick={() => setIsQuickAddOpen(true)}
-      />
-
-      {/* ── Drawer "Mais" (mobile apenas) ── */}
-      <MoreMenuDrawer
-        open={isMoreMenuOpen}
-        onClose={() => setIsMoreMenuOpen(false)}
-      />
-
-      {/* ── Ação rápida (FAB, mobile apenas) ── */}
-      <QuickActionSheet
-        open={isQuickAddOpen}
-        onClose={() => setIsQuickAddOpen(false)}
-      />
+      <BottomNav />
     </div>
   );
 }

@@ -3,7 +3,10 @@ import { Card, Input, Button, AmountText, StatPill, Surface } from "@/components
 import { currency } from "@/lib/format";
 import { isTransferencia, totalBalance, invoiceTotal } from "@/lib/finance";
 import { getDashboardData, monthlyDre, getCartoesEFaturas } from "@/lib/queries";
-import { TrendingUp, Filter } from "lucide-react";
+import { TrendingUp, Filter, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, TrendingDown, Receipt, StickyNote, Briefcase } from "lucide-react";
+import Link from "next/link";
+import { IconChip } from "@/components/ui";
+import type { IconTone } from "@/components/ui";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
 
 const MESES_RAPIDOS = [
@@ -68,6 +71,34 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           <TrendingUp className="h-3.5 w-3.5" />
           Taxa de poupança de {poupanca}% em {periodoLabel}
         </div>
+      </div>
+
+      {/* ── Lançar: receita / despesa / transferir ──────────────────── */}
+      <div className="grid grid-cols-3 gap-2">
+        <Link href="/movimentacoes?tipo=receita#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-[13px] font-semibold bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] active:scale-[0.97] transition-all">
+          <ArrowUpRight className="h-4 w-4" /> Receita
+        </Link>
+        <Link href="/movimentacoes?tipo=despesa#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-[13px] font-semibold bg-surface border border-surface-border/60 text-ink-primary active:scale-[0.97] transition-all">
+          <ArrowDownLeft className="h-4 w-4 text-[#f87171]" /> Despesa
+        </Link>
+        <Link href="/movimentacoes?acao=transferencia#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-[13px] font-semibold bg-surface border border-surface-border/60 text-ink-primary active:scale-[0.97] transition-all">
+          <ArrowLeftRight className="h-4 w-4 text-[#60a5fa]" /> Transferir
+        </Link>
+      </div>
+
+      {/* ── Acesso rápido aos módulos ───────────────────────────────── */}
+      <div className="grid grid-cols-4 gap-2">
+        {([
+          { href: "/dividas", label: "Dívidas", icon: TrendingDown, tone: "amber" },
+          { href: "/faturas", label: "Faturas", icon: Receipt, tone: "red" },
+          { href: "/notas", label: "Notas", icon: StickyNote, tone: "gray" },
+          { href: "/gestao-pj", label: "Gestão PJ", icon: Briefcase, tone: "green" },
+        ] as { href: string; label: string; icon: any; tone: IconTone }[]).map((a) => (
+          <Link key={a.href} href={a.href} className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform">
+            <IconChip icon={a.icon} tone={a.tone} size={52} iconSize={21} rounded="rounded-2xl" />
+            <span className="text-[11px] font-semibold text-ink-secondary text-center leading-tight">{a.label}</span>
+          </Link>
+        ))}
       </div>
 
       {/* ── Stat pills ────────────────────────────────────────────── */}

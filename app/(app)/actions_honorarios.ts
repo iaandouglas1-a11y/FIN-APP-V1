@@ -35,6 +35,7 @@ export async function saveHonorario(formData: FormData) {
   if (result.error) throw new Error(result.error.message);
 
   revalidatePath("/honorarios");
+  revalidatePath("/gestao-pj");
 }
 
 export async function deleteHonorario(formData: FormData) {
@@ -51,6 +52,7 @@ export async function deleteHonorario(formData: FormData) {
   const { error } = await (s.from("honorarios") as any).delete().eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/honorarios");
+  revalidatePath("/gestao-pj");
   revalidatePath("/movimentacoes");
 }
 
@@ -107,6 +109,7 @@ export async function marcarHonorarioPago(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/honorarios");
+  revalidatePath("/gestao-pj");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
 }
@@ -127,5 +130,6 @@ export async function cancelarPagamentoHonorario(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/honorarios");
+  revalidatePath("/gestao-pj");
   revalidatePath("/movimentacoes");
 }

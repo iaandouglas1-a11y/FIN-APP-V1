@@ -37,6 +37,7 @@ export async function saveCliente(formData: FormData) {
 
   if (result.error) throw new Error(result.error.message);
   revalidatePath("/clientes");
+  revalidatePath("/gestao-pj");
 }
 
 export async function setClienteAtivo(formData: FormData) {
@@ -46,6 +47,7 @@ export async function setClienteAtivo(formData: FormData) {
   const { error } = await (s.from("clientes") as any).update({ ativo }).eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/clientes");
+  revalidatePath("/gestao-pj");
 }
 
 export async function deleteCliente(formData: FormData) {
@@ -54,4 +56,5 @@ export async function deleteCliente(formData: FormData) {
   const { error } = await (s.from("clientes") as any).delete().eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/clientes");
+  revalidatePath("/gestao-pj");
 }
