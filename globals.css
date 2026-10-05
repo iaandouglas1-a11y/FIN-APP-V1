@@ -18,9 +18,8 @@
   padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
 }
 .app-top-cover {
-  /* A área do sistema pode estender o blur do Liquid Glass abaixo da safe area.
-     Mantemos uma faixa opaca maior para que nenhuma sombra atravesse o cabeçalho. */
-  height: calc(5rem + env(safe-area-inset-top, 0px));
+  /* A área do sistema pode estender o blur do Liquid Glass abaixo da safe area. */
+  height: calc(6rem + env(safe-area-inset-top, 0px));
   background: #161616 !important;
   opacity: 1;
   backdrop-filter: none;
@@ -31,7 +30,7 @@
     padding-top: calc(3.25rem + env(safe-area-inset-top, 0px));
   }
   .app-top-cover {
-    height: calc(5rem + env(safe-area-inset-top, 0px));
+    height: calc(6rem + env(safe-area-inset-top, 0px));
   }
 }
 @media (min-width: 768px) {

@@ -18,7 +18,13 @@
   padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
 }
 .app-top-cover {
-  height: env(safe-area-inset-top, 0px);
+  /* No iPhone 15 Pro em modo PWA, o Liquid Glass se estende além da safe area.
+     A faixa opaca precisa cobrir também essa extensão antes do cabeçalho. */
+  height: calc(6rem + env(safe-area-inset-top, 0px));
+  background: #161616 !important;
+  opacity: 1;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 /* Cabeçalho mobile (mockup): faixa #161616 com logo à esquerda e título/ícone à direita;
    o conteúdo sobe 16px por cima dela com cantos superiores arredondados. */
@@ -31,10 +37,11 @@
     padding-top: calc(3.25rem + env(safe-area-inset-top, 0px));
   }
   .app-top-cover {
-    height: calc(2.5rem + env(safe-area-inset-top, 0px));
+    height: calc(6rem + env(safe-area-inset-top, 0px));
   }
   .mobile-page-header {
-    padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));
+    /* Empurra logo e título para fora da faixa sombreada do sistema. */
+    padding-top: calc(4rem + env(safe-area-inset-top, 0px));
   }
 }
 @media (min-width: 768px) {
