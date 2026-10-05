@@ -88,7 +88,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           { href: "/gestao-pj", label: "Gestão PJ", icon: Briefcase },
         ] as { href: string; label: string; icon: any }[]).map((a) => (
           <Link key={a.href} href={a.href} className="flex flex-col items-center gap-1 active:scale-95 transition-transform">
-            <IconChip icon={a.icon} tone="brand" size={80} iconSize={60} rounded="rounded-[15px]" />
+            <IconChip icon={a.icon} tone="brand" size={80} iconSize={40} rounded="rounded-[15px]" />
             <span className="text-[11px] text-ink-secondary text-center leading-tight">{a.label}</span>
           </Link>
         ))}
