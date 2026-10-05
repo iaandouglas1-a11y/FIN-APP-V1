@@ -94,7 +94,7 @@ function LancamentoRow({
         </div>
       </div>
       <AmountText value={valor} signed />
-      <div className="action-col">
+      <div className="action-row">
         {isParcela ? (
           <>
             <EditarOrcamentoParcelaBtn parcela={lancamento} categorias={categorias} />
@@ -228,7 +228,7 @@ export default function OrcamentoBody({
                       {p.parcelaAtual} de {p.parcelasTotal} · {currency(Number(p.valor_parcela))} · Dia {p.dia_referencia}
                     </p>
                   </div>
-                  <div className="action-col !border-l-0 !pl-0 !ml-2">
+                  <div className="action-row !border-l-0 !pl-0 !ml-2">
                     <EditarOrcamentoParcelaBtn parcela={p} categorias={categorias} />
                     <form action={deleteOrcamentoParcela}>
                       <input type="hidden" name="id" value={p.id} />

@@ -261,6 +261,7 @@ const TONE_COLORS: Record<string, { bg: string; fg: string }> = {
   amber:  { bg: "rgba(245,165,36,0.14)",  fg: "#F5A524" },
   blue:   { bg: "rgba(96,165,250,0.14)",  fg: "#60A5FA" },
   purple: { bg: "rgba(192,132,252,0.14)", fg: "#C084FC" },
+  brand:  { bg: "#202020", fg: "#6fc23b" },
   gray:   { bg: "rgba(255,255,255,0.08)", fg: "#94A3B8" },
 };
 export type IconTone = keyof typeof TONE_COLORS;

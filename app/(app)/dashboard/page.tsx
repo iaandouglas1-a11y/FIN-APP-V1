@@ -6,7 +6,6 @@ import { getDashboardData, monthlyDre, getCartoesEFaturas } from "@/lib/queries"
 import { TrendingUp, Filter, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, TrendingDown, Receipt, StickyNote, Briefcase, Wallet, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { IconChip } from "@/components/ui";
-import type { IconTone } from "@/components/ui";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
 
 const MESES_RAPIDOS = [
@@ -68,29 +67,29 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       </div>
 
       {/* ── Lançar: receita / despesa / transferir ──────────────────── */}
-      <div className="grid grid-cols-3 gap-2.5">
-        <Link href="/movimentacoes?tipo=receita#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3.5 rounded-2xl text-[13px] font-semibold bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] active:scale-[0.97] transition-all">
+      <div className="grid grid-cols-3 gap-2">
+        <Link href="/movimentacoes?tipo=receita#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-[11px] rounded-[14px] text-[12px] font-semibold bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] active:scale-[0.97] transition-all">
           <ArrowUpRight className="h-4 w-4" /> Receita
         </Link>
-        <Link href="/movimentacoes?tipo=despesa#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3.5 rounded-2xl text-[13px] font-semibold bg-surface-2/70 border border-surface-border/60 text-ink-primary active:scale-[0.97] transition-all">
-          <ArrowDownLeft className="h-4 w-4 text-[#f87171]" /> Despesa
+        <Link href="/movimentacoes?tipo=despesa#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-[11px] rounded-[14px] text-[12px] font-semibold bg-surface border border-surface-border text-ink-primary active:scale-[0.97] transition-all">
+          <ArrowDownLeft className="h-4 w-4" /> Despesa
         </Link>
-        <Link href="/movimentacoes?acao=transferencia#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3.5 rounded-2xl text-[13px] font-semibold bg-surface-2/70 border border-surface-border/60 text-ink-primary active:scale-[0.97] transition-all">
-          <ArrowLeftRight className="h-4 w-4 text-ink-secondary" /> Transferir
+        <Link href="/movimentacoes?acao=transferencia#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-[11px] rounded-[14px] text-[12px] font-semibold bg-surface border border-surface-border text-ink-primary active:scale-[0.97] transition-all">
+          <ArrowLeftRight className="h-4 w-4" /> Transferir
         </Link>
       </div>
 
       {/* ── Acesso rápido aos módulos ───────────────────────────────── */}
-      <div className="grid grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-4 gap-2">
         {([
-          { href: "/dividas", label: "Dívidas", icon: TrendingDown, tone: "amber" },
-          { href: "/faturas", label: "Faturas", icon: Receipt, tone: "red" },
-          { href: "/notas", label: "Notas", icon: StickyNote, tone: "gray" },
-          { href: "/gestao-pj", label: "Gestão PJ", icon: Briefcase, tone: "green" },
-        ] as { href: string; label: string; icon: any; tone: IconTone }[]).map((a) => (
-          <Link key={a.href} href={a.href} className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform">
-            <IconChip icon={a.icon} tone={a.tone} size={56} iconSize={22} rounded="rounded-[22px]" />
-            <span className="text-[11px] font-semibold text-ink-secondary text-center leading-tight">{a.label}</span>
+          { href: "/dividas", label: "Dívidas", icon: TrendingDown },
+          { href: "/faturas", label: "Faturas", icon: Receipt },
+          { href: "/notas", label: "Notas", icon: StickyNote },
+          { href: "/gestao-pj", label: "Gestão PJ", icon: Briefcase },
+        ] as { href: string; label: string; icon: any }[]).map((a) => (
+          <Link key={a.href} href={a.href} className="flex flex-col items-center gap-1 active:scale-95 transition-transform">
+            <IconChip icon={a.icon} tone="brand" size={50} iconSize={22} rounded="rounded-[15px]" />
+            <span className="text-[11px] text-ink-secondary text-center leading-tight">{a.label}</span>
           </Link>
         ))}
       </div>

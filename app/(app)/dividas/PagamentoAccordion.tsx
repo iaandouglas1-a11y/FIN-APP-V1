@@ -55,7 +55,7 @@ export default function PagamentoAccordion({ pagamento: p, categoriaNome, contas
       {open && (
         <div className="px-3.5 pb-3">
           {categoriaNome && <p className="text-[11px] text-ink-tertiary mb-2">Categoria: {categoriaNome}</p>}
-          <div className="action-col !justify-start !border-l-0 !pl-0 !ml-0 pt-2 border-t border-surface-border/30">
+          <div className="action-row !justify-start !border-l-0 !pl-0 !ml-0 pt-2 border-t border-surface-border/30">
             {p.tipo === "orcado" ? (
               <RealizarPagamentoBtn
                 pagamentoId={p.id}

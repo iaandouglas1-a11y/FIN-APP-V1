@@ -166,7 +166,7 @@ export default function InvestimentoAccordion({ id, nome, tipo, subcategoria, ti
                     </span>
                     <form action={deleteMovimento} className="shrink-0">
                       <input type="hidden" name="id" value={m.id} />
-                      <button type="submit" className="opacity-0 group-hover/mov:opacity-100 p-1 text-slate-600 hover:text-rose-400 rounded transition-all">
+                      <button type="submit" className="opacity-80 group-hover/mov:opacity-100 p-1 text-slate-600 hover:text-rose-400 rounded transition-all">
                         <Trash2 className="h-3 w-3" />
                       </button>
                     </form>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
   LayoutDashboard, ArrowUpRight,
-  Receipt, Wallet, Tags, ChevronRight, TrendingDown, TrendingUp, StickyNote, PiggyBank, Briefcase,
+  Receipt, Wallet, Tags, ChevronRight, ChevronLeft, TrendingDown, TrendingUp, StickyNote, PiggyBank, Briefcase,
   Search, Filter, Pencil, type LucideIcon
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -30,6 +30,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     href: "/dashboard", title: "Meu Onfin", icon: Search,
   };
   const PageHeaderIcon = pageHeader.icon as LucideIcon;
+  // Módulos abertos por atalho no Dashboard mostram botão "voltar"
+  const isSecondary = ["/dividas", "/faturas", "/notas", "/gestao-pj", "/orcamento"].some(
+    (h) => pathname === h || pathname?.startsWith(`${h}/`)
+  );
 
   const navItems = [
     {
@@ -142,16 +146,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         */}
         <div
           aria-hidden
-          className="app-top-cover md:hidden fixed inset-x-0 top-0 z-40 bg-bg pointer-events-none"
+          className="app-top-cover md:hidden fixed inset-x-0 top-0 z-40 bg-[#161616] pointer-events-none"
         />
-        <div className="app-top-pad flex-1 p-4 md:p-8 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-8">
-          <div className="mobile-page-header md:hidden" aria-label={`Cabeçalho ${pageHeader.title}`}>
-            <OnfinLogo variant="horizontal" className="w-[150px] h-auto" />
-            <div className="flex items-center gap-4 min-w-0">
-              <span className="truncate text-[18px] font-medium tracking-tight text-[#A7A8B8]">{pageHeader.title}</span>
-              <PageHeaderIcon className="h-8 w-8 shrink-0 text-[#F5F7FA]" strokeWidth={2.4} />
-            </div>
-          </div>
+        <div className="mobile-page-header md:hidden" aria-label={`Cabeçalho ${pageHeader.title}`}>
+          {isSecondary && (
+            <Link href="/dashboard" aria-label="Voltar ao Dashboard" className="-ml-1 flex h-8 w-8 items-center justify-center rounded-full text-ink-primary active:scale-95 transition-transform">
+              <ChevronLeft className="h-5 w-5" />
+            </Link>
+          )}
+          <OnfinLogo variant="horizontal" className="w-[100px] h-auto" />
+          <span className="flex-1" />
+          <span className="truncate text-[13px] text-ink-secondary">{pageHeader.title}</span>
+          <PageHeaderIcon className="h-5 w-5 shrink-0 text-ink-primary" />
+        </div>
+        <div className="relative -mt-4 md:mt-0 flex-1 rounded-t-[22px] md:rounded-none bg-bg p-4 md:p-8 md:pt-8 pt-5 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-8">
           <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}
           </div>

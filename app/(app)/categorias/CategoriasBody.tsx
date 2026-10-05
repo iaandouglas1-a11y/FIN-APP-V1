@@ -27,7 +27,7 @@ function CategoriaRow({ categoria, tone }: { categoria: Categoria; tone: "green"
         <input type="hidden" name="id" value={categoria.id} />
         <button
           type="submit"
-          className="p-1.5 text-slate-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="p-1.5 text-slate-600 hover:text-rose-400 opacity-80 hover:opacity-100 transition-opacity"
           title="Excluir"
         >
           <Trash2 className="h-3.5 w-3.5" />
