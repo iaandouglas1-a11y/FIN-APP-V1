@@ -1,7 +1,7 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { LayoutDashboard, ArrowUpRight, Wallet, TrendingUp, PiggyBank, Tags } from "lucide-react";
+import { LayoutDashboard, ArrowUpRight, Wallet, TrendingUp, Tags } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 import Link from "next/link";
@@ -19,7 +19,6 @@ const navItems: BottomNavItem[] = [
   { href: "/movimentacoes", label: "Extrato", icon: ArrowUpRight },
   { href: "/contas", label: "Bancos", icon: Wallet },
   { href: "/investimentos", label: "Investim.", icon: TrendingUp },
-  { href: "/orcamento", label: "Orçamento", icon: PiggyBank },
   { href: "/categorias", label: "Categorias", icon: Tags },
 ];
 

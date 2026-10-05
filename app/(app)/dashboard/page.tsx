@@ -3,7 +3,7 @@ import { Card, Input, Button, AmountText, StatPill, Surface } from "@/components
 import { currency } from "@/lib/format";
 import { isTransferencia, totalBalance, invoiceTotal } from "@/lib/finance";
 import { getDashboardData, monthlyDre, getCartoesEFaturas } from "@/lib/queries";
-import { TrendingUp, Filter, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, TrendingDown, Receipt, StickyNote, Briefcase, Wallet, ChevronRight } from "lucide-react";
+import { TrendingUp, Filter, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, TrendingDown, Receipt, StickyNote, Briefcase, Wallet, PiggyBank, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { IconChip } from "@/components/ui";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
@@ -80,16 +80,17 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       </div>
 
       {/* ── Acesso rápido aos módulos ───────────────────────────────── */}
-      <div className="grid grid-cols-4 gap-3.5">
+      <div className="grid grid-cols-5 gap-1">
         {([
+          { href: "/orcamento", label: "Orçamento", icon: PiggyBank },
           { href: "/dividas", label: "Dívidas", icon: TrendingDown },
           { href: "/faturas", label: "Faturas", icon: Receipt },
           { href: "/notas", label: "Notas", icon: StickyNote },
           { href: "/gestao-pj", label: "Gestão PJ", icon: Briefcase },
         ] as { href: string; label: string; icon: any }[]).map((a) => (
           <Link key={a.href} href={a.href} className="flex flex-col items-center gap-1 active:scale-95 transition-transform">
-            <IconChip icon={a.icon} tone="brand" size={80} iconSize={40} rounded="rounded-[15px]" />
-            <span className="text-[11px] text-ink-secondary text-center leading-tight">{a.label}</span>
+            <IconChip icon={a.icon} tone="brand" size={60} iconSize={32} rounded="rounded-[15px]" />
+            <span className="text-[10px] text-ink-secondary text-center leading-tight">{a.label}</span>
           </Link>
         ))}
       </div>
