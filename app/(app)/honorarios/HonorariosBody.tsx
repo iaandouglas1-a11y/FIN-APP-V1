@@ -294,51 +294,50 @@ export default function HonorariosBody({
                 <div key={h.id} className="bg-surface/50 border border-surface-border/40 rounded-[18px] p-4 sm:p-5 -mx-2 sm:-mx-3">
                   <h3 className="font-semibold text-white text-[17px] sm:text-lg leading-snug break-words">{h.clienteNome}</h3>
 
-                  <div className="mt-3 flex items-end justify-between gap-3">
+                  <div className="mt-3 flex items-end gap-3">
                     <div className="min-w-0">
                       <p className="num text-[15px] sm:text-base font-semibold tracking-tight text-white">{currency(Number(h.valor))}</p>
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap text-xs text-slate-500">
                         <span>{h.vencimentoLabel} · Honorário {h.competenciaLabel}</span>
                       </div>
                     </div>
-                    <span className={`shrink-0 text-xs px-2.5 py-1 rounded-lg font-semibold ${s.bg} ${s.text}`}>
-                      {s.label}
-                    </span>
-                  </div>
-                  {/* Ações */}
-                  <div className="flex items-center gap-2.5 mt-4 pt-3.5 border-t border-surface-border/30">
-                    {h.status !== "pago" && (
-                      <PagarHonorarioBtn
-                        honorarioId={h.id}
-                        clienteNome={h.clienteNome}
-                        valor={Number(h.valor)}
-                        pago={h.pago}
-                        pagoEm={h.pago_em || null}
-                        contas={contas}
+                    <div className="ml-auto flex items-center gap-1.5 shrink-0">
+                      <span className={`shrink-0 text-xs px-2.5 py-1 rounded-lg font-semibold ${s.bg} ${s.text}`}>
+                        {s.label}
+                      </span>
+                      {h.status !== "pago" && (
+                        <PagarHonorarioBtn
+                          honorarioId={h.id}
+                          clienteNome={h.clienteNome}
+                          valor={Number(h.valor)}
+                          pago={h.pago}
+                          pagoEm={h.pago_em || null}
+                          contas={contas}
+                        />
+                      )}
+                      <EditarHonorarioBtn
+                        honorario={{
+                          id: h.id,
+                          cliente_id: h.cliente_id,
+                          competencia: h.competencia,
+                          valor: Number(h.valor),
+                          vencimento: h.vencimento,
+                          observacao: h.observacao,
+                        }}
+                        clientes={clientes}
                       />
-                    )}
-                    <EditarHonorarioBtn
-                      honorario={{
-                        id: h.id,
-                        cliente_id: h.cliente_id,
-                        competencia: h.competencia,
-                        valor: Number(h.valor),
-                        vencimento: h.vencimento,
-                        observacao: h.observacao,
-                      }}
-                      clientes={clientes}
-                    />
-                    <form action={deleteHonorario} className="inline">
-                      <input type="hidden" name="id" value={h.id} />
-                      <button
-                        type="submit"
-                        aria-label={`Excluir honorário de ${h.clienteNome}`}
-                        title="Excluir honorário"
-                        className="h-9 w-9 inline-flex items-center justify-center rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-200"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </form>
+                      <form action={deleteHonorario} className="inline">
+                        <input type="hidden" name="id" value={h.id} />
+                        <button
+                          type="submit"
+                          aria-label={`Excluir honorário de ${h.clienteNome}`}
+                          title="Excluir honorário"
+                          className="h-8 w-8 inline-flex items-center justify-center rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-200"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </form>
+                    </div>
                   </div>
                 </div>
               );

@@ -201,7 +201,7 @@ body {
   /* Coluna de ações (editar/duplicar/excluir) colada na extremidade direita do card —
      libera a largura da linha para o texto complementar. */
   .action-col {
-    @apply flex flex-col items-center justify-center gap-1 shrink-0 self-stretch pl-2.5 ml-1 border-l border-surface-border/50;
+    @apply flex flex-row items-center justify-center gap-1 shrink-0 self-center pl-2.5 ml-1 border-l border-surface-border/50;
   }
 
   /* Spinner */

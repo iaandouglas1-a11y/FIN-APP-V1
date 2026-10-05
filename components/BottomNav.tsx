@@ -27,18 +27,18 @@ function NavItem({ item, isActive }: { item: BottomNavItem; isActive: boolean })
   return (
     <Link
       href={item.href}
-      className="flex flex-col items-center justify-center min-h-[52px] flex-1 active:opacity-70 transition-all duration-150"
+      className={clsx(
+        "flex flex-col items-center justify-center min-h-[72px] flex-1 px-1.5 py-2 active:opacity-70 transition-all duration-150",
+        isActive ? "rounded-[24px] bg-[#5DA832]" : "rounded-2xl"
+      )}
     >
       <div className="relative mb-1">
         <Icon
-          className={clsx("w-[19px] h-[19px] transition-all duration-200", isActive ? "text-[#5DA832]" : "text-ink-tertiary")}
+          className={clsx("w-[24px] h-[24px] transition-all duration-200", isActive ? "text-[#0A0A0A]" : "text-ink-tertiary")}
           strokeWidth={2.1}
         />
-        {isActive && (
-          <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#5DA832]" />
-        )}
       </div>
-      <span className={clsx("text-[10.5px] font-semibold leading-none", isActive ? "text-[#5DA832]" : "text-ink-tertiary")}>
+      <span className={clsx("text-[11px] font-semibold leading-none", isActive ? "text-[#0A0A0A]" : "text-ink-tertiary")}>
         {item.label}
       </span>
     </Link>

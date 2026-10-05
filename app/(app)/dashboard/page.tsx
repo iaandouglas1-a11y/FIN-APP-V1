@@ -3,7 +3,7 @@ import { Card, Input, Button, AmountText, StatPill, Surface } from "@/components
 import { currency } from "@/lib/format";
 import { isTransferencia, totalBalance, invoiceTotal } from "@/lib/finance";
 import { getDashboardData, monthlyDre, getCartoesEFaturas } from "@/lib/queries";
-import { TrendingUp, Filter, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, TrendingDown, Receipt, StickyNote, Briefcase } from "lucide-react";
+import { TrendingUp, Filter, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, TrendingDown, Receipt, StickyNote, Briefcase, Wallet, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { IconChip } from "@/components/ui";
 import type { IconTone } from "@/components/ui";
@@ -60,34 +60,28 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     .slice(0, 5);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <FiltroDataPersist pagina="dashboard" basePath="/dashboard" inicio={sp.inicio} fim={sp.fim} />
 
-      {/* ── Hero: saldo consolidado ───────────────────────────────── */}
-      <div className="glass-card p-6">
-        <div className="text-[11px] font-semibold text-ink-secondary">Saldo consolidado</div>
-        <AmountText value={saldo} size="hero" className="block mt-1.5" />
-        <div className={`inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-full text-xs font-semibold ${poupanca >= 0 ? "bg-[#5DA832]/[0.14] text-[#8FCB5E]" : "bg-danger/[0.14] text-[#f87171]"}`}>
-          <TrendingUp className="h-3.5 w-3.5" />
-          Taxa de poupança de {poupanca}% em {periodoLabel}
-        </div>
+      <div className="flex items-center justify-between px-1">
+        <h1 className="text-[22px] font-semibold tracking-tight text-ink-primary">Meu Onfin</h1>
       </div>
 
       {/* ── Lançar: receita / despesa / transferir ──────────────────── */}
-      <div className="grid grid-cols-3 gap-2">
-        <Link href="/movimentacoes?tipo=receita#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-[13px] font-semibold bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] active:scale-[0.97] transition-all">
+      <div className="grid grid-cols-3 gap-2.5">
+        <Link href="/movimentacoes?tipo=receita#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3.5 rounded-2xl text-[13px] font-semibold bg-[#5DA832] hover:bg-[#6fc23b] text-[#0A0A0A] active:scale-[0.97] transition-all">
           <ArrowUpRight className="h-4 w-4" /> Receita
         </Link>
-        <Link href="/movimentacoes?tipo=despesa#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-[13px] font-semibold bg-surface border border-surface-border/60 text-ink-primary active:scale-[0.97] transition-all">
+        <Link href="/movimentacoes?tipo=despesa#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3.5 rounded-2xl text-[13px] font-semibold bg-surface-2/70 border border-surface-border/60 text-ink-primary active:scale-[0.97] transition-all">
           <ArrowDownLeft className="h-4 w-4 text-[#f87171]" /> Despesa
         </Link>
-        <Link href="/movimentacoes?acao=transferencia#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-[13px] font-semibold bg-surface border border-surface-border/60 text-ink-primary active:scale-[0.97] transition-all">
-          <ArrowLeftRight className="h-4 w-4 text-[#60a5fa]" /> Transferir
+        <Link href="/movimentacoes?acao=transferencia#lancamento" className="flex items-center justify-center gap-1.5 px-2 py-3.5 rounded-2xl text-[13px] font-semibold bg-surface-2/70 border border-surface-border/60 text-ink-primary active:scale-[0.97] transition-all">
+          <ArrowLeftRight className="h-4 w-4 text-ink-secondary" /> Transferir
         </Link>
       </div>
 
       {/* ── Acesso rápido aos módulos ───────────────────────────────── */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-2.5">
         {([
           { href: "/dividas", label: "Dívidas", icon: TrendingDown, tone: "amber" },
           { href: "/faturas", label: "Faturas", icon: Receipt, tone: "red" },
@@ -95,17 +89,42 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           { href: "/gestao-pj", label: "Gestão PJ", icon: Briefcase, tone: "green" },
         ] as { href: string; label: string; icon: any; tone: IconTone }[]).map((a) => (
           <Link key={a.href} href={a.href} className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform">
-            <IconChip icon={a.icon} tone={a.tone} size={52} iconSize={21} rounded="rounded-2xl" />
+            <IconChip icon={a.icon} tone={a.tone} size={56} iconSize={22} rounded="rounded-[22px]" />
             <span className="text-[11px] font-semibold text-ink-secondary text-center leading-tight">{a.label}</span>
           </Link>
         ))}
       </div>
 
-      {/* ── Stat pills ────────────────────────────────────────────── */}
-      <div className="flex gap-3">
-        <StatPill label={`Receitas · ${periodoLabel.split(" ")[0]}`} value={currency(receitas)} tone="green" />
-        <StatPill label={`Despesas · ${periodoLabel.split(" ")[0]}`} value={currency(despesas)} tone="red" />
+      {/* ── Cards principais do dashboard ─────────────────────────── */}
+      <div className="glass-card p-5 sm:p-6">
+        <div className="flex items-center gap-2 text-ink-secondary text-[13px] font-semibold">
+          <Wallet className="h-4 w-4" /> Saldo consolidado
+        </div>
+        <AmountText value={saldo} size="hero" className="block mt-1.5" />
+        <div className={`inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-xl text-xs font-semibold ${poupanca >= 0 ? "bg-[#5DA832]/[0.14] text-[#8FCB5E]" : "bg-danger/[0.14] text-[#f87171]"}`}>
+          <TrendingUp className="h-3.5 w-3.5" />
+          Poupança {poupanca}% em {periodoLabel.split(" ")[0]}
+        </div>
       </div>
+
+      <Link href="/faturas" className="glass-card p-5 sm:p-6 flex items-center gap-3 hover:border-[#5DA832]/30 transition-colors">
+        <Receipt className="h-5 w-5 text-ink-secondary shrink-0" />
+        <div className="min-w-0 flex-1">
+          <p className="text-[13px] font-semibold text-ink-secondary">Faturas em aberto</p>
+          <p className="num text-2xl sm:text-3xl font-semibold text-[#f87171] mt-1">{currency(totalFaturasAberto)}</p>
+        </div>
+        <span className="inline-flex items-center gap-1.5 rounded-xl bg-danger/[0.14] px-3 py-1.5 text-xs font-semibold text-[#f87171] shrink-0">
+          {totalFaturasAberto > 0 ? "Em aberto" : "Em dia"}
+          <ChevronRight className="h-3.5 w-3.5" />
+        </span>
+      </Link>
+
+      <div className="grid grid-cols-2 gap-3">
+        <StatPill label="Receitas" value={currency(receitas)} tone="green" />
+        <StatPill label="Despesas" value={currency(despesas)} tone="red" />
+      </div>
+
+      {/* ── Stat pills ────────────────────────────────────────────── */}
       <div className="flex gap-3">
         <StatPill label="Faturas em aberto" value={currency(totalFaturasAberto)} tone="amber" />
         <StatPill label="Lançamentos no período" value={String(movimentacoesOperacionais.length)} />

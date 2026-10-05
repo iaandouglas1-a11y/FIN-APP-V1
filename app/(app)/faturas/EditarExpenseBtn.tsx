@@ -20,7 +20,7 @@ export default function EditarExpenseBtn({ exp, categorias, contas, cartoes, fat
 
   if (!modo) {
     return (
-      <div className="action-col opacity-80 group-hover/exp:opacity-100 transition-opacity">
+      <div className="action-col opacity-80 group-hover/exp:opacity-100 transition-opacity self-center">
         <button
           type="button"
           onClick={() => setModo("editar")}
