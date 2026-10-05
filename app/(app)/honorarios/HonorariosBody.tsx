@@ -294,17 +294,17 @@ export default function HonorariosBody({
                 <div key={h.id} className="bg-surface/50 border border-surface-border/40 rounded-[18px] p-4 sm:p-5 -mx-2 sm:-mx-3">
                   <h3 className="font-semibold text-white text-[17px] sm:text-lg leading-snug break-words">{h.clienteNome}</h3>
 
-                  <div className="mt-3 flex items-end gap-3">
+                  <div className="mt-2.5 flex items-end justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="num text-[15px] sm:text-base font-semibold tracking-tight text-white">{currency(Number(h.valor))}</p>
-                      <div className="flex items-center gap-2 mt-1.5 flex-wrap text-xs text-slate-500">
-                        <span>{h.vencimentoLabel} · Honorário {h.competenciaLabel}</span>
+                      <p className="num text-[13px] sm:text-sm font-semibold tracking-tight text-white">{currency(Number(h.valor))}</p>
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap text-[11px] text-slate-500">
+                        <span>Competência {h.competenciaLabel}</span>
+                        <span className={`shrink-0 px-2 py-0.5 rounded-md font-semibold ${s.bg} ${s.text}`}>
+                          {s.label}
+                        </span>
                       </div>
                     </div>
-                    <div className="ml-auto flex items-center gap-1.5 shrink-0">
-                      <span className={`shrink-0 text-xs px-2.5 py-1 rounded-lg font-semibold ${s.bg} ${s.text}`}>
-                        {s.label}
-                      </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
                       {h.status !== "pago" && (
                         <PagarHonorarioBtn
                           honorarioId={h.id}

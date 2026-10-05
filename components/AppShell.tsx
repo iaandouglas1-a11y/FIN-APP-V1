@@ -148,7 +148,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           aria-hidden
           className="app-top-cover md:hidden fixed inset-x-0 top-0 z-40 bg-[#161616] pointer-events-none"
         />
-        <div className="mobile-page-header md:hidden" aria-label={`Cabeçalho ${pageHeader.title}`}>
+        <div className="mobile-page-header relative z-50 md:hidden" aria-label={`Cabeçalho ${pageHeader.title}`}>
           {isSecondary && (
             <Link href="/dashboard" aria-label="Voltar ao Dashboard" className="-ml-1 flex h-8 w-8 items-center justify-center rounded-full text-ink-primary active:scale-95 transition-transform">
               <ChevronLeft className="h-5 w-5" />

@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Copy, X, Check } from "lucide-react";
+import { Pencil, X, Check } from "lucide-react";
 import { toast } from "sonner";
 import { saveMovimentacao } from "@/app/(app)/actions";
-import { duplicarMovimentacao } from "@/app/(app)/actions_movimentacoes";
 import { FormGroup, Input, Select } from "@/components/ui";
 import { dateBR } from "@/lib/format";
 
@@ -30,16 +29,6 @@ export default function EditarMovimentacaoBtn({ mov, categorias, contas, cartoes
         >
           <Pencil className="h-3.5 w-3.5" />
         </button>
-        <form action={duplicarMovimentacao}>
-          <input type="hidden" name="id" value={mov.id} />
-          <button
-            type="submit"
-            className="p-1.5 text-slate-600 hover:text-[#5DA832] rounded transition-colors"
-            title="Duplicar e editar"
-          >
-            <Copy className="h-3.5 w-3.5" />
-          </button>
-        </form>
       </div>
     );
   }

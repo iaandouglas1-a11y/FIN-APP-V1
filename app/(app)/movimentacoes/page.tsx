@@ -3,7 +3,7 @@ import { Card, Input, Select, Button, EmptyState, IconChip, AmountText, Surface 
 import { currency, dateBR } from "@/lib/format";
 import { isTransferencia } from "@/lib/finance";
 import { getCartoesEFaturas, getCategorias, getContasWithMovs, getMovimentacoes } from "@/lib/queries";
-import { Trash2, Filter, Inbox, Search, X } from "lucide-react";
+import { Trash2, Filter, Inbox, X } from "lucide-react";
 import { getCategoryIcon } from "@/lib/categoryIcons";
 import { clsx } from "clsx";
 import FiltroDataPersist from "@/components/FiltroDataPersist";
@@ -81,9 +81,6 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
 
       <div className="flex items-center justify-between px-1">
         <h1 className="hidden md:block text-[22px] font-semibold text-ink-primary tracking-tight">Movimentações</h1>
-        <a href="#filtros" className="icon-btn w-9 h-11 rounded-xl bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary">
-          <Search className="h-4 w-4" />
-        </a>
       </div>
 
       {/* Tabs Todas/Receitas/Despesas via URL — sem JS necessário */}
