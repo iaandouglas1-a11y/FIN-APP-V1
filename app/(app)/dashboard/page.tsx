@@ -80,7 +80,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       </div>
 
       {/* ── Acesso rápido aos módulos ───────────────────────────────── */}
-      <div className="grid grid-cols-4 gap-1">
+      <div className="grid grid-cols-4 gap-2.5">
         {([
           { href: "/dividas", label: "Dívidas", icon: TrendingDown },
           { href: "/faturas", label: "Faturas", icon: Receipt },
@@ -88,7 +88,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           { href: "/gestao-pj", label: "Gestão PJ", icon: Briefcase },
         ] as { href: string; label: string; icon: any }[]).map((a) => (
           <Link key={a.href} href={a.href} className="flex flex-col items-center gap-1 active:scale-95 transition-transform">
-            <IconChip icon={a.icon} tone="brand" size={52} iconSize={23} rounded="rounded-[15px]" />
+            <IconChip icon={a.icon} tone="brand" size={55} iconSize={25} rounded="rounded-[15px]" />
             <span className="text-[11px] text-ink-secondary text-center leading-tight">{a.label}</span>
           </Link>
         ))}
