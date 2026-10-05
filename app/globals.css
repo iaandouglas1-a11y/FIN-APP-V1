@@ -20,12 +20,18 @@
 .app-top-cover {
   height: env(safe-area-inset-top, 0px);
 }
+.mobile-page-header {
+  @apply mb-5 flex min-h-[112px] items-center justify-between gap-4 rounded-t-[42px] border border-b-0 border-surface-border/50 bg-[#141414] px-7 pb-5 pt-7;
+}
 @media (display-mode: standalone) {
   .app-top-pad {
     padding-top: calc(3.25rem + env(safe-area-inset-top, 0px));
   }
   .app-top-cover {
     height: calc(2.5rem + env(safe-area-inset-top, 0px));
+  }
+  .mobile-page-header {
+    @apply pt-9;
   }
 }
 @media (min-width: 768px) {

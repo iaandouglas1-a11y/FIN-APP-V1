@@ -64,7 +64,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       <FiltroDataPersist pagina="dashboard" basePath="/dashboard" inicio={sp.inicio} fim={sp.fim} />
 
       <div className="flex items-center justify-between px-1">
-        <h1 className="text-[22px] font-semibold tracking-tight text-ink-primary">Meu Onfin</h1>
+        <h1 className="hidden md:block text-[22px] font-semibold tracking-tight text-ink-primary">Meu Onfin</h1>
       </div>
 
       {/* ── Lançar: receita / despesa / transferir ──────────────────── */}

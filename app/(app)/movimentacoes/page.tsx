@@ -80,7 +80,7 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
       <FiltroDataPersist pagina="movimentacoes" basePath="/movimentacoes" inicio={sp.inicio} fim={sp.fim} />
 
       <div className="flex items-center justify-between px-1">
-        <h1 className="text-[22px] font-semibold text-ink-primary tracking-tight">Movimentações</h1>
+        <h1 className="hidden md:block text-[22px] font-semibold text-ink-primary tracking-tight">Movimentações</h1>
         <a href="#filtros" className="icon-btn w-9 h-11 rounded-xl bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary">
           <Search className="h-4 w-4" />
         </a>

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import {
   LayoutDashboard, ArrowUpRight,
-  Receipt, Wallet, Tags, ChevronRight, ChevronLeft, TrendingDown, TrendingUp, StickyNote, PiggyBank, Briefcase
+  Receipt, Wallet, Tags, ChevronRight, TrendingDown, TrendingUp, StickyNote, PiggyBank, Briefcase,
+  Search, Filter, Pencil, type LucideIcon
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -14,10 +15,21 @@ import { BottomNav } from "./BottomNav";
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const pathname = usePathname();
-  // Módulos abertos por atalho no Dashboard: mostram botão "voltar" no topo (mobile)
-  const isSecondary = ["/dividas", "/faturas", "/notas", "/gestao-pj", "/orcamento"].some(
-    (h) => pathname === h || pathname?.startsWith(`${h}/`)
-  );
+  const pageHeader = [
+    { href: "/dashboard", title: "Meu Onfin", icon: Search },
+    { href: "/movimentacoes", title: "Extrato", icon: Filter },
+    { href: "/contas", title: "Bancos e cartões", icon: Pencil },
+    { href: "/investimentos", title: "Investimentos", icon: TrendingUp },
+    { href: "/categorias", title: "Categorias", icon: Tags },
+    { href: "/faturas", title: "Faturas", icon: Receipt },
+    { href: "/dividas", title: "Dívidas", icon: TrendingDown },
+    { href: "/notas", title: "Notas", icon: StickyNote },
+    { href: "/orcamento", title: "Orçamento", icon: PiggyBank },
+    { href: "/gestao-pj", title: "Gestão PJ", icon: Briefcase },
+  ].find(({ href }) => pathname === href || pathname?.startsWith(`${href}/`)) ?? {
+    href: "/dashboard", title: "Meu Onfin", icon: Search,
+  };
+  const PageHeaderIcon = pageHeader.icon as LucideIcon;
 
   const navItems = [
     {
@@ -133,17 +145,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           className="app-top-cover md:hidden fixed inset-x-0 top-0 z-40 bg-bg pointer-events-none"
         />
         <div className="app-top-pad flex-1 p-4 md:p-8 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-8">
-          <div className="mb-5 flex items-center gap-3 px-1 md:hidden" aria-label="Marca Onfin">
-            {isSecondary && (
-              <Link
-                href="/dashboard"
-                aria-label="Voltar ao Dashboard"
-                className="w-9 h-9 -ml-1 rounded-full bg-surface border border-surface-border/60 flex items-center justify-center text-ink-secondary active:scale-95 transition-all"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </Link>
-            )}
-            <OnfinLogo variant="horizontal" className="h-8 w-auto" />
+          <div className="mobile-page-header md:hidden" aria-label={`Cabeçalho ${pageHeader.title}`}>
+            <OnfinLogo variant="horizontal" className="w-[150px] h-auto" />
+            <div className="flex items-center gap-4 min-w-0">
+              <span className="truncate text-[18px] font-medium tracking-tight text-[#A7A8B8]">{pageHeader.title}</span>
+              <PageHeaderIcon className="h-8 w-8 shrink-0 text-[#F5F7FA]" strokeWidth={2.4} />
+            </div>
           </div>
           <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}
