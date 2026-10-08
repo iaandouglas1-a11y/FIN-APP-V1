@@ -7,11 +7,11 @@ export const metadata: Metadata = {
   description: "Gestão financeira On Contabilidade",
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/onfin-app-icon.svg?v=2", type: "image/svg+xml" },
+      { url: "/onfin-icon.ico?v=2", sizes: "any" },
+      { url: "/onfin-icon-32.png?v=2", sizes: "32x32", type: "image/png" },
     ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+    apple: [{ url: "/onfin-icon-180.png?v=2", sizes: "180x180" }],
   },
   manifest: "/manifest.json",
   appleWebApp: {
@@ -36,7 +36,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Onfin" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta name="msapplication-TileColor" content="#0A0A0A" />
+        <meta name="msapplication-TileImage" content="/onfin-icon-144.png?v=2" />
+        <link rel="icon" href="/onfin-icon.ico?v=2" sizes="any" />
+        <link rel="icon" type="image/svg+xml" href="/onfin-app-icon.svg?v=2" />
+        <link rel="apple-touch-icon" href="/onfin-icon-180.png?v=2" />
       </head>
       <body>
         <ToastProvider />
