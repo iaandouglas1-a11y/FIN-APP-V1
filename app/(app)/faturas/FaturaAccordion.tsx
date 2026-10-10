@@ -112,8 +112,9 @@ export default function FaturaAccordion({
             <p className="text-sm text-slate-400 italic">{observacao}</p>
           )}
 
-          {/* BOTÃO PAGAR */}
-          <div onClick={(e) => e.stopPropagation()}>
+          {/* AÇÕES DA FATURA */}
+          <div className="grid grid-cols-2 gap-2 items-start">
+          <div className="min-w-0" onClick={(e) => e.stopPropagation()}>
             <PagarFaturaBtn
               faturaId={faturaId}
               cartaoId={cartaoId}
@@ -124,7 +125,7 @@ export default function FaturaAccordion({
             />
           </div>
           {!pago && (
-            <div onClick={(e) => e.stopPropagation()}>
+            <div className="min-w-0" onClick={(e) => e.stopPropagation()}>
               <AnteciparFaturaBtn
                 faturaId={faturaId}
                 total={total}
@@ -134,6 +135,7 @@ export default function FaturaAccordion({
               />
             </div>
           )}
+          </div>
 
           {/* LISTA DE DESPESAS */}
           {expenses.length === 0 ? (

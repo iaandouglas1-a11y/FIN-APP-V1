@@ -71,12 +71,12 @@ export default function PagarFaturaBtn({ faturaId, cartaoId, total, pago, pagoEm
 
   // --- Fatura não paga ---
   return (
-    <div className="relative">
+    <div className="relative w-full">
       {!aberto ? (
         <button
           type="button"
           onClick={() => setAberto(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-semibold transition-all duration-200 active:scale-95"
+          className="w-full min-h-10 flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#5DA832] hover:bg-[#6fc23b] text-white text-sm font-semibold transition-all duration-200 active:scale-95"
         >
           <CreditCard className="h-4 w-4" />
           Pagar Fatura

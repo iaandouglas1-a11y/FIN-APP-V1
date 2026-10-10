@@ -20,7 +20,7 @@ export default function AnteciparFaturaBtn({ faturaId, total, antecipado, restan
   if (restante <= 0) return null;
 
   return (
-    <div className="relative space-y-2">
+    <div className="relative w-full space-y-2">
       {antecipado > 0 && (
         <div className="text-xs text-slate-500">
           Antecipado: <span className="text-[#8FCB5E] font-semibold">{currency(antecipado)}</span>
@@ -32,7 +32,7 @@ export default function AnteciparFaturaBtn({ faturaId, total, antecipado, restan
         <button
           type="button"
           onClick={() => setAberto(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface border border-surface-border/60 hover:border-[#5DA832]/50 hover:text-[#8FCB5E] text-ink-secondary text-sm font-semibold transition-all duration-200 active:scale-95"
+          className="w-full min-h-10 flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-surface border border-surface-border/60 hover:border-[#5DA832]/50 hover:text-[#8FCB5E] text-ink-secondary text-sm font-semibold transition-all duration-200 active:scale-95"
         >
           <Coins className="h-4 w-4" />
           Antecipar parte
