@@ -1,4 +1,4 @@
-import { invoiceTotal } from "@/lib/finance";
+import { invoiceAnticipated, invoiceRemaining, invoiceTotal, isAntecipacaoFatura } from "@/lib/finance";
 import { getCartoesEFaturas, getContasWithMovs, getCategorias } from "@/lib/queries";
 import FaturasBody from "./FaturasBody";
 
@@ -21,8 +21,10 @@ export default async function FaturasPage() {
 
   const faturasPreparadas = (faturas as any[]).map((f) => {
     const card = (cartoes as any[]).find((c) => c.id === f.cartao_id);
-    const expenses = (movimentacoes as any[]).filter((m) => m.fatura_id === f.id);
+    const expenses = (movimentacoes as any[]).filter((m) => m.fatura_id === f.id && !isAntecipacaoFatura(m));
     const total = invoiceTotal(f.id, movimentacoes);
+    const antecipado = invoiceAnticipated(f.id, movimentacoes);
+    const restante = invoiceRemaining(f.id, movimentacoes);
 
     const pago = f.pago === true;
     const venc = new Date(f.data_vencimento);
@@ -40,6 +42,8 @@ export default async function FaturasPage() {
       pagoEm: f.pago_em ?? null,
       observacao: f.observacao ?? null,
       total,
+      antecipado,
+      restante,
       isOverdue,
       isDue,
       expenses,

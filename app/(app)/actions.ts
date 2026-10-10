@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
+import { ANTECIPACAO_FATURA_PREFIX, invoiceAnticipated, invoiceTotal } from "@/lib/finance";
 
 // Schemas de Validação
 const nullableId = z.string().uuid().optional().or(z.literal("")).transform((v) => v || null);
@@ -251,6 +252,63 @@ export async function pagarFatura(formData: FormData) {
 
   revalidatePath("/faturas");
   revalidatePath("/contas/cartoes");
+  revalidatePath("/movimentacoes");
+  revalidatePath("/dashboard");
+}
+
+// --- Antecipar parte da fatura ---
+export async function anteciparFatura(formData: FormData) {
+  const fatura_id = String(formData.get("fatura_id") || "");
+  const conta_id = String(formData.get("conta_id") || "");
+  const valor = Number(formData.get("valor"));
+
+  if (!fatura_id || !conta_id || !Number.isFinite(valor) || valor <= 0) {
+    throw new Error("Informe uma conta e um valor válido para antecipar.");
+  }
+
+  const s = await createServerSupabaseClient();
+  const [{ data: fatura, error: faturaError }, { data: movs, error: movsError }] = await Promise.all([
+    (s.from("faturas") as any).select("id, cartao_id, pago").eq("id", fatura_id).single(),
+    (s.from("movimentacoes") as any).select("fatura_id, tipo, valor, descricao").eq("fatura_id", fatura_id),
+  ]);
+  if (faturaError || !fatura) throw new Error("Fatura não encontrada.");
+  if (movsError) throw new Error(movsError.message);
+  if (fatura.pago) throw new Error("Esta fatura já foi paga.");
+
+  const total = invoiceTotal(fatura_id, movs || []);
+  const antecipado = invoiceAnticipated(fatura_id, movs || []);
+  const restante = Math.max(0, total - antecipado);
+  if (total <= 0) throw new Error("Esta fatura ainda não possui lançamentos.");
+  if (valor > restante + 0.005) throw new Error(`O valor máximo para antecipar é R$ ${restante.toFixed(2).replace(".", ",")}.`);
+
+  let catId: string | null = null;
+  const { data: existing } = await (s.from("categorias") as any)
+    .select("id").eq("nome", "Fatura").limit(1).single();
+  if (existing) {
+    catId = existing.id;
+  } else {
+    const { data: nova, error: catError } = await (s.from("categorias") as any)
+      .insert({ nome: "Fatura", tipo: "despesa" }).select("id").single();
+    if (catError) throw new Error(catError.message);
+    catId = nova?.id || null;
+  }
+  if (!catId) throw new Error("Não foi possível preparar a categoria da antecipação.");
+
+  const { error } = await (s.from("movimentacoes") as any).insert({
+    tipo: "despesa",
+    valor,
+    data: new Date().toISOString().slice(0, 10),
+    categoria_id: catId,
+    conta_id,
+    cartao_id: null,
+    fatura_id,
+    status: "realizado",
+    descricao: `${ANTECIPACAO_FATURA_PREFIX} ${fatura.cartao_id}`,
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/faturas");
+  revalidatePath("/contas");
   revalidatePath("/movimentacoes");
   revalidatePath("/dashboard");
 }

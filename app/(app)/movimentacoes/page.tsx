@@ -1,7 +1,7 @@
 import { deleteMovimentacao } from "@/app/(app)/actions";
 import { Card, Input, Select, Button, EmptyState, IconChip, AmountText, Surface } from "@/components/ui";
 import { currency, dateBR } from "@/lib/format";
-import { isTransferencia } from "@/lib/finance";
+import { ANTECIPACAO_FATURA_PREFIX, isAntecipacaoFatura, isTransferencia } from "@/lib/finance";
 import { getCartoesEFaturas, getCategorias, getContasWithMovs, getMovimentacoes } from "@/lib/queries";
 import { Trash2, Filter, Inbox, X } from "lucide-react";
 import { getCategoryIcon } from "@/lib/categoryIcons";
@@ -209,7 +209,9 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                           {transferencia ? "Transferência entre contas" : (m.categorias?.nome || "Sem categoria")}
                         </div>
                         <div className="text-[11.5px] text-ink-tertiary mt-0.5 truncate">
-                          {m.descricao || m.contas?.nome || m.cartoes?.nome || "—"}
+                          {isAntecipacaoFatura(m)
+                            ? String(m.descricao).replace(ANTECIPACAO_FATURA_PREFIX, "Antecipação de fatura")
+                            : (m.descricao || m.contas?.nome || m.cartoes?.nome || "—")}
                         </div>
                       </div>
                       {transferencia ? <span className="num shrink-0 text-[14px] font-semibold text-ink-secondary">↔ {currency(Number(m.valor))}</span> : <AmountText value={m.tipo === "receita" ? Number(m.valor) : -Number(m.valor)} signed tone={m.tipo === "receita" ? "green" : "red"} />}

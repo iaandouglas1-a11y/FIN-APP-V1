@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Receipt, ChevronDown, ChevronUp } from "lucide-react";
 import { currency, dateBR } from "@/lib/format";
 import PagarFaturaBtn from "./PagarFaturaBtn";
+import AnteciparFaturaBtn from "./AnteciparFaturaBtn";
 import EditarExpenseBtn from "./EditarExpenseBtn";
 
 type Props = {
@@ -17,6 +18,8 @@ type Props = {
   pagoEm?: string | null;
   observacao?: string | null;
   total: number;
+  antecipado: number;
+  restante: number;
   isOverdue: boolean;
   isDue: boolean;
   expenses: any[];
@@ -37,6 +40,8 @@ export default function FaturaAccordion({
   pagoEm,
   observacao,
   total,
+  antecipado,
+  restante,
   isOverdue,
   isDue,
   expenses,
@@ -88,10 +93,10 @@ export default function FaturaAccordion({
               : isDue ? "text-amber-400"
               : "text-slate-200"
             }`}>
-              {currency(total)}
+              {currency(restante)}
             </p>
             <p className="text-xs text-slate-500">
-              {pago ? "Pago" : isOverdue ? "Atrasado" : isDue ? "A vencer" : "Aberto"}
+              {pago ? "Pago" : antecipado > 0 ? "Saldo restante" : isOverdue ? "Atrasado" : isDue ? "A vencer" : "Aberto"}
             </p>
           </div>
           {open ? <ChevronUp className="h-4 w-4 text-slate-500" /> : <ChevronDown className="h-4 w-4 text-slate-500" />}
@@ -112,12 +117,23 @@ export default function FaturaAccordion({
             <PagarFaturaBtn
               faturaId={faturaId}
               cartaoId={cartaoId}
-              total={total}
+              total={restante}
               pago={pago}
               pagoEm={pagoEm ?? null}
               contas={contas}
             />
           </div>
+          {!pago && (
+            <div onClick={(e) => e.stopPropagation()}>
+              <AnteciparFaturaBtn
+                faturaId={faturaId}
+                total={total}
+                antecipado={antecipado}
+                restante={restante}
+                contas={contas}
+              />
+            </div>
+          )}
 
           {/* LISTA DE DESPESAS */}
           {expenses.length === 0 ? (
@@ -150,6 +166,12 @@ export default function FaturaAccordion({
                 <span className="text-slate-400">Total</span>
                 <span className="text-white">{currency(total)}</span>
               </div>
+              {antecipado > 0 && (
+                <div className="flex justify-between text-xs px-1 mt-1">
+                  <span className="text-slate-500">Saldo após antecipação</span>
+                  <span className="text-[#8FCB5E] font-semibold">{currency(restante)}</span>
+                </div>
+              )}
             </div>
           )}
         </div>

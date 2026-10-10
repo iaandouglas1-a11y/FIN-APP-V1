@@ -17,6 +17,8 @@ type FaturaItem = {
   pagoEm: string | null;
   observacao: string | null;
   total: number;
+  antecipado: number;
+  restante: number;
   isOverdue: boolean;
   isDue: boolean;
   expenses: any[];
@@ -169,6 +171,8 @@ export default function FaturasBody({
                 pagoEm={f.pagoEm}
                 observacao={f.observacao}
                 total={f.total}
+                antecipado={f.antecipado}
+                restante={f.restante}
                 isOverdue={f.isOverdue}
                 isDue={f.isDue}
                 expenses={f.expenses}

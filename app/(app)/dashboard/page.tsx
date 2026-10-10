@@ -1,7 +1,7 @@
 import { CategoryPie, EvolutionChart, WaterfallChart } from "@/components/Charts";
 import { Card, Input, Button, AmountText, StatPill, Surface } from "@/components/ui";
 import { currency } from "@/lib/format";
-import { isTransferencia, totalBalance, invoiceTotal } from "@/lib/finance";
+import { isTransferencia, totalBalance, invoiceRemaining } from "@/lib/finance";
 import { getDashboardData, monthlyDre, getCartoesEFaturas } from "@/lib/queries";
 import { TrendingUp, Filter, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, TrendingDown, Receipt, StickyNote, Briefcase, Wallet, PiggyBank, ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -37,7 +37,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const receitas = movimentacoesOperacionais.filter((m) => m.tipo === "receita").reduce((s, m) => s + Number(m.valor), 0);
   const totalFaturasAberto = (faturas as any[])
     .filter(f => !f.pago)
-    .reduce((sum, f) => sum + invoiceTotal(f.id, faturaMovs), 0);
+    .reduce((sum, f) => sum + invoiceRemaining(f.id, faturaMovs), 0);
   const despesas = movimentacoesOperacionais.filter((m) => m.tipo === "despesa").reduce((s, m) => s + Number(m.valor), 0);
   const saldo    = totalBalance(allMovs);
 

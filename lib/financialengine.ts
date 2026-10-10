@@ -5,6 +5,7 @@ import {
 } from "@/lib/datafinance";
 
 import type { Movimentacao } from "@/types/database";
+import { invoiceRemaining } from "@/lib/finance";
 
 type EnrichedFinancialItem = {
   id: string;
@@ -31,19 +32,13 @@ function calcContaSaldo(contaId: string, movs: Movimentacao[]) {
     .reduce((sum, m) => sum + signedValue(m), 0);
 }
 
-function invoiceTotal(faturaId: string, movs: Movimentacao[]) {
-  return movs
-    .filter((m) => m.fatura_id === faturaId && m.tipo === "despesa")
-    .reduce((sum, m) => sum + Number(m.valor), 0);
-}
-
 // "Usado" do cartão = soma das faturas ainda não pagas (mesmo critério do
 // card "Faturas em aberto" do Dashboard). Faturas já pagas não entram mais,
 // então o valor não fica crescendo pra sempre depois do pagamento.
 function calcCartaoUsado(cartaoId: string, faturas: any[], movs: Movimentacao[]) {
   return faturas
     .filter((f) => f.cartao_id === cartaoId && !f.pago)
-    .reduce((sum, f) => sum + invoiceTotal(f.id, movs), 0);
+    .reduce((sum, f) => sum + invoiceRemaining(f.id, movs), 0);
 }
 
 export async function getFinancialOverview(): Promise<
