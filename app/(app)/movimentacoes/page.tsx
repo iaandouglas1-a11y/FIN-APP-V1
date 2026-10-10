@@ -57,7 +57,9 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
   const despesasTotal = movsVisiveis.filter(m => m.tipo === "despesa" && !isTransferencia(m)).reduce((s, m) => s + Number(m.valor), 0);
 
   // Apenas faturas em aberto podem receber novos lançamentos — faturas já pagas ficam de fora
-  const faturasEmAberto = (cardsData.faturas as any[]).filter((f) => !f.pago);
+  const contasAtivas = (contasData.contas as any[]).filter((c) => c.ativo !== false);
+  const cartoesAtivos = (cardsData.cartoes as any[]).filter((c) => c.ativo !== false);
+  const faturasEmAberto = (cardsData.faturas as any[]).filter((f) => !f.pago && cartoesAtivos.some((c) => c.id === f.cartao_id));
 
   // Agrupar por data (mais recente primeiro); dentro do dia: receitas antes de despesas
   const grupos = movsVisiveis.reduce((acc, m) => {
@@ -118,8 +120,8 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
       <div id="lancamento" className="scroll-mt-6">
         <MovimentacaoQuickForms
           categorias={categorias}
-          contas={contasData.contas}
-          cartoes={cardsData.cartoes}
+          contas={contasAtivas}
+          cartoes={cartoesAtivos}
           faturas={faturasEmAberto}
           defaultTipo={sp.tipo}
         />
@@ -219,8 +221,8 @@ export default async function MovimentacoesPage({ searchParams }: { searchParams
                         <EditarMovimentacaoBtn
                           mov={m}
                           categorias={categorias}
-                          contas={contasData.contas}
-                          cartoes={cardsData.cartoes}
+                          contas={contasAtivas}
+                          cartoes={cartoesAtivos}
                           faturas={
                             // Faturas em aberto + a fatura atual do lançamento (mesmo que já paga),
                             // pra não perder a referência ao editar um lançamento antigo.

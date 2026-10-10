@@ -12,6 +12,7 @@ type EnrichedFinancialItem = {
   nome: string;
   tipo: "conta" | "cartao";
   logo_url?: string;
+  ativo: boolean;
 
   // métricas calculadas
   saldo: number;
@@ -59,6 +60,7 @@ export async function getFinancialOverview(): Promise<
         nome: item.nome,
         tipo: "conta",
         logo_url: item.logo_url,
+        ativo: item.ativo !== false,
         saldo,
       };
     }
@@ -72,6 +74,7 @@ export async function getFinancialOverview(): Promise<
         nome: item.nome,
         tipo: "cartao",
         logo_url: item.logo_url,
+        ativo: item.ativo !== false,
 
         saldo: -usado,
         limite,

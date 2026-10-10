@@ -16,6 +16,7 @@ export default async function ContasECartoesPage() {
       id: c.id,
       nome: c.nome,
       tipo: "conta" as const,
+      ativo: c.ativo,
       logo_url: c.logo_url,
       saldo: normalizeZero(c.saldo),
     }));
@@ -26,6 +27,7 @@ export default async function ContasECartoesPage() {
       id: c.id,
       nome: c.nome,
       tipo: "cartao" as const,
+      ativo: c.ativo,
       logo_url: c.logo_url,
       saldo: normalizeZero(c.saldo),
       limite: normalizeZero(c.limite || 0),

@@ -18,7 +18,8 @@ const movSchema = z.object({
   cartao_id: nullableId, 
   fatura_id: nullableId, 
   status: z.enum(["previsto", "realizado"]),
-  descricao: z.string().optional().or(z.literal(""))
+  descricao: z.string().optional().or(z.literal("")),
+  parcelas_total: z.coerce.number().int().min(1).optional()
 }).refine(
   (v) => v.tipo === "receita" 
     ? !!v.conta_id && !v.cartao_id 
@@ -62,12 +63,43 @@ export async function saveMovimentacao(formData: FormData) {
   const parsed = movSchema.safeParse(entries(formData)); 
   if (!parsed.success) throw new Error(parsed.error.errors[0].message);
 
-  const s = await createServerSupabaseClient(); 
-  const result = id 
-    ? await (s.from("movimentacoes") as any).update(parsed.data).eq("id", id) 
-    : await (s.from("movimentacoes") as any).insert(parsed.data); 
-  
-  if (result.error) throw new Error(result.error.message); 
+  const s = await createServerSupabaseClient();
+  const { parcelas_total = 1, ...mov } = parsed.data;
+  if (id || parcelas_total <= 1 || mov.tipo !== "despesa" || !mov.cartao_id) {
+    const result = id
+      ? await (s.from("movimentacoes") as any).update(mov).eq("id", id)
+      : await (s.from("movimentacoes") as any).insert(mov);
+    if (result.error) throw new Error(result.error.message);
+  } else {
+    if (!mov.fatura_id) throw new Error("Selecione a fatura da primeira parcela.");
+    const { data: base, error: baseError } = await (s.from("faturas") as any)
+      .select("id, cartao_id, data_vencimento, pago").eq("id", mov.fatura_id).single();
+    if (baseError || !base || base.cartao_id !== mov.cartao_id) throw new Error("A fatura selecionada não pertence ao cartão.");
+    if (base.pago) throw new Error("A fatura selecionada já está paga.");
+    const valorParcela = Number((Number(mov.valor) / parcelas_total).toFixed(2));
+    const diferenca = Number(mov.valor) - valorParcela * parcelas_total;
+    for (let i = 0; i < parcelas_total; i++) {
+      const venc = new Date(`${base.data_vencimento}T12:00:00`);
+      venc.setMonth(venc.getMonth() + i);
+      const dataVencimento = venc.toISOString().slice(0, 10);
+      let faturaId = i === 0 ? base.id : null;
+      if (!faturaId) {
+        const { data: existente } = await (s.from("faturas") as any).select("id, pago").eq("cartao_id", mov.cartao_id).eq("data_vencimento", dataVencimento).maybeSingle();
+        if (existente?.pago) throw new Error(`A fatura de ${dataVencimento} já está paga.`);
+        if (existente) faturaId = existente.id;
+        else {
+          const fechamento = new Date(`${dataVencimento}T12:00:00`);
+          fechamento.setDate(fechamento.getDate() - 7);
+          const { data: nova, error: novaError } = await (s.from("faturas") as any).insert({ cartao_id: mov.cartao_id, data_fechamento: fechamento.toISOString().slice(0, 10), data_vencimento: dataVencimento, pago: false }).select("id").single();
+          if (novaError) throw new Error(novaError.message);
+          faturaId = nova.id;
+        }
+      }
+      const valor = i === parcelas_total - 1 ? Number((valorParcela + diferenca).toFixed(2)) : valorParcela;
+      const result = await (s.from("movimentacoes") as any).insert({ ...mov, valor, fatura_id: faturaId, descricao: `${mov.descricao || "Compra"} (parcela ${i + 1}/${parcelas_total})` });
+      if (result.error) throw new Error(result.error.message);
+    }
+  }
   revalidatePath("/movimentacoes"); 
   revalidatePath("/dashboard"); 
   revalidatePath("/contas");

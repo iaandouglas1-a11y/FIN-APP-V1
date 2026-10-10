@@ -36,7 +36,8 @@ export function FinancialQuickInline({ onCreated }: Props) {
         nome,
         tipo,
         logo_url: null,
-        limite: isCartao ? limite : null
+        limite: isCartao ? limite : null,
+        ativo: true
       })
 
     // 2. LEGACY (compatibilidade)

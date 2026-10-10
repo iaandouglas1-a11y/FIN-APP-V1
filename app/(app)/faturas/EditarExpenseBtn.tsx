@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Copy, Trash2, X, Check } from "lucide-react";
+import { Pencil, Trash2, X, Check } from "lucide-react";
 import { toast } from "sonner";
 import { saveMovimentacao, deleteMovimentacao } from "@/app/(app)/actions";
-import { duplicarMovimentacao } from "@/app/(app)/actions_movimentacoes";
 import { FormGroup, Input, Select } from "@/components/ui";
 
 interface Props {
@@ -29,16 +28,6 @@ export default function EditarExpenseBtn({ exp, categorias, contas, cartoes, fat
         >
           <Pencil className="h-3 w-3" />
         </button>
-        <form action={duplicarMovimentacao}>
-          <input type="hidden" name="id" value={exp.id} />
-          <button
-            type="submit"
-            className="p-1.5 text-slate-600 hover:text-[#5DA832] rounded transition-colors"
-            title="Duplicar"
-          >
-            <Copy className="h-3 w-3" />
-          </button>
-        </form>
         <form action={deleteMovimentacao}>
           <input type="hidden" name="id" value={exp.id} />
           <button

@@ -14,14 +14,16 @@ export async function getCategorias() {
 export async function getContasWithMovs() { 
   noStore(); 
   const s = await createServerSupabaseClient(); 
-  const [contas, movs] = await Promise.all([
+  const [contas, movs, itens] = await Promise.all([
     s.from("contas").select("*").order("nome"), 
-    s.from("movimentacoes").select("*")
+    s.from("movimentacoes").select("*"),
+    (s.from("financeiro_itens") as any).select("id, ativo")
   ]); 
   if (contas.error) throw contas.error; 
-  if (movs.error) throw movs.error; 
+  if (movs.error) throw movs.error;
+  const ativoPorId = new Map((itens.data || []).map((i: any) => [i.id, i.ativo !== false]));
   return { 
-    contas: (contas.data || []) as Conta[], 
+    contas: (contas.data || []).map((c: any) => ({ ...c, ativo: ativoPorId.get(c.id) ?? true })) as Conta[],
     movimentacoes: (movs.data || []) as Movimentacao[] 
   }; 
 }
@@ -64,16 +66,18 @@ export async function getCartoesEFaturas(filters?: { inicio?: string; fim?: stri
   let faturasQuery = s.from("faturas").select("*").order("data_vencimento", { ascending: false });
   if (filters?.inicio) faturasQuery = faturasQuery.gte("data_vencimento", filters.inicio);
   if (filters?.fim) faturasQuery = faturasQuery.lte("data_vencimento", filters.fim);
-  const [cartoes, faturas, movs] = await Promise.all([
+  const [cartoes, faturas, movs, itens] = await Promise.all([
     s.from("cartoes").select("*, contas(nome)").order("nome"), 
     faturasQuery, 
-    s.from("movimentacoes").select("*, categorias(nome)").order("data", { ascending: false })
+    s.from("movimentacoes").select("*, categorias(nome)").order("data", { ascending: false }),
+    (s.from("financeiro_itens") as any).select("id, ativo")
   ]); 
   if (cartoes.error) throw cartoes.error; 
   if (faturas.error) throw faturas.error; 
-  if (movs.error) throw movs.error; 
+  if (movs.error) throw movs.error;
+  const ativoPorId = new Map((itens.data || []).map((i: any) => [i.id, i.ativo !== false]));
   return { 
-    cartoes: (cartoes.data || []) as any[], 
+    cartoes: (cartoes.data || []).map((c: any) => ({ ...c, ativo: ativoPorId.get(c.id) ?? true })) as any[],
     faturas: (faturas.data || []) as FaturaExtendida[], 
     movimentacoes: (movs.data || []) as any[] 
   }; 

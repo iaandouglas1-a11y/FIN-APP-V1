@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, X, Wallet, CreditCard } from "lucide-react";
+import { Plus, Pencil, X, Wallet, CreditCard, Archive, ArchiveRestore } from "lucide-react";
+import { createClient } from "@supabase/supabase-js";
 import { Card, EntityLogo, AmountText, EmptyState, ProgressBar } from "@/components/ui";
 import type { IconTone } from "@/components/ui";
 import { currency } from "@/lib/format";
 import { FinancialQuickInline } from "./FinancialQuickInline";
 import { EditarFinancialForm } from "./EditarFinancialForm";
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 
 type Item = {
   id: string;
   nome: string;
   tipo: "conta" | "cartao";
+  ativo: boolean;
   logo_url?: string | null;
   saldo: number;
   limite?: number;
@@ -39,11 +42,22 @@ function cartaoTone(usado: number, limite: number): { icon: IconTone; text: Tone
 export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[]; cartoes: Item[] }) {
   const router = useRouter();
   const [painelAberto, setPainelAberto] = useState<null | "editar" | "adicionar">(null);
+  const [aba, setAba] = useState<"ativos" | "arquivados">("ativos");
 
   const todosItens = [...contas, ...cartoes];
+  const contasVisiveis = contas.filter((c) => aba === "ativos" ? c.ativo : !c.ativo);
+  const cartoesVisiveis = cartoes.filter((c) => aba === "ativos" ? c.ativo : !c.ativo);
+  async function alternarAtivo(item: Item) {
+    const { error } = await supabase.from("financeiro_itens").update({ ativo: !item.ativo }).eq("id", item.id);
+    if (!error) router.refresh();
+  }
 
   return (
     <>
+      <div className="flex gap-1.5 bg-surface-2/60 rounded-xl p-1">
+        <button type="button" onClick={() => setAba("ativos")} className={`flex-1 py-2 rounded-xl text-[12.5px] font-semibold ${aba === "ativos" ? "bg-[#5DA832]/20 text-[#8FCB5E]" : "text-ink-tertiary"}`}>Ativos</button>
+        <button type="button" onClick={() => setAba("arquivados")} className={`flex-1 py-2 rounded-xl text-[12.5px] font-semibold ${aba === "arquivados" ? "bg-[#5DA832]/20 text-[#8FCB5E]" : "text-ink-tertiary"}`}>Arquivados</button>
+      </div>
       {/* Ações do topo — mesmo padrão visual de "Nova transação" / "Transferência" */}
       <div className="grid grid-cols-2 gap-2">
         <button
@@ -114,15 +128,15 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
         <div className="px-4 pt-4 pb-3 mb-1 border-b border-surface-border/40">
           <h2 className="text-[15px] font-semibold text-white">Contas</h2>
           <p className="text-xs text-ink-tertiary mt-1">
-            {contas.length} {contas.length === 1 ? "conta cadastrada" : "contas cadastradas"}
+            {contasVisiveis.length} {contasVisiveis.length === 1 ? "conta" : "contas"} {aba === "ativos" ? "ativas" : "arquivadas"}
           </p>
         </div>
 
-        {contas.length === 0 ? (
-          <EmptyState icon={<Wallet className="h-10 w-10" />} title="Nenhuma conta cadastrada" />
+        {contasVisiveis.length === 0 ? (
+          <EmptyState icon={<Wallet className="h-10 w-10" />} title={aba === "ativos" ? "Nenhuma conta ativa" : "Nenhuma conta arquivada"} />
         ) : (
           <div className="divide-y divide-surface-border/40">
-            {contas.map((c) => {
+            {contasVisiveis.map((c) => {
               const tone = contaTone(c.saldo);
               return (
                 <div key={c.id} className="p-4 flex items-center gap-3">
@@ -131,7 +145,12 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
                     <p className="font-semibold text-white text-sm truncate">{c.nome}</p>
                     <p className="text-xs text-slate-500">Conta</p>
                   </div>
-                  <AmountText value={c.saldo} tone={tone.text} className="shrink-0" />
+                  <div className="flex items-center gap-2 shrink-0">
+                    <AmountText value={c.saldo} tone={tone.text} />
+                    <button type="button" onClick={() => alternarAtivo(c)} title={c.ativo ? "Arquivar conta" : "Reativar conta"} className="p-1.5 text-slate-500 hover:text-[#8FCB5E] rounded-xl transition-colors">
+                      {c.ativo ? <Archive className="h-3.5 w-3.5" /> : <ArchiveRestore className="h-3.5 w-3.5" />}
+                    </button>
+                  </div>
                 </div>
               );
             })}
@@ -144,15 +163,15 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
         <div className="px-4 pt-4 pb-3 mb-1 border-b border-surface-border/40">
           <h2 className="text-[15px] font-semibold text-white">Cartões</h2>
           <p className="text-xs text-ink-tertiary mt-1">
-            {cartoes.length} {cartoes.length === 1 ? "cartão cadastrado" : "cartões cadastrados"}
+            {cartoesVisiveis.length} {cartoesVisiveis.length === 1 ? "cartão" : "cartões"} {aba === "ativos" ? "ativos" : "arquivados"}
           </p>
         </div>
 
-        {cartoes.length === 0 ? (
-          <EmptyState icon={<CreditCard className="h-10 w-10" />} title="Nenhum cartão cadastrado" />
+        {cartoesVisiveis.length === 0 ? (
+          <EmptyState icon={<CreditCard className="h-10 w-10" />} title={aba === "ativos" ? "Nenhum cartão ativo" : "Nenhum cartão arquivado"} />
         ) : (
           <div className="divide-y divide-surface-border/40">
-            {cartoes.map((c) => {
+            {cartoesVisiveis.map((c) => {
               const limite = c.limite ?? 0;
               const usado = c.usado ?? 0;
               const pct = limite > 0 ? (usado / limite) * 100 : 0;
@@ -167,7 +186,12 @@ export default function ContasCartoesBody({ contas, cartoes }: { contas: Item[];
                         {currency(usado)} de {currency(limite)}
                       </p>
                     </div>
-                    <AmountText value={c.disponivel ?? 0} tone={tone.text} className="shrink-0" />
+                    <div className="flex items-center gap-2 shrink-0">
+                      <AmountText value={c.disponivel ?? 0} tone={tone.text} />
+                      <button type="button" onClick={() => alternarAtivo(c)} title={c.ativo ? "Arquivar cartão" : "Reativar cartão"} className="p-1.5 text-slate-500 hover:text-[#8FCB5E] rounded-xl transition-colors">
+                        {c.ativo ? <Archive className="h-3.5 w-3.5" /> : <ArchiveRestore className="h-3.5 w-3.5" />}
+                      </button>
+                    </div>
                   </div>
                   <ProgressBar pct={pct} color={tone.barColor} />
                 </div>
